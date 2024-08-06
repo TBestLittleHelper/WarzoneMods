@@ -16,7 +16,17 @@ function GameDataSetup(game)
     end
 
     for _, pid in pairs(game.ServerGame.Game.Players) do
-        if (pid.IsAI == false) then playerGameData[pid.ID] = {Chat = {}} end
+        if (pid.IsAI == false) then
+            playerGameData[pid.ID] = {
+                Chat = {},
+                Settings = {
+                    AlertUnreadChat = true,
+                    NumPastChat = 10,
+                    MenuSizeX = 550,
+                    MenuSizeY = 490
+                }
+            }
+        end
     end
 
     publicGameData.GameFinalized = false
