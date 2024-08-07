@@ -127,12 +127,10 @@ function AddToGroup(game, playerID, payload, setReturnTable)
             Color = RandomColor(),
             UnreadChat = false
         }
-        -- addToSet(set, key)
         AddToSet(Group.Members, playerID)
         AddToSet(Group.Members, TargetPlayerID)
-        -- Save to mod storage
-        playerGameData[playerID].Chat[TargetGroupID] = Group
 
+        playerGameData[playerID].Chat[TargetGroupID] = Group
         UpdateAllGroupMembers(game, playerID, TargetGroupID, playerGameData)
         -- Send a msg to the chat of the group
         payload.Chat = game.Game.Players[Group.Owner].DisplayName(nil, false) ..
@@ -263,19 +261,25 @@ function DeleteGroup(game, playerID, payload, setReturnTable)
 end
 
 function SaveSettings(game, playerID, payload, setReturnTable)
-    Dump(payload)
 
-    PublicGameData = Mod.PublicGameData
-    if (PublicGameData == nil) then PublicGameData = {} end
-    if (PublicGameData[playerID] == nil) then PublicGameData[playerID] = {} end
+    -- Validate settings
+    local AlertUnreadChat = payload.AlertUnreadChat or true
+    local NumPastChat = payload.NumPastChat or 7
+    local MenuSizeX = payload.MenuSizeX or 550
+    local MenuSizeY = payload.MenuSizeY or 550
 
-    PublicGameData[playerID].AlertUnreadChat = payload.AlertUnreadChat
-    PublicGameData[playerID].EachGroupButton = payload.EachGroupButton
-    PublicGameData[playerID].NumPastChat = payload.NumPastChat
-    PublicGameData[playerID].SizeX = payload.SizeX
-    PublicGameData[playerID].SizeY = payload.SizeY
+    -- Save settings
+    local PlayerGameData = Mod.PlayerGameData
+    if (PlayerGameData == nil) then PlayerGameData = {} end
+    if (PlayerGameData[playerID] == nil) then PlayerGameData[playerID] = {} end
 
-    Mod.PublicGameData = PublicGameData
+    PlayerGameData[playerID].Settings = {
+        AlertUnreadChat = AlertUnreadChat,
+        NumPastChat = NumPastChat,
+        MenuSizeX = MenuSizeX,
+        MenuSizeY = MenuSizeY
+    }
+    Mod.PlayerGameData[playerID] = PlayerGameData
 end
 
 -- Remove data that we don't need anymore, when a game is over
