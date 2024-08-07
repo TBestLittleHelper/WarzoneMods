@@ -180,8 +180,7 @@ function SettingsDialog(rootParent, setMaxSize, setScrollable, game, close)
 end
 
 function GetSettings()
-    PlayerSettings = Mod.PlayerGameData.Settings
-
+    PlayerSettings = Mod.PlayerGameData.Settings or {}
     return {
         AlertUnreadChat = PlayerSettings.AlertUnreadChat or true,
         NumPastChat = PlayerSettings.NumPastChat or 7,
