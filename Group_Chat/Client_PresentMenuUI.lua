@@ -2,11 +2,9 @@ require("Utilities")
 
 local ClientGame;
 local PlayerGameData;
-local PlayerSettings;
 local SkipRefresh = false;
 
 -- Settings
-local NumPastChat
 function Client_PresentMenuUI(rootParent, setMaxSize, setScrollable, game, close)
     if (Mod.Settings.Version < 1) then
         UI.Alert(
@@ -29,16 +27,11 @@ function Client_PresentMenuUI(rootParent, setMaxSize, setScrollable, game, close
 
     ClientGame = game
     PlayerGameData = Mod.PlayerGameData
-    PlayerSettings = Mod.PlayerGameData.Settings
     SkipRefresh = false -- This is set to true if we go to Edit or Settings Dialog
 
     -- Check if we have any saved settings
-    local AlertUnreadChat = PlayerSettings.AlertUnreadChat or true
-    NumPastChat = PlayerSettings.NumPastChat or 7
-    local MenuSizeX = PlayerSettings.MenuSizeX or 550
-    local MenuSizeY = PlayerSettings.MenuSizeY or 550
-
-    setMaxSize(MenuSizeX, MenuSizeY)
+    local Settings = GetSettings();
+    setMaxSize(Settings.MenuSizeX, Settings.MenuSizeY)
     setScrollable(false, true)
 
     if (ChatGroupSelected == nil) then ChatGroupSelectedID = nil end
@@ -149,81 +142,88 @@ end
 
 function SettingsDialog(rootParent, setMaxSize, setScrollable, game, close)
     setMaxSize(410, 390) -- This dialog's size
+    local Settings = GetSettings()
     local vert = UI.CreateVerticalLayoutGroup(rootParent)
 
-    -- TODO more/better alert options?
     -- Alert user of unread chat
     AlertUnreadChatCheckBox = UI.CreateCheckBox(vert).SetIsChecked(
-                                  AlertUnreadChat)
-                                  .SetText(
+                                  Settings.AlertUnreadChat).SetText(
                                   "Show an alert when there is unread chat")
 
     -- Num of max past chat shown
     UI.CreateLabel(vert).SetText("Visible chat messages")
     NumPastChatInput = UI.CreateNumberInputField(vert).SetSliderMinValue(3)
-                           .SetSliderMaxValue(100).SetValue(NumPastChat)
-
-    -- Buttons or pick from list : MainDialog
-    EachGroupButtonCheckBox = UI.CreateCheckBox(vert).SetIsChecked(
-                                  EachGroupButton)
-                                  .SetText("Show a button for each group")
+                           .SetSliderMaxValue(100)
+                           .SetValue(Settings.NumPastChat)
 
     -- Let's the user use setMaxSize for the main dialog
     UI.CreateLabel(vert).SetText("Change X size")
     SizeXInput = UI.CreateNumberInputField(vert).SetSliderMinValue(300)
-                     .SetSliderMaxValue(1000).SetValue(SizeX)
+                     .SetSliderMaxValue(1000).SetValue(Settings.MenuSizeX)
     UI.CreateLabel(vert).SetText("Change Y size")
     SizeYInput = UI.CreateNumberInputField(vert).SetSliderMinValue(300)
-                     .SetSliderMaxValue(1000).SetValue(SizeY)
+                     .SetSliderMaxValue(1000).SetValue(Settings.MenuSizeY)
 
     local buttonRow = UI.CreateHorizontalLayoutGroup(vert)
-    -- Go back to PresentMenuUi button : don't save
+    -- Go back to PresentMenuUI button : don't save
     UI.CreateButton(buttonRow).SetText("Go Back").SetColor("#0000FF")
         .SetOnClick(function() RefreshMainDialog(close, game) end)
 
     -- Save changes then go back to MainDialog
     ResizeChatDialog = UI.CreateButton(buttonRow).SetText("Save settings")
                            .SetColor("#00ff05").SetOnClick(function()
-        AlertUnreadChat = AlertUnreadChatCheckBox.GetIsChecked()
-        NumPastChat = NumPastChatInput.GetValue()
-        SizeX = SizeXInput.GetValue()
-        SizeY = SizeYInput.GetValue()
-
-        -- Validate input for NumPastChat, sizeX and sizeY
-        if NumPastChat < 3 then
-            NumPastChat = 3
-        elseif NumPastChat > 1000 then
-            NumPastChat = 1000
-        end
-
-        if SizeX < 200 then
-            SizeX = 200
-        elseif SizeX > 2000 then
-            SizeX = 2000
-        end
-
-        if SizeY < 200 then
-            SizeY = 200
-        elseif SizeY > 2000 then
-            SizeY = 2000
-        end
-
-        -- Save settings serverside
-
-        local payload = {}
-        payload.Mod = "Chat"
-        payload.Message = "SaveSettings"
-        payload.AlertUnreadChat = AlertUnreadChat
-        payload.NumPastChat = NumPastChat
-        payload.SizeX = SizeX
-        payload.SizeY = SizeY
-
-        ClientGame.SendGameCustomMessage("Saving settings...", payload,
-                                         function(returnValue) end)
-
+        SaveSettings(AlertUnreadChatCheckBox.GetIsChecked(),
+                     NumPastChatInput.GetValue(), SizeXInput.GetValue(),
+                     SizeYInput.GetValue())
         RefreshMainDialog(close, game)
     end)
 end
+
+function GetSettings()
+    PlayerSettings = Mod.PlayerGameData.Settings
+
+    return {
+        AlertUnreadChat = PlayerSettings.AlertUnreadChat or true,
+        NumPastChat = PlayerSettings.NumPastChat or 7,
+        MenuSizeX = PlayerSettings.MenuSizeX or 550,
+        MenuSizeY = PlayerSettings.MenuSizeY or 550
+    }
+end
+function SaveSettings(AlertUnreadChat, NumPastChat, SizeX, SizeY)
+    -- Client validate input for NumPastChat, sizeX and sizeY
+    if NumPastChat < 3 then
+        NumPastChat = 3
+    elseif NumPastChat > 1000 then
+        NumPastChat = 1000
+    end
+
+    if SizeX < 200 then
+        SizeX = 200
+    elseif SizeX > 2000 then
+        SizeX = 2000
+    end
+
+    if SizeY < 200 then
+        SizeY = 200
+    elseif SizeY > 2000 then
+        SizeY = 2000
+    end
+
+    -- Save settings serverside
+    local payload = {
+        Message = "SaveSettings",
+        AlertUnreadChat = AlertUnreadChat,
+        NumPastChat = NumPastChat,
+        SizeX = SizeX,
+        SizeY = SizeY
+    }
+
+    ClientGame.SendGameCustomMessage("Saving settings...", payload,
+                                     function(returnValue) end)
+    RefreshMainDialog(close, game)
+
+end
+
 function RefreshMainDialog(close, game)
     if close ~= nil then
         close()
