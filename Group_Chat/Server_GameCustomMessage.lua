@@ -9,6 +9,8 @@ function Server_GameCustomMessage(game, playerID, payload, setReturnTable)
     -- Sorted according to what is used most
     if (payload.Message == "ReadChat") then
         ReadChat(playerID)
+    elseif (payload.Message == "GetGroup") then
+        GetGroup(playerID, payload, setReturnTable)
     elseif (payload.Message == "SendChat") then
         DeliverChat(game, playerID, payload, setReturnTable)
     elseif (payload.Message == "AddGroupMember") then
@@ -25,7 +27,26 @@ function Server_GameCustomMessage(game, playerID, payload, setReturnTable)
         ClearData(game, playerID)
     else
         print("unknown Server_GameCustomMessage. : " .. payload.Message)
+        setReturnTable({
+            Status = "unknown Server_GameCustomMessage : " .. payload.Message
+        })
     end
+end
+
+function GetGroup(playerID, payload, setReturnTable)
+    if payload.GroupID == nil then
+        setReturnTable({Status = "Error : GroupID is missing"})
+        return
+    end
+    -- Make sure we are a member of the group
+    local group = Mod.PrivateGameData.ChatGroups[payload.GroupID]
+    if group.Members[playerID] == nil then
+        Dump(group.Members)
+        setReturnTable({Status = "Error : You are not a member of the Group"})
+        return
+    end
+
+    setReturnTable({Group = group})
 end
 
 function RemoveFromGroup(game, playerID, payload, setReturnTable)
@@ -306,37 +327,3 @@ function ClearData(game, playerID)
     Mod.PublicGameData = publicGameData
 end
 
-function GiftGold(game, playerID, payload, setReturnTable)
-    if (playerID == payload.TargetPlayerID) then
-        setReturnTable({Message = "You can't gift yourself"})
-        return
-    end
-    local goldSending = payload.Gold
-
-    local goldHave = game.ServerGame.LatestTurnStanding.NumResources(playerID,
-                                                                     WL.ResourceType
-                                                                         .Gold)
-
-    if (goldHave < goldSending) then
-        setReturnTable({
-            Message = "You can't gift " .. goldSending .. " when you only have " ..
-                goldHave
-        })
-        return
-    end
-
-    local targetPlayer = game.Game.Players[payload.TargetPlayerID]
-    local targetPlayerHasGold = game.ServerGame.LatestTurnStanding.NumResources(
-                                    targetPlayer.ID, WL.ResourceType.Gold)
-
-    -- Subtract goldSending from ourselves, add goldSending to target
-    game.ServerGame.SetPlayerResource(playerID, WL.ResourceType.Gold,
-                                      goldHave - goldSending)
-    game.ServerGame.SetPlayerResource(targetPlayer.ID, WL.ResourceType.Gold,
-                                      targetPlayerHasGold + goldSending)
-    setReturnTable({
-        Message = "Sent " .. targetPlayer.DisplayName(nil, false) .. " " ..
-            goldSending .. " gold. You now have " .. (goldHave - goldSending) ..
-            "."
-    })
-end
