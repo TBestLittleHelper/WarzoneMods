@@ -6,7 +6,7 @@ function Server_GameCustomMessage(game, playerID, payload, setReturnTable)
     Dump(payload)
     Dump(payload.Message)
 
-    -- Sorted according to what is used most
+    -- Sorted according to what is probably used most
     if (payload.Message == "ReadChat") then
         ReadChat(playerID)
     elseif (payload.Message == "GetGroup") then
