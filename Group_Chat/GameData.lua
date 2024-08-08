@@ -1,4 +1,4 @@
-require("ChatData")
+require("Server_ChatData")
 function GameDataSetup(game)
     -- Make sure setup can only be run once ( StartDistribution and StartGame may both run)
     if (Mod.PrivateGameData.ChatGroups ~= nil) then return end
