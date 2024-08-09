@@ -474,8 +474,6 @@ function UpdateMainDialogUI()
         -- Chat Sender
         local ChatSenderbtn = UI.CreateButton(horz).SetPreferredWidth(150)
                                   .SetPreferredHeight(8)
-        print("Chat history UpdateMainDialogUI")
-        Dump(CurrentGroup.ChatHistory[i])
         if (CurrentGroup.ChatHistory[i].SenderID == -1) then
             ChatSenderbtn.SetText("Mod Info").SetColor("#880085")
         else
