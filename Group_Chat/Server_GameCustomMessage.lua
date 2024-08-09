@@ -40,9 +40,6 @@ function GetGroupPrivateGameData(playerID, payload, setReturnTable)
     end
     -- Make sure we are a member of the group
     local group = Mod.PrivateGameData.ChatGroups[payload.GroupID]
-    print("********", payload.GroupID)
-    Dump(Mod.PrivateGameData.ChatGroups)
-
     if (group == nil) then
         setReturnTable({Status = "Error : Group not found"})
         return
