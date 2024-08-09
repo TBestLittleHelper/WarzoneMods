@@ -10,7 +10,7 @@ function Server_GameCustomMessage(game, playerID, payload, setReturnTable)
     if (payload.Message == "ReadChat") then
         ReadChat(playerID)
     elseif (payload.Message == "GetGroup") then
-        GetGroup(playerID, payload, setReturnTable)
+        GetGroupPrivateGameData(playerID, payload, setReturnTable)
     elseif (payload.Message == "SendChat") then
         DeliverChat(game, playerID, payload, setReturnTable)
     elseif (payload.Message == "AddGroupMember") then
@@ -33,7 +33,7 @@ function Server_GameCustomMessage(game, playerID, payload, setReturnTable)
     end
 end
 
-function GetGroup(playerID, payload, setReturnTable)
+function GetGroupPrivateGameData(playerID, payload, setReturnTable)
     if payload.GroupID == nil then
         setReturnTable({Status = "Error : GroupID is missing"})
         return
