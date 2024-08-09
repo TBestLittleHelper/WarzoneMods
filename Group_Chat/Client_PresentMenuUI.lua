@@ -4,6 +4,17 @@ local ClientGame;
 local PlayerGameData;
 local SkipRefresh = false;
 
+-- UI Values
+local CurrentGroupID;
+local CurrentGroup;
+local CurrentChatHistory;
+
+-- UI Elements
+local GroupMembersNames;
+local ChatLayout;
+local ChatContainer;
+local ChatMsgContainerArray;
+
 -- Settings
 function Client_PresentMenuUI(rootParent, setMaxSize, setScrollable, game, close)
     if (Mod.Settings.Version < 1) then
@@ -31,29 +42,20 @@ function Client_PresentMenuUI(rootParent, setMaxSize, setScrollable, game, close
     SkipRefresh = false -- This is set to true if we go to Edit or Settings Dialog
 
     local Settings = GetSettings();
+    local _, groupID = next(PlayerGameData.ChatGroupMember)
+    CurrentGroupID = groupID
+
     setMaxSize(Settings.MenuSizeX, Settings.MenuSizeY)
     setScrollable(false, true)
-
-    if (TargetGroupID ~= nil and ChatGroupSelectedID ~= nil) then
-        ChatGroupSelectedID = TargetGroupID
-        print("TargetGroupID ChatGroupSelectedID", TargetGroupID,
-              ChatGroupSelectedID)
-    else
-        ChatGroupSelectedID = next(Mod.PlayerGameData.ChatGroupMember)
-        print("ChatGroupSelectedID ", ChatGroupSelectedID)
-    end
 
     ChatLayout = nil
     ChatContainer = nil
     ChatMsgContainerArray = {}
 
-    -- Setting up the main Dialog window
+    -- Setting up the main UI Dialog window
 
     -- Make a label to list members of the current selected group.
-
     GroupMembersNames = UI.CreateLabel(rootParent)
-    --   GroupMembersNames.SetText(GetGroup(ClientGame, ChatGroupSelectedID));
-    GroupMembersNames.SetText("WIP TODO");
 
     local vert = UI.CreateVerticalLayoutGroup(rootParent)
     local horizontalLayout = UI.CreateHorizontalLayoutGroup(vert)
@@ -70,24 +72,17 @@ function Client_PresentMenuUI(rootParent, setMaxSize, setScrollable, game, close
         close() -- Close this dialog.
     end)
 
-    print("asdaasa ", PlayerGameData, PlayerGameData.ChatGroupMember)
-    Dump(PlayerGameData)
     -- If we are in a group, show the chat options
     if (PlayerGameData.ChatGroupMember ~= nil) then
-        print("in a group")
         -- For all groups, show a button
-        for groupID, _ in pairs(PlayerGameData.ChatGroupMember) do
-            print("groupID : ", groupID)
-            Dump(PlayerGameData.ChatGroupMember[groupID])
+        for memberGroupID, _ in pairs(PlayerGameData.ChatGroupMember) do
+            print("member of groupID : ", memberGroupID)
             UI.CreateButton(horizontalLayout).SetText(
-                PlayerGameData.ChatGroupMember[groupID].Name).SetColor(
-                PlayerGameData.ChatGroupMember[groupID].Color).SetOnClick(
+                PlayerGameData.ChatGroupMember[memberGroupID].Name).SetColor(
+                PlayerGameData.ChatGroupMember[memberGroupID].Color).SetOnClick(
                 function()
-                    ChatMessageText.SetInteractable(true)
-                    ChatGroupSelectedID = groupID
-
-                    GroupMembersNames.SetText(GetGroupMembers())
-                    RefreshChat()
+                    CurrentGroupID = memberGroupID
+                    RefreshGroup()
                 end)
         end
     end
@@ -97,16 +92,15 @@ function Client_PresentMenuUI(rootParent, setMaxSize, setScrollable, game, close
                           " Max 300 characters in one messages")
                           .SetFlexibleWidth(0.9).SetCharacterLimit(300)
                           .SetPreferredWidth(500).SetPreferredHeight(40)
-    RefreshChat()
 
-    ChatButtonContainer = UI.CreateHorizontalLayoutGroup(vert)
+    local RefreshChatButtonContainer = UI.CreateHorizontalLayoutGroup(vert)
     -- RefreshChat button
-    UI.CreateButton(ChatButtonContainer).SetText("Refresh chat").SetColor(
-        "#00ff05").SetOnClick(RefreshChat)
+    UI.CreateButton(RefreshChatButtonContainer).SetText("Refresh chat")
+        .SetColor("#00ff05").SetOnClick(RefreshGroup)
     -- local color = ClientGame.Game.Players[ClientGame.Us.ID].Color.HtmlColor -- Let's color the send chat button in the users color
     -- Send chat button
-    UI.CreateButton(ChatButtonContainer).SetColor("#880085")
-        .SetText("Send chat").SetOnClick(function()
+    UI.CreateButton(RefreshChatButtonContainer).SetColor("#880085").SetText(
+        "Send chat").SetOnClick(function()
         if (ChatGroupSelectedID == nil) then
             UI.Alert("Pick a chat group first")
             return
@@ -128,6 +122,8 @@ function Client_PresentMenuUI(rootParent, setMaxSize, setScrollable, game, close
         ClientGame.CreateDialog(SettingsDialog)
         close() -- Close this dialog.
     end)
+
+    RefreshGroup()
 end
 
 function SettingsDialog(rootParent, setMaxSize, setScrollable, game, close)
@@ -178,6 +174,7 @@ function GetSettings()
         MenuSizeY = PlayerSettings.MenuSizeY or 550
     }
 end
+
 function SaveSettings(AlertUnreadChat, NumPastChat, SizeX, SizeY)
     -- Client validate input for NumPastChat, sizeX and sizeY
     if NumPastChat < 3 then
@@ -247,34 +244,10 @@ function ChatGroupSelectedButton(group)
         ChatGroupSelectedText.SetText(name).SetColor(group.Color)
         ChatGroupSelectedID = group.GroupID
 
-        GroupMembersNames.SetText(GetGroupMembers())
-        RefreshChat()
+        -- todo GroupMembersNames.SetText(GetGroupMembers())
+        RefreshGroup()
     end
     return ret
-end
-
-function GetGroupMembers()
-    local PlayerGameData = Mod.PlayerGameData
-    if (ChatGroupSelectedID ~= nil) then
-        local groupMembers =
-            PlayerGameData.Chat[ChatGroupSelectedID].GroupName ..
-                " has the following members:  "
-        local playerID
-        local ListMsg = ""
-
-        for j, val in pairs(PlayerGameData.Chat[ChatGroupSelectedID].Members) do
-            if (val == true) then
-                playerID = j
-                local player = ClientGame.Game.Players[playerID]
-                local playerName = player.DisplayName(nil, false)
-                groupMembers = groupMembers .. playerName .. " "
-            end
-        end
-        ListMsg = ListMsg .. groupMembers .. "\n"
-        return ListMsg
-    end
-    -- The deafault case is the mod's broadcast
-    return "Broadcast"
 end
 
 function CreateGroupEditDialog(rootParent, setMaxSize, setScrollable, game,
@@ -449,17 +422,44 @@ function SendChat()
     ChatMessageText.SetText("")
 end
 
-function RefreshChat()
+function RefreshGroup()
     if (SkipRefresh) then
         print("skipRefresh chat")
         return
     end
-    print("RefreshChat() called")
-    local Settings = GetSettings();
-    --   local GroupChat = GetGroupChat(ChatGroupSelected);
+    if (CurrentGroupID == nil) then
+        print("RefreshChat skipped, no CurrentGroupID")
+        return
+    end
+    GetGroupPrivateGameData()
+end
+function GetGroupPrivateGameData()
+    local payload = {Message = "GetGroup", GroupID = CurrentGroupID}
+    print("Getting group groupID ", CurrentGroupID)
+    Dump(payload)
+    ClientGame.SendGameCustomMessage("Getting group from the server...",
+                                     payload, function(returnValue)
+        if returnValue.Status ~= nil then
+            UI.Alert(returnValue.Status)
+            return
+        end
+        print("returnValue")
+        Dump(returnValue)
+        Dump(returnValue.Group)
+        CurrentGroup = returnValue.Group
+        UpdateMainDialogUI()
+    end)
+end
 
+function UpdateMainDialogUI()
+    if (CurrentGroup == nil) then
+        print("UpdateMainDialogUI skipped, no CurrentGroup")
+        return
+    end
+
+    -- TODO
     -- Update the members of the current selected group.
-    -- todo GroupMembersNames.SetText(GetGroupMembers())
+    GroupMembersNames.SetText("Group.Members")
 
     -- Remove old elements todo
     DestroyOldUIelements(ChatMsgContainerArray)
@@ -472,55 +472,29 @@ function RefreshChat()
 
     local horzMain = UI.CreateVerticalLayoutGroup(ChatLayout)
 
-    local PlayerGameData = Mod.PlayerGameData
-
-    if (ChatGroupSelectedID == nil or ChatArrayIndex == 0) then
-        -- for i = startIndex, NumChat do
-        --     local BroadcastChatLayout = UI.CreateHorizontalLayoutGroup(horzMain)
-        --     BroadcastChatMsg = UI.CreateButton(BroadcastChatLayout)
-        --                            .SetPreferredWidth(150).SetPreferredHeight(8)
-        --                            .SetColor("#880085")
-        --     if (Mod.PublicGameData.Chat.BroadcastGroup[i].Sender == nil) then
-        --         BroadcastChatMsg.SetText("Mod Info")
-        --     else
-        --         BroadcastChatMsg.SetText(
-        --             Mod.PublicGameData.Chat.BroadcastGroup[i].Sender)
-        --     end
-        --     ChatMessageTextRecived = UI.CreateLabel(BroadcastChatLayout)
-        --                                  .SetFlexibleWidth(1)
-        --                                  .SetFlexibleHeight(1).SetText(
-        --                                  Mod.PublicGameData.Chat.BroadcastGroup[i])
-        -- end
-
-        return
-    end
-
     ChatMessageText.SetInteractable(true)
-    -- Adjust to fit with NumPastChat.
-    local startIndex = 1
-    if (ChatArrayIndex > NumPastChat) then
-        startIndex = ChatArrayIndex - NumPastChat + startIndex
-    end
-    for i = startIndex, ChatArrayIndex do
+
+    -- TODO use settings for num chat
+    for i = 1, #CurrentGroup.ChatHistory do
         local horz = UI.CreateHorizontalLayoutGroup(horzMain)
 
         -- Chat Sender
-        ChatSenderbtn = UI.CreateButton(horz).SetPreferredWidth(150)
-                            .SetPreferredHeight(8)
-        if (PlayerGameData.Chat[ChatGroupSelectedID][i].Sender == -1) then
+        local ChatSenderbtn = UI.CreateButton(horz).SetPreferredWidth(150)
+                                  .SetPreferredHeight(8)
+        print("Chat history UpdateMainDialogUI")
+        Dump(CurrentGroup.ChatHistory[i])
+        if (CurrentGroup.ChatHistory[i].SenderID == -1) then
             ChatSenderbtn.SetText("Mod Info").SetColor("#880085")
         else
             ChatSenderbtn.SetText(
-                ClientGame.Game.Players[PlayerGameData.Chat[ChatGroupSelectedID][i]
-                    .Sender].DisplayName(nil, false)).SetColor(ClientGame.Game
-                                                                   .Players[PlayerGameData.Chat[ChatGroupSelectedID][i]
-                                                                   .Sender]
-                                                                   .Color
-                                                                   .HtmlColor)
+                ClientGame.Game.Players[CurrentGroup.ChatHistory[i].SenderID]
+                    .DisplayName(nil, false)).SetColor(
+                ClientGame.Game.Players[CurrentGroup.ChatHistory[i].SenderID]
+                    .Color.HtmlColor)
         end
         -- Chat messages
         UI.CreateLabel(horz).SetFlexibleWidth(1).SetFlexibleHeight(1).SetText(
-            PlayerGameData.Chat[ChatGroupSelectedID][i].Chat)
+            CurrentGroup.ChatHistory[i].Chat)
     end
 end
 
@@ -582,7 +556,7 @@ end
 function ChatGroupClicked()
     local groups = {}
     PlayerGameData = Mod.PlayerGameData -- Make sure we have the latest PlayerGameData
-    for i, v in pairs(PlayerGameData.ChatGroupMember) do
+    for i, _ in pairs(PlayerGameData.ChatGroupMember) do
         print(i)
         groups[i] = PlayerGameData.ChatGroupMember[i]
     end
@@ -643,12 +617,6 @@ function IsPotentialTarget(player)
     return not player.IsAI -- In multi-player, never allow adding an AI.
 end
 
--- Determines if the player is alive.
-function IsAlive(playerID, ClientGame)
-    if (ClientGame.Game.PlayingPlayers[playerID] ~= nil) then return true end
-    return false
-end
-
 function CheckGameEnded(game)
     -- 3 == playing : 4 == elim + over , 5 == manual picks
     print("Game.state code:" .. game.Game.State)
@@ -659,16 +627,5 @@ function CheckGameEnded(game)
     payload.Message = "ClearData"
     game.SendGameCustomMessage("Clearing mod data...", payload,
                                function(returnValue) end)
-end
-
-function GetGroup(game, groupID)
-    local payload = {Message = "GetGroup", GroupID = groupID}
-    game.SendGameCustomMessage("Getting group from the server...", payload,
-                               function(returnValue)
-        if returnValue.Status ~= nil then
-            UI.Alert(returnValue.Status)
-            return
-        end
-    end)
 end
 
