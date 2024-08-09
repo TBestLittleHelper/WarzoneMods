@@ -434,17 +434,12 @@ function RefreshGroup()
 end
 function GetGroupPrivateGameData()
     local payload = {Message = "GetGroup", GroupID = CurrentGroupID}
-    print("Getting group groupID ", CurrentGroupID)
-    Dump(payload)
     ClientGame.SendGameCustomMessage("Getting group from the server...",
                                      payload, function(returnValue)
         if returnValue.Status ~= nil then
             UI.Alert(returnValue.Status)
             return
         end
-        print("returnValue")
-        Dump(returnValue)
-        Dump(returnValue.Group)
         CurrentGroup = returnValue.Group
         UpdateMainDialogUI()
     end)
@@ -456,9 +451,8 @@ function UpdateMainDialogUI()
         return
     end
 
-    -- TODO
     -- Update the members of the current selected group.
-    GroupMembersNames.SetText("Group.Members")
+    GroupMembersNames.SetText(GroupMembersString(CurrentGroup))
 
     -- Remove old elements todo
     DestroyOldUIelements(ChatMsgContainerArray)
@@ -495,6 +489,15 @@ function UpdateMainDialogUI()
         UI.CreateLabel(horz).SetFlexibleWidth(1).SetFlexibleHeight(1).SetText(
             CurrentGroup.ChatHistory[i].Chat)
     end
+end
+
+function GroupMembersString(group)
+    -- todo all members
+    local playerID = next(group.Members)
+    local player = ClientGame.Game.Players[playerID]
+    local displayName = player.DisplayName(nil, false)
+
+    return displayName
 end
 
 function DestroyOldUIelements(Container)
