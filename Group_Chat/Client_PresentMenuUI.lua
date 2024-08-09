@@ -42,7 +42,7 @@ function Client_PresentMenuUI(rootParent, setMaxSize, setScrollable, game, close
     SkipRefresh = false -- This is set to true if we go to Edit or Settings Dialog
 
     local Settings = GetSettings();
-    local _, groupID = next(PlayerGameData.ChatGroupMember)
+    local groupID, _ = next(PlayerGameData.ChatGroupMember)
     CurrentGroupID = groupID
 
     setMaxSize(Settings.MenuSizeX, Settings.MenuSizeY)
@@ -75,15 +75,14 @@ function Client_PresentMenuUI(rootParent, setMaxSize, setScrollable, game, close
     -- If we are in a group, show the chat options
     if (PlayerGameData.ChatGroupMember ~= nil) then
         -- For all groups, show a button
-        for memberGroupID, _ in pairs(PlayerGameData.ChatGroupMember) do
+        for memberGroupID, playerGroup in pairs(PlayerGameData.ChatGroupMember) do
             print("member of groupID : ", memberGroupID)
-            UI.CreateButton(horizontalLayout).SetText(
-                PlayerGameData.ChatGroupMember[memberGroupID].Name).SetColor(
-                PlayerGameData.ChatGroupMember[memberGroupID].Color).SetOnClick(
-                function()
-                    CurrentGroupID = memberGroupID
-                    RefreshGroup()
-                end)
+            Dump(playerGroup)
+            UI.CreateButton(horizontalLayout).SetText(playerGroup.Name)
+                .SetColor(playerGroup.Color).SetOnClick(function()
+                CurrentGroupID = memberGroupID
+                RefreshGroup()
+            end)
         end
     end
     ChatContainer = UI.CreateVerticalLayoutGroup(vert)
@@ -520,7 +519,7 @@ function TargetGroupClicked()
     print("TargetGroupClicked")
 
     local groups = {}
-    for i, v in pairs(PlayerGameData.ChatGroupMember) do
+    for i, _ in pairs(PlayerGameData.ChatGroupMember) do
         print(i)
         groups[i] = PlayerGameData.ChatGroupMember[i]
     end
