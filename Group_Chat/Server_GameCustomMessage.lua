@@ -3,8 +3,8 @@ require("Utilities")
 function Server_GameCustomMessage(game, playerID, payload, setReturnTable)
     -- If the game is over, return
     if (Mod.PublicGameData.GameFinalized == true) then return end
+    print("Server_GameCustomMessage")
     Dump(payload)
-    Dump(payload.Message)
 
     -- Sorted according to what is probably used most
     if (payload.Message == "ReadChat") then
@@ -40,8 +40,15 @@ function GetGroup(playerID, payload, setReturnTable)
     end
     -- Make sure we are a member of the group
     local group = Mod.PrivateGameData.ChatGroups[payload.GroupID]
+    print("********", payload.GroupID)
+    Dump(Mod.PrivateGameData.ChatGroups)
+
+    if (group == nil) then
+        setReturnTable({Status = "Error : Group not found"})
+        return
+    end
+
     if group.Members[playerID] == nil then
-        Dump(group.Members)
         setReturnTable({Status = "Error : You are not a member of the Group"})
         return
     end
