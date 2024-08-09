@@ -3,7 +3,7 @@ require("Utilities")
 function AddMessage(groupID, senderID, chat)
     local privateGameDate = Mod.PrivateGameData
     table.insert(privateGameDate.ChatGroups[groupID].ChatHistory,
-                 {senderID = senderID, chat = chat})
+                 {SenderID = senderID, Chat = chat})
     Mod.PrivateGameData = privateGameDate
 end
 
