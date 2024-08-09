@@ -3,8 +3,8 @@ require("Utilities")
 function Server_GameCustomMessage(game, playerID, payload, setReturnTable)
     -- If the game is over, return
     if (Mod.PublicGameData.GameFinalized == true) then return end
-    print("Server_GameCustomMessage")
-    Dump(payload)
+    --  print("Server_GameCustomMessage")
+    --    Dump(payload)
 
     -- Sorted according to what is probably used most
     if (payload.Message == "ReadChat") then
@@ -22,7 +22,7 @@ function Server_GameCustomMessage(game, playerID, payload, setReturnTable)
     elseif (payload.Message == "DeleteGroup") then
         DeleteGroup(game, playerID, payload, setReturnTable)
     elseif (payload.Message == "SaveSettings") then
-        SaveSettings(game, playerID, payload, setReturnTable)
+        SaveSettings(playerID, payload, setReturnTable)
     elseif (payload.Message == "ClearData") then
         ClearData(game, playerID)
     else
@@ -285,10 +285,11 @@ function DeleteGroup(game, playerID, payload, setReturnTable)
     print("Deleted Group " .. TargetGroupID)
 end
 
-function SaveSettings(game, playerID, payload, setReturnTable)
+function SaveSettings(playerID, payload, setReturnTable)
 
     -- Validate settings
-    local AlertUnreadChat = payload.AlertUnreadChat or true
+    local AlertUnreadChat = (payload.AlertUnreadChat ~= nil) and
+                                payload.AlertUnreadChat or true
     local NumPastChat = payload.NumPastChat or 7
     local MenuSizeX = payload.MenuSizeX or 550
     local MenuSizeY = payload.MenuSizeY or 550
@@ -305,6 +306,8 @@ function SaveSettings(game, playerID, payload, setReturnTable)
         MenuSizeY = MenuSizeY
     }
     Mod.PlayerGameData[playerID] = PlayerGameData
+
+    setReturnTable({Settings = Mod.PlayerGameData[playerID].Settings})
 end
 
 -- Remove data that we don't need anymore, when a game is over
