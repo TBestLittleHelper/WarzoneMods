@@ -3,30 +3,27 @@ require("Utilities")
 function Client_GameRefresh(game)
     -- Skip if we're not in the game or if the game is over.
     if (game.Us == nil or Mod.PublicGameData.GameFinalized) then return end
-    print("client game refresh")
-    if (Mod.PublicGameData == nil) then return end
 
-    -- Check for unread chat
-    print("Checking unread chat")
     CheckUnreadChat(game)
 end
 
 -- Alert when new chat.
 function CheckUnreadChat(game)
+    print("Checking unread chat", skipRefresh)
+
     if (skipRefresh == nil or skipRefresh == true) then return end
 
     local PlayerGameData = Mod.PlayerGameData
-    if (PlayerGameData.Chat == nil) then
-        print("PlayerGameData.Chat is nil. No unread chat")
-        return
-    end
 
     local alertMsg = " Alert message" -- todo add alertMsg
     -- Check if alerts are true
     local Alerts = Mod.PlayerGameData.Settings.AlertUnreadChat or true
     -- todo extract get settings to it's own file and use here?
+    print("2222Checking unread chat")
 
     for _, groupID in pairs(PlayerGameData.ChatGroupMember) do
+        print("CheckUnreadChat ", groupID)
+
         local group = PlayerGameData.ChatGroupMember[groupID]
         -- Always alert in SP, for testing
         if (group.UnreadChat == true or game.Settings.SinglePlayer == true) then
