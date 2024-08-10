@@ -22,7 +22,7 @@ function Server_GameCustomMessage(game, playerID, payload, setReturnTable)
     elseif (payload.Message == "DeleteGroup") then
         DeleteGroup(game, playerID, payload, setReturnTable)
     elseif (payload.Message == "SaveSettings") then
-        SaveSettings(playerID, payload, setReturnTable)
+        SaveSettings(game, playerID, payload, setReturnTable)
     elseif (payload.Message == "ClearData") then
         ClearData(game, playerID)
     else
@@ -285,7 +285,7 @@ function DeleteGroup(game, playerID, payload, setReturnTable)
     print("Deleted Group " .. TargetGroupID)
 end
 
-function SaveSettings(playerID, payload, setReturnTable)
+function SaveSettings(game, playerID, payload, setReturnTable)
 
     -- Validate settings
     local AlertUnreadChat = (payload.AlertUnreadChat ~= nil) and
@@ -295,17 +295,18 @@ function SaveSettings(playerID, payload, setReturnTable)
     local MenuSizeY = payload.MenuSizeY or 550
 
     -- Save settings
-    local PlayerGameData = Mod.PlayerGameData
-    if (PlayerGameData == nil) then PlayerGameData = {} end
-    if (PlayerGameData[playerID] == nil) then PlayerGameData[playerID] = {} end
+    local playerGameData = Mod.PlayerGameData
 
-    PlayerGameData[playerID].Settings = {
+    if (playerGameData == nil) then playerGameData = {} end
+    if (playerGameData[playerID] == nil) then playerGameData[playerID] = {} end
+
+    playerGameData[playerID].Settings = {
         AlertUnreadChat = AlertUnreadChat,
         NumPastChat = NumPastChat,
         MenuSizeX = MenuSizeX,
         MenuSizeY = MenuSizeY
     }
-    Mod.PlayerGameData[playerID] = PlayerGameData
+    Mod.PlayerGameData = playerGameData
 
     setReturnTable({Settings = Mod.PlayerGameData[playerID].Settings})
 end
