@@ -76,8 +76,7 @@ function Client_PresentMenuUI(rootParent, setMaxSize, setScrollable, game, close
     if (PlayerGameData.ChatGroupMember ~= nil) then
         -- For all groups, show a button
         for memberGroupID, playerGroup in pairs(PlayerGameData.ChatGroupMember) do
-            print("member of groupID : ", memberGroupID)
-            Dump(playerGroup)
+            print("member of group : ", playerGroup.Name)
             UI.CreateButton(horizontalLayout).SetText(playerGroup.Name)
                 .SetColor(playerGroup.Color).SetOnClick(function()
                 CurrentGroupID = memberGroupID
@@ -167,14 +166,15 @@ end
 function GetSettings()
     PlayerSettings = Mod.PlayerGameData.Settings or {}
     return {
-        AlertUnreadChat = PlayerSettings.AlertUnreadChat or true,
+        AlertUnreadChat = (PlayerSettings.AlertUnreadChat ~= nil) and
+            PlayerSettings.AlertUnreadChat or true,
         NumPastChat = PlayerSettings.NumPastChat or 7,
         MenuSizeX = PlayerSettings.MenuSizeX or 550,
         MenuSizeY = PlayerSettings.MenuSizeY or 550
     }
 end
 
-function SaveSettings(AlertUnreadChat, NumPastChat, SizeX, SizeY)
+function SaveSettings(AlertUnreadChat, NumPastChat, MenuSizeX, MenuSizeY)
     -- Client validate input for NumPastChat, sizeX and sizeY
     if NumPastChat < 3 then
         NumPastChat = 3
@@ -182,16 +182,16 @@ function SaveSettings(AlertUnreadChat, NumPastChat, SizeX, SizeY)
         NumPastChat = 1000
     end
 
-    if SizeX < 200 then
-        SizeX = 200
-    elseif SizeX > 2000 then
-        SizeX = 2000
+    if MenuSizeX < 200 then
+        MenuSizeX = 200
+    elseif MenuSizeX > 2000 then
+        MenuSizeX = 2000
     end
 
-    if SizeY < 200 then
-        SizeY = 200
-    elseif SizeY > 2000 then
-        SizeY = 2000
+    if MenuSizeY < 200 then
+        MenuSizeY = 200
+    elseif MenuSizeY > 2000 then
+        MenuSizeY = 2000
     end
 
     -- Save settings serverside
@@ -199,12 +199,20 @@ function SaveSettings(AlertUnreadChat, NumPastChat, SizeX, SizeY)
         Message = "SaveSettings",
         AlertUnreadChat = AlertUnreadChat,
         NumPastChat = NumPastChat,
-        SizeX = SizeX,
-        SizeY = SizeY
+        MenuSizeX = MenuSizeX,
+        MenuSizeY = MenuSizeY
     }
+    print("????????????")
+    Dump(payload)
 
     ClientGame.SendGameCustomMessage("Saving settings...", payload,
-                                     function(returnValue) end)
+                                     function(returnValue)
+        if returnValue.Status ~= nil then
+            UI.Alert(returnValue.Status)
+            return
+        end
+        GetSettings()
+    end)
     RefreshMainDialog(close, game)
 
 end
@@ -415,8 +423,10 @@ function SendChat()
               " from " .. ClientGame.Us.ID)
     ClientGame.SendGameCustomMessage("Sending chat...", payload,
                                      function(returnValue)
-        -- TODO only if alert is on?
-        UI.Alert(returnValue.Status)
+        if returnValue.Status ~= nil then
+            UI.Alert(returnValue.Status)
+            return
+        end
     end)
     ChatMessageText.SetText("")
 end
