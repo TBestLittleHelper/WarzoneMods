@@ -29,6 +29,7 @@ function AddPlayerIDToGroup(groupID, playerID, game)
     -- AI's do not have PlayerGameData.
     if (game.ServerGame.Game.Players[playerID].IsAI) then return end
 
+    -- Add to playerGameData for UI use
     local playerGameData = Mod.PlayerGameData
     if (playerGameData[playerID] == nil) then
         playerGameData[playerID] = {ChatGroupMember = {}}
