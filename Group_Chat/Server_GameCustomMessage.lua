@@ -22,7 +22,7 @@ function Server_GameCustomMessage(game, playerID, payload, setReturnTable)
     elseif (payload.Message == "DeleteGroup") then
         DeleteGroup(game, playerID, payload, setReturnTable)
     elseif (payload.Message == "SaveSettings") then
-        SaveSettingsGoMainDialog(game, playerID, payload, setReturnTable)
+        SaveSettingsServer(game, playerID, payload, setReturnTable)
     elseif (payload.Message == "ClearData") then
         ClearData(game, playerID)
     else
@@ -285,7 +285,7 @@ function DeleteGroup(game, playerID, payload, setReturnTable)
     print("Deleted Group " .. TargetGroupID)
 end
 
-function SaveSettingsGoMainDialog(game, playerID, payload, setReturnTable)
+function SaveSettingsServer(game, playerID, payload, setReturnTable)
 
     -- Validate settings
     local AlertUnreadChat = (payload.AlertUnreadChat ~= nil) and
