@@ -63,8 +63,8 @@ function Client_PresentMenuUI(rootParent, setMaxSize, setScrollable, game, close
     local vert = UI.CreateVerticalLayoutGroup(rootParent)
     local horizontalLayout = UI.CreateHorizontalLayoutGroup(vert)
 
-    -- Manage group button
-    UI.CreateButton(horizontalLayout).SetText("Manage groups").SetFlexibleWidth(
+    -- Edit group button
+    UI.CreateButton(horizontalLayout).SetText("Edit groups").SetFlexibleWidth(
         0.2).SetOnClick(function()
         if (ChatMsgContainerArray ~= {}) then
             DestroyOldUIelements(ChatMsgContainerArray)
@@ -167,8 +167,8 @@ end
 
 function GetSettings()
     print("GetSettings")
-    if (PlayerSettings ~= nil) then
-        -- If PlayerGameData is not updated, the local playersettings may be newer
+    -- If PlayerGameData is not updated, the local player settings may be newer
+    if (PlayerSettings ~= nil and Mod.PlayerGameData.Settings ~= nil) then
         if (PlayerSettings.TickCount > Mod.PlayerGameData.Settings.TickCount) then
             return PlayerSettings
         end
