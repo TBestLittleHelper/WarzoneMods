@@ -14,6 +14,7 @@ local PlayerSettings;
 local GroupMembersNames;
 local ChatLayout;
 local ChatContainer;
+local ChatMessageText;
 local ChatMsgContainerArray;
 
 -- Settings
@@ -79,7 +80,7 @@ function Client_PresentMenuUI(rootParent, setMaxSize, setScrollable, game, close
     if (PlayerGameData.ChatGroupMember ~= nil) then
         -- For all groups, show a button
         for memberGroupID, playerGroup in pairs(PlayerGameData.ChatGroupMember) do
-            print("member of group : ", playerGroup.Name)
+            print("member of group : ", playerGroup.Name, memberGroupID)
             UI.CreateButton(horizontalLayout).SetText(playerGroup.Name)
                 .SetColor(playerGroup.Color).SetOnClick(function()
                 CurrentGroupID = memberGroupID
@@ -94,15 +95,15 @@ function Client_PresentMenuUI(rootParent, setMaxSize, setScrollable, game, close
                           .SetFlexibleWidth(0.9).SetCharacterLimit(300)
                           .SetPreferredWidth(500).SetPreferredHeight(40)
 
-    local RefreshChatButtonContainer = UI.CreateHorizontalLayoutGroup(vert)
+    local RefreshSendButtonContainer = UI.CreateHorizontalLayoutGroup(vert)
     -- RefreshChat button
-    UI.CreateButton(RefreshChatButtonContainer).SetText("Refresh chat")
+    UI.CreateButton(RefreshSendButtonContainer).SetText("Refresh chat")
         .SetColor("#00ff05").SetOnClick(RefreshGroup)
     -- local color = ClientGame.Game.Players[ClientGame.Us.ID].Color.HtmlColor -- Let's color the send chat button in the users color
     -- Send chat button
-    UI.CreateButton(RefreshChatButtonContainer).SetColor("#880085").SetText(
+    UI.CreateButton(RefreshSendButtonContainer).SetColor("#880085").SetText(
         "Send chat").SetOnClick(function()
-        if (ChatGroupSelectedID == nil) then
+        if (CurrentGroupID == nil) then
             UI.Alert("Pick a chat group first")
             return
         end
@@ -412,12 +413,9 @@ end
 
 function SendChat()
     local payload = {}
-    payload.Mod = "Chat"
     payload.Message = "SendChat"
-    payload.TargetGroupID = ChatGroupSelectedID
+    payload.TargetGroupID = CurrentGroupID
     payload.Chat = ChatMessageText.GetText()
-    print("Chat sent " .. payload.Chat .. " to " .. payload.TargetGroupID ..
-              " from " .. ClientGame.Us.ID)
     ClientGame.SendGameCustomMessage("Sending chat...", payload,
                                      function(returnValue)
         if returnValue.Status ~= nil then
