@@ -30,15 +30,17 @@ function AddPlayerIDToGroup(groupID, playerID, game)
     if (game.ServerGame.Game.Players[playerID].IsAI) then return end
 
     local playerGameData = Mod.PlayerGameData
+    if (playerGameData[playerID] == nil) then
+        playerGameData[playerID] = {ChatGroupMember = {}}
+    end
+    if (playerGameData[playerID].ChatGroupMember == nil) then
+        playerGameData[playerID].ChatGroupMember = {}
+    end
 
-    playerGameData[playerID] = {
-        ChatGroupMember = {
-            [groupID] = {
-                Name = privateGameDate.ChatGroups[groupID].Name,
-                Color = privateGameDate.ChatGroups[groupID].Color,
-                UnreadChat = false
-            }
-        }
+    playerGameData[playerID].ChatGroupMember[groupID] = {
+        Name = privateGameDate.ChatGroups[groupID].Name,
+        Color = privateGameDate.ChatGroups[groupID].Color,
+        UnreadChat = false
     }
 
     Mod.PlayerGameData = playerGameData
