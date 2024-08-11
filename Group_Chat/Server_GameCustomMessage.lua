@@ -1,4 +1,5 @@
 require("Utilities")
+require("Server_ChatData")
 
 function Server_GameCustomMessage(game, playerID, payload, setReturnTable)
     -- If the game is over, return
@@ -126,65 +127,29 @@ end
 function AddToGroup(game, playerID, payload, setReturnTable)
     local playerGameData = Mod.PlayerGameData
 
-    local TargetGroupID = payload.TargetGroupID
+    local targetGroupID = payload.TargetGroupID
     local TargetPlayerID = payload.TargetPlayerID
     local TargetGroupName = payload.TargetGroupName
 
     print(TargetPlayerID .. " targetplayer")
-    print(TargetGroupID .. " TargetGroupID")
+    print(targetGroupID .. " TargetGroupID")
 
-    if (playerGameData[playerID].Chat == nil) then
-        -- if nill, make an empty table where we can place GroupID
-        playerGameData[playerID].Chat = {}
-    end
-    print("dump playerGameData[playerID].Chat")
-    Dump(playerGameData[playerID].Chat)
-
-    local Group = {}
-    if (playerGameData[playerID].Chat == nil or
-        playerGameData[playerID].Chat[TargetGroupID] == nil) then
-        print("new group " .. TargetGroupID)
-        Group = {
-            Members = {},
-            Owner = playerID,
-            GroupName = TargetGroupName,
-            GroupID = TargetGroupID,
-            Color = RandomColor(),
-            UnreadChat = false
-        }
-        AddToSet(Group.Members, playerID)
-        AddToSet(Group.Members, TargetPlayerID)
-
-        playerGameData[playerID].Chat[TargetGroupID] = Group
-        UpdateAllGroupMembers(game, playerID, TargetGroupID, playerGameData)
-        -- Send a msg to the chat of the group
-        payload.Chat = game.Game.Players[Group.Owner].DisplayName(nil, false) ..
-                           " created " .. Group.GroupName
-        DeliverChat(game, playerID, payload, setReturnTable)
-        payload.Chat =
-            game.Game.Players[TargetPlayerID].DisplayName(nil, false) ..
-                " was added to " .. Group.GroupName
-        DeliverChat(game, playerID, payload, setReturnTable)
+    -- If group does not exsist, create group
+    if Mod.PrivateGameData.ChatGroups[targetGroupID] == nil then
+        CreateGroup(targetGroupID, TargetGroupName, playerID, RandomColor())
     else
-        print("nice, old group :" .. TargetGroupID .. " ID")
-        Group = playerGameData[playerID].Chat[TargetGroupID]
-
-        -- Check if the player is already in the group. If so, return
-        if (Group.Members[TargetPlayerID] ~= nil) then
-            print(TargetPlayerID .. " is alredy in the group")
+        -- Only owner can add members to group
+        if (Mod.PrivateGameData.ChatGroups[targetGroupID].OwnerID ~= playerID) then
+            setReturnTable({Status = "You are not the owner of the group!"})
             return
         end
-        -- Add the player
-        AddToSet(Group.Members, TargetPlayerID)
-        playerGameData[playerID].Chat[TargetGroupID] = Group
-        -- Update Storage
-        UpdateAllGroupMembers(game, playerID, TargetGroupID, playerGameData)
-        -- Send a msg to the chat of the group
-        payload.Chat =
-            game.Game.Players[TargetPlayerID].DisplayName(nil, false) ..
-                "  was added to " .. Group.GroupName
-        DeliverChat(game, playerID, payload, setReturnTable)
     end
+
+    AddPlayerIDToGroup(targetGroupID, TargetPlayerID)
+    AddMessage(targetGroupID, playerID,
+               game.Game.Players[TargetPlayerID].DisplayName(nil, false) ..
+                   " is now a member of the group")
+    -- todo Make group unread chat?
 end
 
 function DeliverChat(game, playerID, payload, setReturnTable)
