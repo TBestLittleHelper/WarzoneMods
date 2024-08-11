@@ -8,6 +8,7 @@ local SkipRefresh = false;
 local CurrentGroupID;
 local CurrentGroup;
 local CurrentChatHistory;
+local PlayerSettings;
 
 -- UI Elements
 local GroupMembersNames;
@@ -41,11 +42,13 @@ function Client_PresentMenuUI(rootParent, setMaxSize, setScrollable, game, close
 
     SkipRefresh = false -- This is set to true if we go to Edit or Settings Dialog
 
-    local Settings = GetSettings();
+    print("Client_PresentMenuUI")
+    PlayerSettings = GetSettings();
+    Dump(PlayerSettings)
     local groupID, _ = next(PlayerGameData.ChatGroupMember)
     CurrentGroupID = groupID
 
-    setMaxSize(Settings.MenuSizeX, Settings.MenuSizeY)
+    setMaxSize(PlayerSettings.MenuSizeX, PlayerSettings.MenuSizeY)
     setScrollable(false, true)
 
     ChatLayout = nil
@@ -126,74 +129,63 @@ end
 
 function SettingsDialog(rootParent, setMaxSize, setScrollable, game, close)
     setMaxSize(410, 390) -- This dialog's size
-    local Settings = GetSettings()
     local vert = UI.CreateVerticalLayoutGroup(rootParent)
 
     -- Alert user of unread chat
     AlertUnreadChatCheckBox = UI.CreateCheckBox(vert).SetIsChecked(
-                                  Settings.AlertUnreadChat)
+                                  PlayerSettings.AlertUnreadChat)
                                   .SetText("Alert for new chat")
 
     -- Num of max past chat shown
     UI.CreateLabel(vert).SetText("Visible chat messages")
     NumPastChatInput = UI.CreateNumberInputField(vert).SetSliderMinValue(3)
                            .SetSliderMaxValue(100)
-                           .SetValue(Settings.NumPastChat)
+                           .SetValue(PlayerSettings.NumPastChat)
 
     -- Let's the user use setMaxSize for the main dialog
     UI.CreateLabel(vert).SetText("Change X size")
     SizeXInput = UI.CreateNumberInputField(vert).SetSliderMinValue(300)
-                     .SetSliderMaxValue(1000).SetValue(Settings.MenuSizeX)
+                     .SetSliderMaxValue(1000).SetValue(PlayerSettings.MenuSizeX)
     UI.CreateLabel(vert).SetText("Change Y size")
     SizeYInput = UI.CreateNumberInputField(vert).SetSliderMinValue(300)
-                     .SetSliderMaxValue(1000).SetValue(Settings.MenuSizeY)
+                     .SetSliderMaxValue(1000).SetValue(PlayerSettings.MenuSizeY)
 
     local buttonRow = UI.CreateHorizontalLayoutGroup(vert)
     -- Go back to PresentMenuUI button : don't save
     UI.CreateButton(buttonRow).SetText("Go Back").SetColor("#0000FF")
-        .SetOnClick(function() RefreshMainDialog(close, game) end)
+        .SetOnClick(function() RefreshMainDialog(close) end)
 
     -- Save changes then go back to MainDialog
     ResizeChatDialog = UI.CreateButton(buttonRow).SetText("Save settings")
                            .SetColor("#00ff05").SetOnClick(function()
-        SaveSettings(AlertUnreadChatCheckBox.GetIsChecked(),
-                     NumPastChatInput.GetValue(), SizeXInput.GetValue(),
-                     SizeYInput.GetValue())
-        RefreshMainDialog(close, game)
+        SaveSettingsGoMainDialog(AlertUnreadChatCheckBox.GetIsChecked(),
+                                 NumPastChatInput.GetValue(),
+                                 SizeXInput.GetValue(), SizeYInput.GetValue(),
+                                 close)
     end)
 end
 
 function GetSettings()
+    print("GetSettings")
+    if (PlayerSettings ~= nil) then
+        -- If PlayerGameData is not updated, the local playersettings may be newer
+        if (PlayerSettings.TickCount > Mod.PlayerGameData.Settings.TickCount) then
+            return PlayerSettings
+        end
+    end
     PlayerSettings = Mod.PlayerGameData.Settings or {}
     return {
         AlertUnreadChat = (PlayerSettings.AlertUnreadChat ~= nil) and
             PlayerSettings.AlertUnreadChat or true,
         NumPastChat = PlayerSettings.NumPastChat or 7,
         MenuSizeX = PlayerSettings.MenuSizeX or 550,
-        MenuSizeY = PlayerSettings.MenuSizeY or 550
+        MenuSizeY = PlayerSettings.MenuSizeY or 550,
+        TickCount = PlayerSettings.TickCount or 0
     }
 end
 
-function SaveSettings(AlertUnreadChat, NumPastChat, MenuSizeX, MenuSizeY)
-    -- Client validate input for NumPastChat, sizeX and sizeY
-    if NumPastChat < 3 then
-        NumPastChat = 3
-    elseif NumPastChat > 1000 then
-        NumPastChat = 1000
-    end
-
-    if MenuSizeX < 200 then
-        MenuSizeX = 200
-    elseif MenuSizeX > 2000 then
-        MenuSizeX = 2000
-    end
-
-    if MenuSizeY < 200 then
-        MenuSizeY = 200
-    elseif MenuSizeY > 2000 then
-        MenuSizeY = 2000
-    end
-
+function SaveSettingsGoMainDialog(AlertUnreadChat, NumPastChat, MenuSizeX,
+                                  MenuSizeY, close)
     -- Save settings serverside
     local payload = {
         Message = "SaveSettings",
@@ -202,27 +194,32 @@ function SaveSettings(AlertUnreadChat, NumPastChat, MenuSizeX, MenuSizeY)
         MenuSizeX = MenuSizeX,
         MenuSizeY = MenuSizeY
     }
-    print("????????????")
-    Dump(payload)
-
     ClientGame.SendGameCustomMessage("Saving settings...", payload,
                                      function(returnValue)
         if returnValue.Status ~= nil then
             UI.Alert(returnValue.Status)
             return
         end
-        GetSettings()
+        local function SetSettings(settings)
+            print("SetSettings")
+            Dump(settings)
+            PlayerSettings = {
+                AlertUnreadChat = (settings.AlertUnreadChat ~= nil) and
+                    settings.AlertUnreadChat or true,
+                NumPastChat = settings.NumPastChat or 7,
+                MenuSizeX = settings.MenuSizeX or 550,
+                MenuSizeY = settings.MenuSizeY or 550,
+                TickCount = WL.TickCount()
+            }
+        end
+        SetSettings(returnValue.Settings)
+        RefreshMainDialog(close)
     end)
-    RefreshMainDialog(close, game)
-
 end
 
-function RefreshMainDialog(close, game)
-    if close ~= nil then
-        close()
-    else
-        return
-    end
+function RefreshMainDialog(close)
+    print("RefreshMainDialog", close)
+    if close ~= nil then close() end
 
     if (MainDialog ~= nil) then
         UI.Destroy(MainDialog)
@@ -356,7 +353,7 @@ function CreateGroupEditDialog(rootParent, setMaxSize, setScrollable, game,
     local buttonRow = UI.CreateHorizontalLayoutGroup(vert)
     -- Go back to PresentMenuUi button
     UI.CreateButton(buttonRow).SetText("Go Back").SetColor("#0000FF")
-        .SetOnClick(function() RefreshMainDialog(close, game) end)
+        .SetOnClick(function() RefreshMainDialog(close) end)
 
     -- Leave a group option
     LeaveGroupBtn = UI.CreateButton(buttonRow).SetText("Leave group")
