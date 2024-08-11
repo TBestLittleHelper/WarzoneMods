@@ -20,12 +20,15 @@ function CreateGroup(groupID, Name, OwnerID, Color)
     Mod.PrivateGameData = privateGameDate
 end
 
-function AddPlayerIDToGroup(groupID, playerID)
+function AddPlayerIDToGroup(groupID, playerID, game)
     -- Add to PrivateGameData
     local privateGameDate = Mod.PrivateGameData
     privateGameDate.ChatGroups[groupID].Members[playerID] = true
+    Mod.PrivateGameData = privateGameDate
 
-    -- Add to PlayerGameData
+    -- AI's do not have PlayerGameData.
+    if (game.ServerGame.Game.Players[playerID].IsAI) then return end
+
     local playerGameData = Mod.PlayerGameData
 
     playerGameData[playerID] = {
@@ -38,7 +41,6 @@ function AddPlayerIDToGroup(groupID, playerID)
         }
     }
 
-    Mod.PrivateGameData = privateGameDate
     Mod.PlayerGameData = playerGameData
 
 end

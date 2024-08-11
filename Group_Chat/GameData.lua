@@ -18,9 +18,8 @@ function GameDataSetup(game)
     CreateGroup(groupID, "System", -1, "#880085")
 
     for _, player in pairs(game.ServerGame.Game.Players) do
-        if (player.IsAI == false) then
-            AddPlayerIDToGroup(groupID, player.ID)
-        end
+        AddPlayerIDToGroup(groupID, player.ID, game)
+
     end
 
     AddMessage(groupID, -1,
