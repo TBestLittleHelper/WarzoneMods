@@ -145,7 +145,7 @@ function AddToGroup(game, playerID, payload, setReturnTable)
         end
     end
 
-    AddPlayerIDToGroup(targetGroupID, TargetPlayerID)
+    AddPlayerIDToGroup(targetGroupID, TargetPlayerID, game)
     AddMessage(targetGroupID, playerID,
                game.Game.Players[TargetPlayerID].DisplayName(nil, false) ..
                    " is now a member of the group")
