@@ -49,7 +49,20 @@ function AddPlayerIDToGroup(groupID, playerID, game)
 
 end
 
-function RemoveIDFromGroup(groupID, playerID, game) end
+function RemoveIDFromGroup(groupID, playerID, game)
+    -- Remove from PrivateGameData
+    local privateGameDate = Mod.PrivateGameData
+    privateGameDate.ChatGroups[groupID].Members[playerID] = nil
+    Mod.PrivateGameData = privateGameDate
+
+    -- AI's do not have PlayerGameData.
+    if (game.ServerGame.Game.Players[playerID].IsAI) then return end
+
+    -- Remove the group from playerID's UI
+    local playerGameData = Mod.PlayerGameData
+    playerGameData[playerID].ChatGroupMember[groupID] = nil
+    Mod.PlayerGameData = playerGameData
+end
 
 function UpdateAllGroupMembers(game, playerID, groupID, playerGameData)
     local playerGameData = playerGameData
