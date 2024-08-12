@@ -55,42 +55,27 @@ function GetGroupPrivateGameData(playerID, payload, setReturnTable)
 end
 
 function RemoveFromGroup(game, playerID, payload, setReturnTable)
-    local playerGameData = Mod.PlayerGameData
-    local TargetGroupID = payload.TargetGroupID
-    local TargetPlayerID = payload.TargetPlayerID
+    local group = Mod.PrivateGameData.ChatGroups[payload.TargetGroupID]
 
-    local group = {}
-    if (playerGameData[playerID].Chat == nil or
-        playerGameData[playerID].Chat[TargetGroupID] == nil) then
-        -- Check if the TargetPlayerID is the owner
-        print("group to be removed not found " .. TargetGroupID)
-        return -- Group can't be found. Do nothing
-    elseif (TargetPlayerID == playerGameData[playerID].Chat[TargetGroupID].Owner) then
-        print("Can't remove the owner of a group")
+    if group == nil then
+        setReturnTable({Status = "Group does not exsist"})
         return
-    else
-        print("removing " .. TargetPlayerID .. " from  :" .. TargetGroupID ..
-                  " ID")
-        Group = playerGameData[playerID].Chat[TargetGroupID]
-        removeFromSet(Group.Members, TargetPlayerID)
-        playerGameData[playerID].Chat[TargetGroupID] = Group
-
-        -- Remove the group from the playerGameData.Chat of the removed player, if it's not an AI
-        if not (game.Game.Players[TargetPlayerID].IsAI) then
-            if not (playerGameData[TargetPlayerID].Chat[TargetGroupID] == nil) then
-                playerGameData[TargetPlayerID].Chat[TargetGroupID] = nil
-            end
-        end
-        Mod.PlayerGameData = playerGameData
-        -- Update all other group members
-        UpdateAllGroupMembers(game, playerID, TargetGroupID, playerGameData)
-
-        -- Send a chat msg to the group chat
-        payload.Chat =
-            game.Game.Players[TargetPlayerID].DisplayName(nil, false) ..
-                " was removed from " .. Group.GroupName
-        DeliverChat(game, playerID, payload, setReturnTable)
     end
+    if group.OwnerID == payload.TargetPlayerID then
+        setReturnTable({
+            Status = "Can not remove owner from the group. Delete group instead"
+        })
+        return
+    end
+    if playerID ~= group.OwnerID then
+        setReturnTable({Status = "Only the group owner can remove players"})
+        return
+    end
+
+    RemoveIDFromGroup(payload.TargetGroupID, payload.TargetPlayerID, game)
+    AddMessage(payload.targetGroupID, payload.playerID,
+               game.Game.Players[payload.TargetPlayerID].DisplayName(nil, false) ..
+                   " was removed from the group")
 end
 
 function LeaveGroup(game, playerID, payload, setReturnTable)
