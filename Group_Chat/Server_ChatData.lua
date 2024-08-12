@@ -6,6 +6,24 @@ function AddMessage(groupID, senderID, chat)
                  {SenderID = senderID, Chat = chat})
     Mod.PrivateGameData = privateGameDate
 end
+function MarkUnread(groupID, playerID)
+    -- AI's do not have PlayerGameData.
+    if (game.ServerGame.Game.Players[playerID].IsAI) then return end
+
+    -- Add to playerGameData for UI use
+    local playerGameData = Mod.PlayerGameData
+    playerGameData[playerID].ChatGroupMember[groupID].UnreadChat = true
+    Mod.PlayerGameData = playerGameData
+end
+function MarkRead(groupID, playerID)
+    -- AI's do not have PlayerGameData.
+    if (game.ServerGame.Game.Players[playerID].IsAI) then return end
+
+    -- Add to playerGameData for UI use
+    local playerGameData = Mod.PlayerGameData
+    playerGameData[playerID].ChatGroupMember[groupID].UnreadChat = false
+    Mod.PlayerGameData = playerGameData
+end
 
 function CreateGroup(groupID, Name, OwnerID, Color)
     local privateGameDate = Mod.PrivateGameData
