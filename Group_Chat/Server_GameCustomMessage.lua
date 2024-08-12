@@ -155,9 +155,10 @@ function DeliverChat(game, playerID, payload, setReturnTable)
 end
 
 function ReadChat(playerID)
+    -- todo update
     local playerGameData = Mod.PlayerGameData
     -- Mark chat as read
-    for i, v in pairs(playerGameData[playerID].Chat) do
+    for i, _ in pairs(playerGameData[playerID].Chat) do
         playerGameData[playerID].Chat[i].UnreadChat = false
     end
     Mod.PlayerGameData = playerGameData
