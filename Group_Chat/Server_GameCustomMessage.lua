@@ -73,7 +73,7 @@ function RemoveFromGroup(game, playerID, payload, setReturnTable)
     end
 
     RemoveIDFromGroup(payload.TargetGroupID, payload.TargetPlayerID, game)
-    AddMessage(payload.targetGroupID, payload.playerID,
+    AddMessage(payload.TargetGroupID, playerID,
                game.Game.Players[payload.TargetPlayerID].DisplayName(nil, false) ..
                    " was removed from the group")
 end
