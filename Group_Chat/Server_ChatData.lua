@@ -48,3 +48,5 @@ function AddPlayerIDToGroup(groupID, playerID, game)
     Mod.PlayerGameData = playerGameData
 
 end
+
+function RemoveIDFromGroup(groupID, playerID, game) end
