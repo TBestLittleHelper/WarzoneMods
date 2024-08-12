@@ -391,7 +391,7 @@ function CreateGroupEditDialog(rootParent, setMaxSize, setScrollable, game,
             return
         end
 
-        if (Mod.PlayerGameData.Chat[TargetGroupID].Owner ~= ClientGame.Us.ID) then
+        if (Mod.PlayerGameData.Chat[TargetGroupID].OwnerID ~= ClientGame.Us.ID) then
             UI.Alert("You can only delete if you are the owner of a group")
             return
         end
