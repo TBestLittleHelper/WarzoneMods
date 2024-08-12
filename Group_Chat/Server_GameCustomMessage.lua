@@ -9,7 +9,7 @@ function Server_GameCustomMessage(game, playerID, payload, setReturnTable)
 
     -- Sorted according to what is probably used most
     if (payload.Message == "ReadChat") then
-        ReadChat(playerID)
+        ReadChat(payload, playerID)
     elseif (payload.Message == "GetGroup") then
         GetGroupPrivateGameData(playerID, payload, setReturnTable)
     elseif (payload.Message == "SendChat") then
@@ -85,7 +85,7 @@ function LeaveGroup(game, playerID, payload, setReturnTable)
 
     if (playerGameData[playerID].Chat == nil or
         playerGameData[playerID].Chat[TargetGroupID] == nil) then
-        print("group to leave from not found " .. TargetGroupID)
+        print("No group with this ID found : " .. TargetGroupID)
         return -- Group can't be found. Do nothing
     end
     -- Check if the TargetPlayerID is the owner
@@ -154,17 +154,22 @@ function DeliverChat(game, playerID, payload, setReturnTable)
     -- todo Make group unread chat?
 end
 
-function ReadChat(playerID)
-    -- todo update
-    local playerGameData = Mod.PlayerGameData
-    -- Mark chat as read
-    for i, _ in pairs(playerGameData[playerID].Chat) do
-        playerGameData[playerID].Chat[i].UnreadChat = false
+function ReadChat(payload, playerID, setReturnTable)
+    -- Make sure we are a member of the group
+    if Mod.PrivateGameData.ChatGroups[payload.TargetGroupID] == nil then
+        setReturnTable({Status = "Group does not exsist"})
+        return
     end
-    Mod.PlayerGameData = playerGameData
+    if Mod.PrivateGameData.ChatGroups[payload.TargetGroupID].Members[playerID] ==
+        false then
+        setReturnTable({Status = "You are not a member of the group"})
+        return
+    end
+    MarkRead(payload.TargetGroupID, playerID)
 end
 
 function DeleteGroup(game, playerID, payload, setReturnTable)
+    -- todo
     local playerGameData = Mod.PlayerGameData
     local data = playerGameData[playerID].Chat
 
