@@ -303,7 +303,7 @@ function UpdateMainDialogUI()
     -- Update the members of the current selected group.
     GroupMembersNames.SetText(GroupMembersString(CurrentGroup.Members))
 
-    -- Remove old elements todo
+    -- todo test Remove old elements
     DestroyOldUIelements(ChatMsgContainerArray)
 
     local rowChatRecived = UI.CreateVerticalLayoutGroup(ChatContainer)
@@ -317,7 +317,14 @@ function UpdateMainDialogUI()
     ChatMessageText.SetInteractable(true)
 
     -- TODO use settings for num chat
-    for i = 1, #CurrentGroup.ChatHistory do
+    local startIndex = 1
+    if (#CurrentGroup.ChatHistory > PlayerSettings.NumPastChat) then
+        startIndex = #CurrentGroup.ChatHistory -
+                         (PlayerSettings.NumPastChat - 1)
+    end
+
+    for i = startIndex, #CurrentGroup.ChatHistory do
+        print(" current i ", i)
         local horz = UI.CreateHorizontalLayoutGroup(horzMain)
 
         -- Chat Sender
