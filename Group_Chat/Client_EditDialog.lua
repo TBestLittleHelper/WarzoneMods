@@ -28,10 +28,6 @@ function CreateGroupEditDialog(rootParent, setMaxSize, setScrollable, game,
                         .SetPreferredWidth(200).SetFlexibleWidth(1)
 
     local row2 = UI.CreateHorizontalLayoutGroup(vert)
-    print("here CreateGroupEditDialog", playerGameData,
-          playerGameData.ChatGroupMember)
-    print("dump PlayerGameData")
-    Dump(playerGameData)
     if (next(playerGameData.ChatGroupMember) ~= nil) then
         ChatGroupBtn = UI.CreateButton(row2).SetText("Pick an existing group")
                            .SetOnClick(ChatGroupClicked)
@@ -84,7 +80,8 @@ function CreateGroupEditDialog(rootParent, setMaxSize, setScrollable, game,
             return
         end
         -- We can't remove the owner of a group
-        if (TargetPlayerID == Mod.PlayerGameData.Chat[TargetGroupID].Owner) then
+        if (TargetPlayerID ==
+            Mod.PlayerGameData.ChatGroupMember[TargetGroupID].Owner) then
             UI.Alert("You can't remove the owner of a group")
             return
         end
@@ -192,6 +189,8 @@ function ChatGroupButton(group)
     ret["text"] = name
     ret["selected"] = function()
         GroupTextName.SetText(name).SetInteractable(false)
+        print("------")
+        print(group.GroupID)
         TargetGroupID = group.GroupID
         GroupTextNameLabel.SetText("Selected group ")
         -- Check if we are owner or member
