@@ -63,27 +63,3 @@ function RemoveIDFromGroup(groupID, playerID, game)
     playerGameData[playerID].ChatGroupMember[groupID] = nil
     Mod.PlayerGameData = playerGameData
 end
-
-function UpdateAllGroupMembers(game, playerID, groupID, playerGameData)
-    local playerGameData = playerGameData
-    local ReffrencePlayerData = playerGameData[playerID].Chat -- We already updated the info for this player. Now we need to sync that to the other players --TODO SP test Server_GameCustomMessage.lua:(221,1-222,0): attempt to index a nil value
-
-    local Group = ReffrencePlayerData[groupID]
-    local outdatedPlayerData
-
-    -- Update playerGameData for each member
-    for Members, v in pairs(Group.Members) do
-        -- Make sure we don't add AI's. This code is useful for testing in SP and as a safety
-        if (game.Game.Players[Members].IsAI == false) then
-            outdatedPlayerData = playerGameData[Members].Chat
-            -- if nil, make an empty table where we can place GroupID
-            if (outdatedPlayerData == nil) then
-                outdatedPlayerData = {}
-            end
-            outdatedPlayerData[groupID] = Group
-            playerGameData[Members].Chat = outdatedPlayerData
-        end
-    end
-    -- Finally write back to Mod.PlayerGameData
-    Mod.PlayerGameData = playerGameData
-end
