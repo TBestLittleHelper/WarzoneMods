@@ -99,7 +99,6 @@ function Client_PresentMenuUI(rootParent, setMaxSize, setScrollable, game, close
     -- RefreshChat button
     UI.CreateButton(RefreshSendButtonContainer).SetText("Refresh chat")
         .SetColor("#00ff05").SetOnClick(RefreshGroup)
-    -- local color = ClientGame.Game.Players[ClientGame.Us.ID].Color.HtmlColor -- Let's color the send chat button in the users color
     -- Send chat button
     UI.CreateButton(RefreshSendButtonContainer).SetColor("#880085").SetText(
         "Send chat").SetOnClick(function()
@@ -424,6 +423,7 @@ function SendChat()
         end
     end)
     ChatMessageText.SetText("")
+    RefreshGroup()
 end
 
 function RefreshGroup()
