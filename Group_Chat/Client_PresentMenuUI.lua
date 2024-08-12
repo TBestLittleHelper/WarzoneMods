@@ -355,10 +355,10 @@ function CreateGroupEditDialog(rootParent, setMaxSize, setScrollable, game,
     UI.CreateButton(buttonRow).SetText("Go Back").SetColor("#0000FF")
         .SetOnClick(function() RefreshMainDialog(close) end)
 
-    -- Leave a group option
-    LeaveGroupBtn = UI.CreateButton(buttonRow).SetText("Leave group")
-                        .SetInteractable(false).SetColor("#FF0000")
-                        .SetOnClick(function()
+    -- Leave group option
+    LeaveGroupButton = UI.CreateButton(buttonRow).SetText("Leave group")
+                           .SetInteractable(false).SetColor("#FF0000")
+                           .SetOnClick(function()
         -- If GroupTextName.GetInteractable is false, we know that TargetGroupID is set
         if (GroupTextName.GetInteractable() == true) then
             UI.Alert("Please choose a group from the list")
@@ -382,9 +382,9 @@ function CreateGroupEditDialog(rootParent, setMaxSize, setScrollable, game,
     end)
 
     -- Delete a group : only possible as a group owner
-    local deleteGroupBtn = UI.CreateButton(buttonRow).SetText("Delete group")
-                               .SetInteractable(false).SetColor("#FF0000")
-                               .SetOnClick(function()
+    DeleteGroupButton = UI.CreateButton(buttonRow).SetText("Delete group")
+                            .SetInteractable(false).SetColor("#FF0000")
+                            .SetOnClick(function()
         -- If GroupTextName.GetInteractable is false, we know that TargetGroupID is set
         if (GroupTextName.GetInteractable() == true) then
             UI.Alert("Please choose a group from the list")
@@ -563,15 +563,17 @@ end
 function ChatGroupClicked()
     local groups = {}
     PlayerGameData = Mod.PlayerGameData -- Make sure we have the latest PlayerGameData
-    for i, _ in pairs(PlayerGameData.ChatGroupMember) do
-        print(i)
-        groups[i] = PlayerGameData.ChatGroupMember[i]
+    for groupID, _ in pairs(PlayerGameData.ChatGroupMember) do
+        print(groupID)
+        groups[groupID] = PlayerGameData.ChatGroupMember[groupID]
+        groups[groupID].GroupID = groupID
     end
-    local options = map(groups, ChatGroupButton)
+    local options = Map(groups, ChatGroupButton)
     UI.PromptFromList("Select a chat group", options)
 end
 function ChatGroupButton(group)
-    local name = group.GroupName
+    Dump(group)
+    local name = group.Name
     local ret = {}
     ret["text"] = name
     ret["selected"] = function()
@@ -579,14 +581,15 @@ function ChatGroupButton(group)
         TargetGroupID = group.GroupID
         GroupTextNameLabel.SetText("Selected group ")
         -- Check if we are owner or member
-        if (ClientGame.Us.ID == Mod.PlayerGameData.Chat[TargetGroupID].Owner) then
+
+        if (ClientGame.Us.ID == group.OwnerID) then
             -- If we are the owner, we can delete the group
-            deleteGroupBtn.SetInteractable(true)
-            LeaveGroupBtn.SetInteractable(false)
+            DeleteGroupButton.SetInteractable(true)
+            LeaveGroupButton.SetInteractable(false)
         else
             -- If we are not the owner we can leave the group
-            deleteGroupBtn.SetInteractable(false)
-            LeaveGroupBtn.SetInteractable(true)
+            DeleteGroupButton.SetInteractable(false)
+            LeaveGroupButton.SetInteractable(true)
         end
     end
     return ret
