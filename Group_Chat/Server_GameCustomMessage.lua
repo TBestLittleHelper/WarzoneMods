@@ -125,8 +125,6 @@ function LeaveGroup(game, playerID, payload, setReturnTable)
 end
 
 function AddToGroup(game, playerID, payload, setReturnTable)
-    local playerGameData = Mod.PlayerGameData
-
     local targetGroupID = payload.TargetGroupID
     local TargetPlayerID = payload.TargetPlayerID
     local TargetGroupName = payload.TargetGroupName
@@ -156,45 +154,19 @@ function AddToGroup(game, playerID, payload, setReturnTable)
 end
 
 function DeliverChat(game, playerID, payload, setReturnTable)
-    local playerGameData = Mod.PlayerGameData
-    local data = playerGameData[playerID].Chat
-    local TargetGroupID = payload.TargetGroupID
-
-    local ChatInfo = {}
-    ChatInfo.Sender = playerID
-    ChatInfo.Chat = payload.Chat
-
-    local ChatArrayIndex
-    if (data[TargetGroupID] == nil) then
-        ChatArrayIndex = 1
-    else
-        ChatArrayIndex = #data[TargetGroupID] + 1
+    -- Make sure we are a member of the group
+    if Mod.PrivateGameData.ChatGroups[payload.TargetGroupID] == nil then
+        setReturnTable({Status = "Group does not exsist"})
+        return
     end
-
-    print("Chat received " .. ChatInfo.Chat .. " to " .. TargetGroupID ..
-              " from " .. ChatInfo.Sender .. " total group chat's : " ..
-              ChatArrayIndex)
-
-    -- use the ChatArrayIndex. We want the chat msg to be stored in an array	format
-    if data[TargetGroupID][ChatArrayIndex] == nil then
-        data[TargetGroupID][ChatArrayIndex] = {}
+    if Mod.PrivateGameData.ChatGroups[payload.TargetGroupID].Members[playerID] ==
+        false then
+        setReturnTable({Status = "You are not a member of the group"})
+        return
     end
-    data[TargetGroupID].NumChat = ChatArrayIndex
-    data[TargetGroupID][ChatArrayIndex] = {}
-    data[TargetGroupID][ChatArrayIndex] = ChatInfo
-    -- Mark the chat as unread for everyone in the group.
-    data[TargetGroupID].UnreadChat = true
-    playerGameData[playerID].Chat = data
-
-    UpdateAllGroupMembers(game, playerID, TargetGroupID, playerGameData)
-    local Alerts = true
-    local PublicGameData = Mod.PublicGameData
-    if (PublicGameData ~= nil) then
-        if (PublicGameData[playerID] ~= nil) then
-            Alerts = PublicGameData[playerID].AlertUnreadChat
-        end
-    end
-    if (Alerts) then setReturnTable({Status = "Chat sent"}) end
+    -- Add Message
+    AddMessage(payload.TargetGroupID, playerID, payload.Chat)
+    -- todo Make group unread chat?
 end
 
 function ReadChat(playerID)
