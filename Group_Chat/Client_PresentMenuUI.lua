@@ -457,7 +457,7 @@ function UpdateMainDialogUI()
     end
 
     -- Update the members of the current selected group.
-    GroupMembersNames.SetText(GroupMembersString(CurrentGroup))
+    GroupMembersNames.SetText(GroupMembersString(CurrentGroup.Members))
 
     -- Remove old elements todo
     DestroyOldUIelements(ChatMsgContainerArray)
@@ -477,12 +477,12 @@ function UpdateMainDialogUI()
         local horz = UI.CreateHorizontalLayoutGroup(horzMain)
 
         -- Chat Sender
-        local ChatSenderbtn = UI.CreateButton(horz).SetPreferredWidth(150)
-                                  .SetPreferredHeight(8)
+        local ChatSenderButton = UI.CreateButton(horz).SetPreferredWidth(150)
+                                     .SetPreferredHeight(8)
         if (CurrentGroup.ChatHistory[i].SenderID == -1) then
-            ChatSenderbtn.SetText("Mod Info").SetColor("#880085")
+            ChatSenderButton.SetText("Mod Info").SetColor("#880085")
         else
-            ChatSenderbtn.SetText(
+            ChatSenderButton.SetText(
                 ClientGame.Game.Players[CurrentGroup.ChatHistory[i].SenderID]
                     .DisplayName(nil, false)).SetColor(
                 ClientGame.Game.Players[CurrentGroup.ChatHistory[i].SenderID]
@@ -494,13 +494,15 @@ function UpdateMainDialogUI()
     end
 end
 
-function GroupMembersString(group)
-    -- todo all members
-    local playerID = next(group.Members)
-    local player = ClientGame.Game.Players[playerID]
-    local displayName = player.DisplayName(nil, false)
+function GroupMembersString(members)
+    local displayString = ""
+    for playerID, _ in pairs(members) do
+        displayString = displayString .. " " ..
+                            ClientGame.Game.Players[playerID]
+                                .DisplayName(nil, false)
+    end
 
-    return displayName
+    return displayString
 end
 
 function DestroyOldUIelements(Container)
