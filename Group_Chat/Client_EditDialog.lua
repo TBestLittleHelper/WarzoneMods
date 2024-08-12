@@ -1,9 +1,12 @@
 require("Utilities")
 
+local ClientGame;
+
 function CreateGroupEditDialog(rootParent, setMaxSize, setScrollable, game,
                                close)
 
     local playerGameData = Mod.PlayerGameData
+    ClientGame = game
 
     setMaxSize(420, 330)
     TargetPlayerID = nil
