@@ -2,6 +2,9 @@ require("Utilities")
 
 function CreateGroupEditDialog(rootParent, setMaxSize, setScrollable, game,
                                close)
+
+    local playerGameData = Mod.PlayerGameData
+
     setMaxSize(420, 330)
     TargetPlayerID = nil
     TargetGroupID = nil
@@ -22,11 +25,11 @@ function CreateGroupEditDialog(rootParent, setMaxSize, setScrollable, game,
                         .SetPreferredWidth(200).SetFlexibleWidth(1)
 
     local row2 = UI.CreateHorizontalLayoutGroup(vert)
-    print("here CreateGroupEditDialog", PlayerGameData,
-          PlayerGameData.ChatGroupMember)
+    print("here CreateGroupEditDialog", playerGameData,
+          playerGameData.ChatGroupMember)
     print("dump PlayerGameData")
-    Dump(PlayerGameData)
-    if (next(PlayerGameData.ChatGroupMember) ~= nil) then
+    Dump(playerGameData)
+    if (next(playerGameData.ChatGroupMember) ~= nil) then
         ChatGroupBtn = UI.CreateButton(row2).SetText("Pick an existing group")
                            .SetOnClick(ChatGroupClicked)
     end
