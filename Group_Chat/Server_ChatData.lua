@@ -5,14 +5,21 @@ function AddMessage(groupID, senderID, chat)
     table.insert(privateGameDate.ChatGroups[groupID].ChatHistory,
                  {SenderID = senderID, Chat = chat})
     Mod.PrivateGameData = privateGameDate
+    -- For all group members, mark unread with last chat
+    for playerID, _ in pairs(privateGameDate.ChatGroups[groupID].UnreadChat) do
+        MarkUnread(groupID, senderID, playerID, chat)
+    end
 end
-function MarkUnread(groupID, playerID)
-    -- AI's do not have PlayerGameData.
+function MarkUnread(groupID, senderID, playerID, chat)
+    -- AI's do not have PlayerGameData nor UI
     if (game.ServerGame.Game.Players[playerID].IsAI) then return end
 
     -- Add to playerGameData for UI use
     local playerGameData = Mod.PlayerGameData
-    playerGameData[playerID].ChatGroupMember[groupID].UnreadChat = true
+    playerGameData[playerID].ChatGroupMember[groupID].UnreadChat = {
+        SenderID = senderID,
+        Chat = chat
+    }
     Mod.PlayerGameData = playerGameData
 end
 function MarkRead(groupID, playerID)
@@ -21,7 +28,7 @@ function MarkRead(groupID, playerID)
 
     -- Add to playerGameData for UI use
     local playerGameData = Mod.PlayerGameData
-    playerGameData[playerID].ChatGroupMember[groupID].UnreadChat = false
+    playerGameData[playerID].ChatGroupMember[groupID].UnreadChat = nil
     Mod.PlayerGameData = playerGameData
 end
 

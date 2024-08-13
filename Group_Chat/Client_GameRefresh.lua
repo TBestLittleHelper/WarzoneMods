@@ -3,21 +3,18 @@ require("Utilities")
 function Client_GameRefresh(game)
     -- Skip if we're not in the game or if the game is over.
     if (game.Us == nil or Mod.PublicGameData.GameFinalized) then return end
+    if (skipRefresh == nil or skipRefresh == true) then return end
 
-    CheckUnreadChat(game)
+    if (Mod.PlayerGameData.Settings.AlertUnreadChat) then
+        CheckUnreadChat(game)
+    end
 end
 
 -- Alert when new chat.
 function CheckUnreadChat(game)
     print("Checking unread chat", skipRefresh)
-
-    if (skipRefresh == nil or skipRefresh == true) then return end
-
     local PlayerGameData = Mod.PlayerGameData
 
-    local alertMsg = " Alert message" -- todo add alertMsg
-    -- Check if alerts are true
-    local Alerts = Mod.PlayerGameData.Settings.AlertUnreadChat or true
     -- todo extract get settings to it's own file and use here?
     print("2222Checking unread chat")
 
@@ -26,13 +23,14 @@ function CheckUnreadChat(game)
 
         local group = PlayerGameData.ChatGroupMember[groupID]
         -- Always alert in SP, for testing
-        if (group.UnreadChat == true or game.Settings.SinglePlayer == true) then
+        if (group.UnreadChat ~= nil) then
             if (Alerts) then
-                local sender = "Mod Info"
-                -- TODO add sender name?
+                -- Last message from group
+                local lastChat = group.UnreadChat.Chat
+                local SenderID = group.UnreadChat.SenderID
 
-                alertMsg = alertMsg .. group.Name .. " has unread chat."
-                UI.Alert(alertMsg)
+                UI.Alert(lastChat .. SenderID)
+
                 -- todo Maybe improve markChatAsRead code
                 local payload = {}
                 payload.Mod = "Chat"
