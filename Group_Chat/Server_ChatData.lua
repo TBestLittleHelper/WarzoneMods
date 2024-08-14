@@ -1,16 +1,16 @@
 require("Utilities")
 
-function AddMessage(groupID, senderID, chat)
+function AddMessage(groupID, senderID, chat, game)
     local privateGameDate = Mod.PrivateGameData
     table.insert(privateGameDate.ChatGroups[groupID].ChatHistory,
                  {SenderID = senderID, Chat = chat})
     Mod.PrivateGameData = privateGameDate
     -- For all group members, mark unread with last chat
-    for playerID, _ in pairs(privateGameDate.ChatGroups[groupID].UnreadChat) do
-        MarkUnread(groupID, senderID, playerID, chat)
+    for playerID, _ in pairs(privateGameDate.ChatGroups[groupID].Members) do
+        MarkUnread(groupID, senderID, playerID, chat, game)
     end
 end
-function MarkUnread(groupID, senderID, playerID, chat)
+function MarkUnread(groupID, senderID, playerID, chat, game)
     -- AI's do not have PlayerGameData nor UI
     if (game.ServerGame.Game.Players[playerID].IsAI) then return end
 

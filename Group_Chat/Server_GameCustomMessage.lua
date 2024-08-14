@@ -75,7 +75,7 @@ function RemoveFromGroup(game, playerID, payload, setReturnTable)
     RemoveIDFromGroup(payload.TargetGroupID, payload.TargetPlayerID, game)
     AddMessage(payload.TargetGroupID, playerID,
                game.Game.Players[payload.TargetPlayerID].DisplayName(nil, false) ..
-                   " was removed from the group")
+                   " was removed from the group", game)
 end
 
 function LeaveGroup(game, playerID, payload, setReturnTable)
@@ -134,7 +134,7 @@ function AddToGroup(game, playerID, payload, setReturnTable)
     AddPlayerIDToGroup(targetGroupID, TargetPlayerID, game)
     AddMessage(targetGroupID, playerID,
                game.Game.Players[TargetPlayerID].DisplayName(nil, false) ..
-                   " is now a member of the group")
+                   " is now a member of the group", game)
     -- todo Make group unread chat?
 end
 
@@ -150,7 +150,7 @@ function DeliverChat(game, playerID, payload, setReturnTable)
         return
     end
     -- Add Message
-    AddMessage(payload.TargetGroupID, playerID, payload.Chat)
+    AddMessage(payload.TargetGroupID, playerID, payload.Chat, game)
     -- todo Make group unread chat?
 end
 
