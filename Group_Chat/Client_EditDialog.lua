@@ -21,8 +21,7 @@ function CreateGroupEditDialog(rootParent, setMaxSize, setScrollable, game,
                           .SetOnClick(TargetPlayerClicked)
 
     local row11 = UI.CreateHorizontalLayoutGroup(vert)
-    GroupTextNameLabel = UI.CreateLabel(row11)
-                             .SetText("Name a new chat group: ")
+    GroupTextNameLabel = UI.CreateLabel(row11).SetText("Group name: ")
     GroupTextName = UI.CreateTextInputField(row11).SetCharacterLimit(25)
                         .SetPlaceholderText(" Group Name max 25 characters")
                         .SetPreferredWidth(200).SetFlexibleWidth(1)
@@ -192,7 +191,7 @@ function ChatGroupButton(group)
         print("------")
         print(group.GroupID)
         TargetGroupID = group.GroupID
-        GroupTextNameLabel.SetText("Selected group ")
+        GroupTextNameLabel.SetText("Current group ")
         -- Check if we are owner or member
 
         if (ClientGame.Us.ID == group.OwnerID) then
