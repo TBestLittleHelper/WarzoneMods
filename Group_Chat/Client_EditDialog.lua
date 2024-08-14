@@ -2,6 +2,8 @@ require("Utilities")
 
 local ClientGame;
 
+-- todo UI name and var as local here
+
 function CreateGroupEditDialog(rootParent, setMaxSize, setScrollable, game,
                                close)
 
@@ -14,8 +16,7 @@ function CreateGroupEditDialog(rootParent, setMaxSize, setScrollable, game,
 
     local vert = UI.CreateVerticalLayoutGroup(rootParent)
     local row1 = UI.CreateHorizontalLayoutGroup(vert)
-    UI.CreateLabel(row1).SetText(
-        "Select a player to add or remove from a group: ")
+    UI.CreateLabel(row1).SetText("Player: ")
     TargetPlayerBtn = UI.CreateButton(row1).SetText("Select player...")
                           .SetColor(RandomColor())
                           .SetOnClick(TargetPlayerClicked)
@@ -23,8 +24,11 @@ function CreateGroupEditDialog(rootParent, setMaxSize, setScrollable, game,
     local row11 = UI.CreateHorizontalLayoutGroup(vert)
     GroupTextNameLabel = UI.CreateLabel(row11).SetText("Group name: ")
     GroupTextName = UI.CreateTextInputField(row11).SetCharacterLimit(25)
-                        .SetPlaceholderText(" Group Name max 25 characters")
+                        .SetPlaceholderText("Max 25 characters")
                         .SetPreferredWidth(200).SetFlexibleWidth(1)
+
+    GroupColorButton = UI.CreateButton(row11).SetText("Color").SetColor(
+                           RandomColor()).SetOnClick(GroupColorClicked)
 
     local row2 = UI.CreateHorizontalLayoutGroup(vert)
     if (next(playerGameData.ChatGroupMember) ~= nil) then
@@ -170,17 +174,6 @@ function GroupButton(group)
     return ret
 end
 
-function ChatGroupClicked()
-    local groups = {}
-    PlayerGameData = Mod.PlayerGameData -- Make sure we have the latest PlayerGameData
-    for groupID, _ in pairs(PlayerGameData.ChatGroupMember) do
-        print(groupID)
-        groups[groupID] = PlayerGameData.ChatGroupMember[groupID]
-        groups[groupID].GroupID = groupID
-    end
-    local options = Map(groups, ChatGroupButton)
-    UI.PromptFromList("Select a chat group", options)
-end
 function ChatGroupButton(group)
     Dump(group)
     local name = group.Name
@@ -188,12 +181,12 @@ function ChatGroupButton(group)
     ret["text"] = name
     ret["selected"] = function()
         GroupTextName.SetText(name).SetInteractable(false)
-        print("------")
-        print(group.GroupID)
+        -- Set color to match the current group, and don't allow changing it
+        GroupColorButton.SetColor(group.Color)
+        GroupColorButton.SetOnClick(function() end)
         TargetGroupID = group.GroupID
-        GroupTextNameLabel.SetText("Current group ")
-        -- Check if we are owner or member
 
+        -- Check if we are owner or member
         if (ClientGame.Us.ID == group.OwnerID) then
             -- If we are the owner, we can delete the group
             DeleteGroupButton.SetInteractable(true)
@@ -205,6 +198,22 @@ function ChatGroupButton(group)
         end
     end
     return ret
+end
+
+function ChatGroupClicked()
+    local groups = {}
+    PlayerGameData = Mod.PlayerGameData -- Make sure we have the latest PlayerGameData
+    for groupID, _ in pairs(PlayerGameData.ChatGroupMember) do
+        groups[groupID] = PlayerGameData.ChatGroupMember[groupID]
+        groups[groupID].GroupID = groupID
+    end
+    local options = Map(groups, ChatGroupButton)
+    UI.PromptFromList("Select a chat group", options)
+end
+
+function GroupColorClicked()
+    -- todo? Make a dialog to pick colors
+    GroupColorButton.SetColor(RandomColor())
 end
 
 function DeleteGroupConfirmed(ClientGame, payload)
