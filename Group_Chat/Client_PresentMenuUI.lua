@@ -314,7 +314,11 @@ function UpdateMainDialogUI()
 
     local horzMain = UI.CreateVerticalLayoutGroup(ChatLayout)
 
-    ChatMessageText.SetInteractable(true)
+    if (CurrentGroup.ChatHistory[1].SenderID == -1) then
+        ChatMessageText.SetInteractable(false)
+    else
+        ChatMessageText.SetInteractable(true)
+    end
 
     -- TODO use settings for num chat
     local startIndex = 1
