@@ -202,9 +202,8 @@ end
 
 function ChatGroupClicked()
     local groups = {}
-    PlayerGameData = Mod.PlayerGameData -- Make sure we have the latest PlayerGameData
-    for groupID, _ in pairs(PlayerGameData.ChatGroupMember) do
-        groups[groupID] = PlayerGameData.ChatGroupMember[groupID]
+    for groupID, _ in pairs(Mod.PlayerGameData.ChatGroupMember) do
+        groups[groupID] = Mod.PlayerGameData.ChatGroupMember[groupID]
         groups[groupID].GroupID = groupID
     end
     local options = Map(groups, ChatGroupButton)
