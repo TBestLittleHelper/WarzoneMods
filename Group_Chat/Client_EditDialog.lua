@@ -50,9 +50,6 @@ function CreateGroupEditDialog(rootParent, setMaxSize, setScrollable, game,
 
             if (TargetGroupID == nil) then
                 TargetGroupID = WL.TickCount()
-                print("makeing new groupID: " .. TargetGroupID)
-            else
-                print("found old group ID " .. TargetPlayerID)
             end
 
             local payload = {}
@@ -60,6 +57,7 @@ function CreateGroupEditDialog(rootParent, setMaxSize, setScrollable, game,
             payload.TargetPlayerID = TargetPlayerID
             payload.TargetGroupID = TargetGroupID
             payload.TargetGroupName = GroupTextName.GetText()
+            payload.Color = GroupColorButton.GetColor()
 
             ClientGame.SendGameCustomMessage("Adding group member...", payload,
                                              function(returnValue)
