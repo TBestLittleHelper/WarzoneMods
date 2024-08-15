@@ -21,7 +21,7 @@ function Server_GameCustomMessage(game, playerID, payload, setReturnTable)
     elseif (payload.Message == "LeaveGroup") then
         LeaveGroup(game, playerID, payload, setReturnTable)
     elseif (payload.Message == "DeleteGroup") then
-        DeleteGroup(game, playerID, payload, setReturnTable)
+        CheckDeleteGroup(game, playerID, payload, setReturnTable)
     elseif (payload.Message == "SaveSettings") then
         SaveSettingsServer(game, playerID, payload, setReturnTable)
     elseif (payload.Message == "ClearData") then
@@ -168,27 +168,18 @@ function ReadChat(payload, playerID, setReturnTable)
     MarkRead(payload.TargetGroupID, playerID)
 end
 
-function DeleteGroup(game, playerID, payload, setReturnTable)
-    -- todo
-    local playerGameData = Mod.PlayerGameData
-    local data = playerGameData[playerID].Chat
-
-    local TargetGroupID = payload.TargetGroupID
-    local Group = data[TargetGroupID]
-
-    -- Make sure only the creator/owner of a group can delete it
-    if (playerID ~= data[TargetGroupID].Owner) then
-        print("You can't delete since you are not the owner of the group")
+function CheckDeleteGroup(game, playerID, payload, setReturnTable)
+    if Mod.PrivateGameData.ChatGroups[payload.TargetGroupID] == nil then
+        setReturnTable({Status = "Group does not exsist"})
         return
     end
-    -- Set groupID data to nil for each player
-    for Members, v in pairs(Group.Members) do
-        -- Make sure we skip AI's. This code is useful for testing in SP and as a safety as AI's can't have playerGameData.Chat
-        if not (game.Game.Players[Members].IsAI) then
-            playerGameData[Members].Chat[TargetGroupID] = nil
-        end
+    -- Only owner can delete the group
+    if (Mod.PrivateGameData.ChatGroups[payload.TargetGroupID].OwnerID ~=
+        playerID) then
+        setReturnTable({Status = "You are not the owner of the group!"})
+        return
     end
-    Mod.PlayerGameData = playerGameData
+    DeleteGroup(payload.TargetGroupID)
     print("Deleted Group " .. TargetGroupID)
 end
 
