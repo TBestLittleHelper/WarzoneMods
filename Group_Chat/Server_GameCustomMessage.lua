@@ -179,8 +179,7 @@ function CheckDeleteGroup(game, playerID, payload, setReturnTable)
         setReturnTable({Status = "You are not the owner of the group!"})
         return
     end
-    DeleteGroup(payload.TargetGroupID)
-    print("Deleted Group " .. TargetGroupID)
+    DeleteGroup(payload.TargetGroupID, game)
 end
 
 function SaveSettingsServer(game, playerID, payload, setReturnTable)

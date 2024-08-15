@@ -32,18 +32,19 @@ function MarkRead(groupID, playerID)
     Mod.PlayerGameData = playerGameData
 end
 
-function DeleteGroup(groupID)
+function DeleteGroup(groupID, game)
+    local privateGameDate = Mod.PrivateGameData
+    local playerGameData = Mod.PlayerGameData
+
     -- Remove group from all PlayerGameData
-    local playerGameData = Mod.playerGameData
-    for playerID, _ in pairs(playerGameData.ChatGroups[groupID].Members) do
-        if not (game.Game.Players[Members].IsAI) then
+    for playerID, _ in pairs(privateGameDate.ChatGroups[groupID].Members) do
+        if not (game.ServerGame.Game.Players[playerID].IsAI) then
             playerGameData[playerID].ChatGroupMember[groupID] = nil
         end
     end
     Mod.PlayerGameData = playerGameData
 
     -- Delete from PrivateGameData
-    local privateGameDate = Mod.PrivateGameData
     privateGameDate.ChatGroups[groupID] = nil
     Mod.PrivateGameData = privateGameDate
 
