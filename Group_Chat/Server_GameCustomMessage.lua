@@ -9,7 +9,7 @@ function Server_GameCustomMessage(game, playerID, payload, setReturnTable)
 
     -- Sorted according to what is probably used most
     if (payload.Message == "ReadChat") then
-        ReadChat(payload, playerID)
+        ReadChat(payload, playerID, setReturnTable)
     elseif (payload.Message == "GetGroup") then
         GetGroupPrivateGameData(playerID, payload, setReturnTable)
     elseif (payload.Message == "SendChat") then
