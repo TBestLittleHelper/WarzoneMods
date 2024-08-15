@@ -1,9 +1,11 @@
 require("Utilities")
 require("Client_EditDialog")
 
+SkipRefresh = false;
+
+
 local ClientGame;
 local PlayerGameData;
-local SkipRefresh = false;
 
 -- UI Values
 local CurrentGroupID;
