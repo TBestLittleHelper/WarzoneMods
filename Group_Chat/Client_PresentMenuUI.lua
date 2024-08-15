@@ -243,14 +243,14 @@ end
 
 function ChatGroupSelectedButton(group)
     local name = group.GroupName
-    local ret = {}
-    ret["text"] = name
-    ret["selected"] = function()
-        ChatGroupSelectedText.SetText(name).SetColor(group.Color)
-        ChatGroupSelectedID = group.GroupID
-
-        RefreshGroup()
-    end
+    local ret = {
+        text = group.GroupName,
+        selected = function()
+            ChatGroupSelectedText.SetText(name).SetColor(group.Color)
+            ChatGroupSelectedID = group.GroupID
+            RefreshGroup()
+        end
+    }
     return ret
 end
 
