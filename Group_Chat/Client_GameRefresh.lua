@@ -1,12 +1,18 @@
 require("Utilities")
 
+local UnreadMessages;
 function Client_GameRefresh(game)
+    print(skipRefresh, "skipRefresh")
     -- Skip if we're not in the game or if the game is over.
-    game.CreateDialog(TestDialog)
     if (game.Us == nil or Mod.PublicGameData.GameFinalized) then return end
-    if (skipRefresh == nil or skipRefresh == true) then return end
+    if (SkipRefresh) then return end -- skipRefresh might be nill
 
-    if (Mod.PlayerGameData.Settings.AlertUnreadChat) then
+    if Mod.PlayerGameData.Settings and
+        Mod.PlayerGameData.Settings.AlertUnreadChat ~= nil then
+        if Mod.PlayerGameData.Settings.AlertUnreadChat then
+            CheckUnreadChat(game)
+        end
+    else
         CheckUnreadChat(game)
     end
 end
@@ -19,36 +25,37 @@ function TestDialog(rootParent, setMaxSize, setScrollable, game, close)
 
     local horizontalLayout = UI.CreateHorizontalLayoutGroup(vert)
 
-    UI.CreateButton(horizontalLayout).SetText("System : Mod Info")
-    UI.CreateButton(horizontalLayout).SetText("Mod Info")
-    UI.CreateButton(horizontalLayout).SetText("A really long message")
+    for _, group in ipairs(UnreadMessages) do
+        print("here ----- ")
+        UI.CreateButton(horizontalLayout).SetText(group.Name)
+        UI.CreateButton(horizontalLayout).SetText(group.SenderID)
+        UI.CreateButton(horizontalLayout).SetText(group.Chat)
+    end
+
 end
 
 -- Alert when new chat.
 function CheckUnreadChat(game)
-    print("Checking unread chat", skipRefresh)
+    print("Checking unread chat")
     local PlayerGameData = Mod.PlayerGameData
 
-    -- todo extract get settings to it's own file and use here?
-    print("2222Checking unread chat")
+    UnreadMessages = {}
 
-    for _, groupID in pairs(PlayerGameData.ChatGroupMember) do
+    for groupID, group in pairs(PlayerGameData.ChatGroupMember) do
+        --   Dump(groupID)
+        print(groupID, "groupID")
+        Dump(group)
         print("CheckUnreadChat ", groupID)
 
-        local group = PlayerGameData.ChatGroupMember[groupID]
-        -- Always alert in SP, for testing
+        --        local group = PlayerGameData.ChatGroupMember[groupID]
         if (group.UnreadChat ~= nil) then
-            -- Last message from group
-            local lastChat = group.UnreadChat.Chat
-            local SenderID = group.UnreadChat.SenderID
-
-            UI.Alert(lastChat .. SenderID)
-
+            UnreadMessages[groupID] = {
+                SenderID = group.UnreadChat.SenderID,
+                Chat = group.UnreadChat.Chat,
+                Name = group.Name
+            }
             -- todo Maybe improve markChatAsRead code
-            local payload = {}
-            payload.Mod = "Chat"
-            payload.Message = "ReadChat"
-            payload.GroupID = groupID
+            local payload = {Message = "ReadChat", GroupID = groupID}
             game.SendGameCustomMessage("Marking chat as read...", payload,
                                        function(returnValue)
                 if returnValue.Status ~= nil then
@@ -58,4 +65,5 @@ function CheckUnreadChat(game)
             end)
         end
     end
+    if UnreadMessages ~= {} then game.CreateDialog(TestDialog) end
 end
