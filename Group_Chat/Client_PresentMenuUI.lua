@@ -232,15 +232,6 @@ function RefreshMainDialog(close)
     MainDialog = ClientGame.CreateDialog(Client_PresentMenuUI)
 end
 
-function ChatGroupSelected()
-    local groups = {}
-    for i, v in pairs(PlayerGameData.ChatGroupMember) do
-        groups[i] = PlayerGameData.ChatGroupMember[i]
-    end
-    local options = map(groups, ChatGroupSelectedButton)
-    UI.PromptFromList("Select a chat group", options)
-end
-
 function ChatGroupSelectedButton(group)
     local name = group.GroupName
     local ret = {
@@ -368,19 +359,6 @@ function DestroyOldUIelements(Container)
             table.remove(Container, count)
         end
     end
-end
-
-function TargetGroupClicked()
-    print("TargetGroupClicked")
-
-    local groups = {}
-    for i, _ in pairs(PlayerGameData.ChatGroupMember) do
-        print(i)
-        groups[i] = PlayerGameData.ChatGroupMember[i]
-    end
-    local options = map(groups, GroupButton)
-    UI.PromptFromList("Select the group you'd like to add this player too",
-                      options)
 end
 
 function CheckGameEnded(game)
