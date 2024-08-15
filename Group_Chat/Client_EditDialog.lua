@@ -4,6 +4,8 @@ local ClientGame;
 local TargetGroupID;
 local TargetPlayerID
 
+local GroupColorButton;
+local TargetPlayerBtn;
 -- todo UI name and var as local here
 
 function CreateGroupEditDialog(rootParent, setMaxSize, setScrollable, game,
@@ -24,7 +26,7 @@ function CreateGroupEditDialog(rootParent, setMaxSize, setScrollable, game,
                           .SetOnClick(TargetPlayerClicked)
 
     local row11 = UI.CreateHorizontalLayoutGroup(vert)
-    GroupTextNameLabel = UI.CreateLabel(row11).SetText("Group name: ")
+    UI.CreateLabel(row11).SetText("Group name: ")
     GroupTextName = UI.CreateTextInputField(row11).SetCharacterLimit(25)
                         .SetPlaceholderText("Max 25 characters")
                         .SetPreferredWidth(200).SetFlexibleWidth(1)
