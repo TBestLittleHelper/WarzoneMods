@@ -320,7 +320,6 @@ function UpdateMainDialogUI()
         ChatMessageText.SetInteractable(true)
     end
 
-    -- TODO use settings for num chat
     local startIndex = 1
     if (#CurrentGroup.ChatHistory > PlayerSettings.NumPastChat) then
         startIndex = #CurrentGroup.ChatHistory -
