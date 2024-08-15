@@ -1,6 +1,8 @@
 require("Utilities")
 
 local ClientGame;
+local TargetGroupID;
+local TargetPlayerID
 
 -- todo UI name and var as local here
 
@@ -141,7 +143,8 @@ function CreateGroupEditDialog(rootParent, setMaxSize, setScrollable, game,
             return
         end
 
-        if (Mod.PlayerGameData.Chat[TargetGroupID].OwnerID ~= ClientGame.Us.ID) then
+        if (Mod.PlayerGameData.ChatGroupMember[TargetGroupID].OwnerID ~=
+            ClientGame.Us.ID) then
             UI.Alert("You can only delete if you are the owner of a group")
             return
         end
@@ -153,8 +156,8 @@ function CreateGroupEditDialog(rootParent, setMaxSize, setScrollable, game,
 
         -- Ask for confirmation from the player
         UI.PromptFromList("Are you sure you want to delete " ..
-                              Mod.PlayerGameData.Chat[TargetGroupID].GroupName ..
-                              "?", {
+                              Mod.PlayerGameData.ChatGroupMember[TargetGroupID]
+                                  .Name .. "?", {
             DeleteGroupConfirmed(ClientGame, payload), DeleteGroupDeclined()
         })
     end)
