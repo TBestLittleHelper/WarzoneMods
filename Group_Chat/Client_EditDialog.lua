@@ -34,8 +34,8 @@ function CreateGroupEditDialog(rootParent, setMaxSize, setScrollable, game,
 
     local row2 = UI.CreateHorizontalLayoutGroup(vert)
     if (next(playerGameData.ChatGroupMember) ~= nil) then
-        ChatGroupBtn = UI.CreateButton(row2).SetText("Pick an existing group")
-                           .SetOnClick(ChatGroupClicked)
+        UI.CreateButton(row2).SetText("Pick an existing group").SetOnClick(
+            ChatGroupClicked)
     end
     -- Add a player to a group
     UI.CreateButton(row2).SetText("Add Player").SetColor("#00ff05").SetOnClick(
