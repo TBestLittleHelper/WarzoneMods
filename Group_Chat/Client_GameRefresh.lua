@@ -16,7 +16,7 @@ function Client_GameRefresh(game)
         CheckUnreadChat(game)
     end
 end
-function TestDialog(rootParent, setMaxSize, setScrollable, game, close)
+function UnreadChatDialog(rootParent, setMaxSize, setScrollable, game, close)
     print("testDialog")
     setMaxSize(410, 390) -- This dialog's size
 
@@ -31,7 +31,6 @@ function TestDialog(rootParent, setMaxSize, setScrollable, game, close)
         UI.CreateButton(horizontalLayout).SetText(group.SenderID)
         UI.CreateButton(horizontalLayout).SetText(group.Chat)
     end
-
 end
 
 -- Alert when new chat.
@@ -54,16 +53,19 @@ function CheckUnreadChat(game)
                 Chat = group.UnreadChat.Chat,
                 Name = group.Name
             }
-            -- todo Maybe improve markChatAsRead code
-            local payload = {Message = "ReadChat", GroupID = groupID}
-            game.SendGameCustomMessage("Marking chat as read...", payload,
-                                       function(returnValue)
-                if returnValue.Status ~= nil then
-                    UI.Alert(returnValue.Status)
-                    return
-                end
-            end)
         end
     end
-    if UnreadMessages ~= {} then game.CreateDialog(TestDialog) end
+    if UnreadMessages ~= {} then
+        -- todo Improve markChatAsRead code
+        SkipRefresh = true
+        local payload = {Message = "ReadChat"}
+        game.SendGameCustomMessage("Marking chat as read...", payload,
+                                   function(returnValue)
+            if returnValue.Status ~= nil then
+                UI.Alert(returnValue.Status)
+                return
+            end
+        end)
+        game.CreateDialog(UnreadChatDialog)
+    end
 end

@@ -9,7 +9,7 @@ function Server_GameCustomMessage(game, playerID, payload, setReturnTable)
 
     -- Sorted according to what is probably used most
     if (payload.Message == "ReadChat") then
-        ReadChat(payload, playerID, setReturnTable)
+        ReadChat(playerID, setReturnTable)
     elseif (payload.Message == "GetGroup") then
         GetGroupPrivateGameData(playerID, payload, setReturnTable)
     elseif (payload.Message == "SendChat") then
@@ -154,18 +154,11 @@ function DeliverChat(game, playerID, payload, setReturnTable)
     -- todo Make group unread chat?
 end
 
-function ReadChat(payload, playerID, setReturnTable)
-    -- Make sure we are a member of the group
-    if Mod.PrivateGameData.ChatGroups[payload.TargetGroupID] == nil then
-        setReturnTable({Status = "Group does not exsist"})
-        return
+function ReadChat(playerID, setReturnTable)
+    -- Marke all groups as read
+    for groupID, _ in ipairs(Mod.PrivateGameData.ChatGroups) do
+        MarkRead(groupID, playerID)
     end
-    if Mod.PrivateGameData.ChatGroups[payload.TargetGroupID].Members[playerID] ==
-        false then
-        setReturnTable({Status = "You are not a member of the group"})
-        return
-    end
-    MarkRead(payload.TargetGroupID, playerID)
 end
 
 function CheckDeleteGroup(game, playerID, payload, setReturnTable)
