@@ -2,12 +2,26 @@ require("Utilities")
 
 function Client_GameRefresh(game)
     -- Skip if we're not in the game or if the game is over.
+    game.CreateDialog(TestDialog)
     if (game.Us == nil or Mod.PublicGameData.GameFinalized) then return end
     if (skipRefresh == nil or skipRefresh == true) then return end
 
     if (Mod.PlayerGameData.Settings.AlertUnreadChat) then
         CheckUnreadChat(game)
     end
+end
+function TestDialog(rootParent, setMaxSize, setScrollable, game, close)
+    print("testDialog")
+    setMaxSize(410, 390) -- This dialog's size
+
+    local vert = UI.CreateVerticalLayoutGroup(rootParent)
+    UI.CreateLabel(vert).SetText("Last chat messages")
+
+    local horizontalLayout = UI.CreateHorizontalLayoutGroup(vert)
+
+    UI.CreateButton(horizontalLayout).SetText("System : Mod Info")
+    UI.CreateButton(horizontalLayout).SetText("Mod Info")
+    UI.CreateButton(horizontalLayout).SetText("A really long message")
 end
 
 -- Alert when new chat.
@@ -24,26 +38,24 @@ function CheckUnreadChat(game)
         local group = PlayerGameData.ChatGroupMember[groupID]
         -- Always alert in SP, for testing
         if (group.UnreadChat ~= nil) then
-            if (Alerts) then
-                -- Last message from group
-                local lastChat = group.UnreadChat.Chat
-                local SenderID = group.UnreadChat.SenderID
+            -- Last message from group
+            local lastChat = group.UnreadChat.Chat
+            local SenderID = group.UnreadChat.SenderID
 
-                UI.Alert(lastChat .. SenderID)
+            UI.Alert(lastChat .. SenderID)
 
-                -- todo Maybe improve markChatAsRead code
-                local payload = {}
-                payload.Mod = "Chat"
-                payload.Message = "ReadChat"
-                payload.GroupID = groupID
-                game.SendGameCustomMessage("Marking chat as read...", payload,
-                                           function(returnValue)
-                    if returnValue.Status ~= nil then
-                        UI.Alert(returnValue.Status)
-                        return
-                    end
-                end)
-            end
+            -- todo Maybe improve markChatAsRead code
+            local payload = {}
+            payload.Mod = "Chat"
+            payload.Message = "ReadChat"
+            payload.GroupID = groupID
+            game.SendGameCustomMessage("Marking chat as read...", payload,
+                                       function(returnValue)
+                if returnValue.Status ~= nil then
+                    UI.Alert(returnValue.Status)
+                    return
+                end
+            end)
         end
     end
 end
