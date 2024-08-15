@@ -232,19 +232,6 @@ function RefreshMainDialog(close)
     MainDialog = ClientGame.CreateDialog(Client_PresentMenuUI)
 end
 
-function ChatGroupSelectedButton(group)
-    local name = group.GroupName
-    local ret = {
-        text = group.GroupName,
-        selected = function()
-            ChatGroupSelectedText.SetText(name).SetColor(group.Color)
-            ChatGroupSelectedID = group.GroupID
-            RefreshGroup()
-        end
-    }
-    return ret
-end
-
 function SendChat()
     local payload = {}
     payload.Message = "SendChat"
@@ -318,7 +305,6 @@ function UpdateMainDialogUI()
     end
 
     for i = startIndex, #CurrentGroup.ChatHistory do
-        print(" current i ", i)
         local horz = UI.CreateHorizontalLayoutGroup(horzMain)
 
         -- Chat Sender

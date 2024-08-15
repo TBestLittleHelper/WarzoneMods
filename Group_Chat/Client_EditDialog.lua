@@ -163,17 +163,6 @@ function CreateGroupEditDialog(rootParent, setMaxSize, setScrollable, game,
     end)
 end
 
-function GroupButton(group)
-    local ret = {
-        text = group.GroupName,
-        selected = function()
-            GroupTextName.SetText(name).SetInteractable(false)
-            TargetGroupID = group.Owner
-        end
-    }
-    return ret
-end
-
 function ChatGroupButton(group)
     Dump(group)
     local name = group.Name
