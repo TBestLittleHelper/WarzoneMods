@@ -233,15 +233,15 @@ function TargetPlayerClicked()
 end
 
 function PlayerButton(player)
-    local name = player.DisplayName(nil, false)
-
-    local ret = {}
-    ret["text"] = name
-    ret["selected"] = function()
-        TargetPlayerBtn.SetText(name).SetColor(player.Color.HtmlColor)
-        TargetPlayerID = player.ID
-    end
-    return ret
+    local displayName = player.DisplayName(nil, false)
+    return {
+        text = displayName,
+        selected = function()
+            TargetPlayerBtn.SetText(displayName)
+                .SetColor(player.Color.HtmlColor)
+            TargetPlayerID = player.ID
+        end
+    }
 end
 
 -- Determins if the player is one we can interact with.
