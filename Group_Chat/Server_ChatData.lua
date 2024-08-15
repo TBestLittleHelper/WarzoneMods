@@ -26,7 +26,7 @@ function MarkRead(groupID, playerID)
     -- AI's do not have PlayerGameData.
     if (game.ServerGame.Game.Players[playerID].IsAI) then return end
 
-    -- Add to playerGameData for UI use
+    -- Update playerGameData for UI use
     local playerGameData = Mod.PlayerGameData
     playerGameData[playerID].ChatGroupMember[groupID].UnreadChat = nil
     Mod.PlayerGameData = playerGameData
