@@ -6,6 +6,8 @@ local TargetPlayerID
 
 local GroupColorButton;
 local TargetPlayerBtn;
+local GroupTextName;
+local LeaveGroupButton;
 -- todo UI name and var as local here
 
 function CreateGroupEditDialog(rootParent, setMaxSize, setScrollable, game,
