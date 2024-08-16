@@ -1,5 +1,5 @@
 function Alert(message, game)
-    if (message == nil) then return end
+    if (message == nil) then return false end
     local function AlertDialog(rootParent, setMaxSize, setScrollable, game,
                                close)
         setMaxSize(210, 150) -- This dialog's size
@@ -7,5 +7,6 @@ function Alert(message, game)
         UI.CreateLabel(vert).SetText(message)
     end
     game.CreateDialog(AlertDialog)
+    return true
 end
 

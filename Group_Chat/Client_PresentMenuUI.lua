@@ -192,10 +192,7 @@ function SaveSettingsGoMainDialog(AlertUnreadChat, NumPastChat, MenuSizeX,
     }
     ClientGame.SendGameCustomMessage("Saving settings...", payload,
                                      function(returnValue)
-        if returnValue.Status ~= nil then
-            UI.Alert(returnValue.Status)
-            return
-        end
+        if (Alert(returnValue.Status, game)) then return end
         local function SetSettings(settings)
             print("SetSettings")
             Dump(settings)
@@ -233,13 +230,10 @@ function SendChat()
     payload.Chat = ChatMessageText.GetText()
     ClientGame.SendGameCustomMessage("Sending chat...", payload,
                                      function(returnValue)
-        if returnValue.Status ~= nil then
-            UI.Alert(returnValue.Status)
-            return
-        end
+        if (Alert(returnValue.Status, game)) then return end
+        ChatMessageText.SetText("")
+        RefreshGroup()
     end)
-    ChatMessageText.SetText("")
-    RefreshGroup()
 end
 
 function RefreshGroup()
@@ -253,10 +247,7 @@ function GetGroupPrivateGameData()
     local payload = {Message = "GetGroup", GroupID = CurrentGroupID}
     ClientGame.SendGameCustomMessage("Getting group from the server...",
                                      payload, function(returnValue)
-        if returnValue.Status ~= nil then
-            UI.Alert(returnValue.Status)
-            return
-        end
+        if (Alert(returnValue.Status, game)) then return end
         CurrentGroup = returnValue.Group
         UpdateMainDialogUI()
     end)
