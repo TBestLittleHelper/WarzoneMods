@@ -100,9 +100,16 @@ function Toint(n)
 end
 
 function RandomColor()
-    -- List given by Fizzer of all supported colors. 74 diffrent colors
-    local PossibleColors = {
-        "00A0FF", "00B5FF", "F3FFAE", "43C731", "43C631", "1274A4", "1274A5",
+    local colors = PossibleColors()
+
+    local randomColor = colors[math.random(#colors)]
+    return "#" .. randomColor
+end
+
+function PossibleColors()
+    -- List of colors can be found here : https://www.warzone.com/wiki/Mod_API_Reference:UI
+    return {
+    "00A0FF", "00B5FF", "F3FFAE", "43C731", "43C631", "1274A4", "1274A5",
         "B03B3B", "0021FF", "359029", "00E9FF", "00FF21", "FFF700", "AA3A3A",
         "43C732", "00D4FF", "B03C3C", "00F4FF", "00BFFF", "4EC4FF", "FFFF00",
         "615DDF", "100C08", "943E3E", "0000ff", "4effff", "59009d", "008000",
@@ -115,7 +122,4 @@ function RandomColor()
         "36454F", "FF00FF", "76FF7A", "100C08", "BABABC", "6C73D1", "FF00ED",
         "FFC200"
     }
-
-    local color = PossibleColors[math.random(#PossibleColors)]
-    return "#" .. color
 end
