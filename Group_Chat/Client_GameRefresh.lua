@@ -35,9 +35,13 @@ function UnreadChatDialog(rootParent, setMaxSize, setScrollable, game, close)
     local horizontalLayout = UI.CreateHorizontalLayoutGroup(vert)
 
     for _, group in pairs(UnreadMessages) do
-        UI.CreateButton(horizontalLayout).SetText(group.Name)
-        UI.CreateButton(horizontalLayout).SetText(group.SenderID)
-        UI.CreateButton(horizontalLayout).SetText(group.Chat)
+        Dump(group)
+        UI.CreateButton(horizontalLayout).SetText(group.Name).SetColor(
+            group.Color)
+        UI.CreateButton(horizontalLayout).SetText(
+            game.Game.Players[group.SenderID].DisplayName(nil, false)).SetColor(
+            game.Game.Players[group.SenderID].Color.HtmlColor)
+        UI.CreateLabel(horizontalLayout).SetText(group.Chat)
     end
 end
 
@@ -52,7 +56,8 @@ function CheckUnreadChat(game)
             unreadMessages[groupID] = {
                 SenderID = group.UnreadChat.SenderID,
                 Chat = group.UnreadChat.Chat,
-                Name = group.Name
+                Name = group.Name,
+                Color = group.Color
             }
         end
     end
