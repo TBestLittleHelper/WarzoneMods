@@ -83,7 +83,6 @@ function AddPlayerIDToGroup(groupID, playerID, game)
     playerGameData[playerID].ChatGroupMember[groupID] = {
         Name = privateGameDate.ChatGroups[groupID].Name,
         Color = privateGameDate.ChatGroups[groupID].Color,
-        UnreadChat = false,
         OwnerID = privateGameDate.ChatGroups[groupID].OwnerID
     }
 
