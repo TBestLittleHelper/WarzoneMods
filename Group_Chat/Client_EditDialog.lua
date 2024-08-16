@@ -1,4 +1,5 @@
 require("Utilities")
+require("Client_ColorDialog")
 
 local ClientGame;
 local TargetGroupID;
@@ -206,6 +207,7 @@ end
 function GroupColorClicked()
     -- todo? Make a dialog to pick colors
     GroupColorButton.SetColor(RandomColor())
+    ClientGame.CreateDialog(ColorPickerDialog)
 end
 
 function DeleteGroupConfirmed(ClientGame, payload)
