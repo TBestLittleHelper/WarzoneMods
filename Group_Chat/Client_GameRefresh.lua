@@ -17,7 +17,6 @@ function Client_GameRefresh(game)
     end
 end
 function UnreadChatDialog(rootParent, setMaxSize, setScrollable, game, close)
-    print("testDialog")
     setMaxSize(410, 390) -- This dialog's size
 
     local vert = UI.CreateVerticalLayoutGroup(rootParent)
@@ -35,27 +34,19 @@ end
 
 -- Alert when new chat.
 function CheckUnreadChat(game)
-    print("Checking unread chat")
     local PlayerGameData = Mod.PlayerGameData
-
-    UnreadMessages = {}
+    local unreadMessages;
 
     for groupID, group in pairs(PlayerGameData.ChatGroupMember) do
-        --   Dump(groupID)
-        print(groupID, "groupID")
-        Dump(group)
-        print("CheckUnreadChat ", groupID)
-
-        --        local group = PlayerGameData.ChatGroupMember[groupID]
         if (group.UnreadChat ~= nil) then
-            UnreadMessages[groupID] = {
+            unreadMessages[groupID] = {
                 SenderID = group.UnreadChat.SenderID,
                 Chat = group.UnreadChat.Chat,
                 Name = group.Name
             }
         end
     end
-    if UnreadMessages ~= {} then
+    if unreadMessages ~= nil then
         -- todo Improve markChatAsRead code
         SkipRefresh = true
         local payload = {Message = "ReadChat"}
@@ -66,6 +57,7 @@ function CheckUnreadChat(game)
                 return
             end
         end)
+        UnreadMessages = unreadMessages
         game.CreateDialog(UnreadChatDialog)
     end
 end
