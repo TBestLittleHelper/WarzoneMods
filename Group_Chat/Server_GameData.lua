@@ -19,16 +19,23 @@ function GameDataSetup(game)
 
     for _, player in pairs(game.ServerGame.Game.Players) do
         AddPlayerIDToGroup(groupID, player.ID, game)
+    end
+
+    -- Use AddSystemMessage instead, to not mark it as unread for players
+    local function AddSystemMessage(groupID, senderID, chat)
+        local privateGameDate = Mod.PrivateGameData
+        table.insert(privateGameDate.ChatGroups[groupID].ChatHistory,
+                     {SenderID = senderID, Chat = chat})
+        Mod.PrivateGameData = privateGameDate
 
     end
 
-    AddMessage(groupID, -1,
-               "When a game ends, all chat messages will be deleted.", game)
-    AddMessage(groupID, -1,
-               "Note that messages to the server is rate-limited. Therefore, do not spam chat or group changes: it won't work!",
-               game)
-    AddMessage(groupID, -1, "Please report any bugs and feedback to TBest.",
-               game)
+    AddSystemMessage(groupID, -1,
+                     "When a game ends, all chat messages will be deleted.")
+    AddSystemMessage(groupID, -1,
+                     "Note that messages to the server is rate-limited. Therefore, do not spam chat or group changes: it won't work!")
+    AddSystemMessage(groupID, -1,
+                     "Please report any bugs and feedback to TBest.")
 
 end
 
