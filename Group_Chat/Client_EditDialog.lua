@@ -46,12 +46,12 @@ function CreateGroupEditDialog(rootParent, setMaxSize, setScrollable, game,
     UI.CreateButton(row2).SetText("Add Player").SetColor("#00ff05").SetOnClick(
         function()
             if (TargetPlayerID == nil) then
-                UI.Alert("Please choose a player first")
+                UI.Alert("Please select a player")
                 return
             end
             if (GroupTextName.GetText() == nil or
                 string.len(GroupTextName.GetText()) < 3) then
-                UI.Alert("Please choose a group name with at least 3 characters")
+                UI.Alert("Please choose a group name with at least 3 characters") -- todo I don't like this wording
                 return
             end
 
