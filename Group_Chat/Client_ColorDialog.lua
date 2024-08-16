@@ -1,8 +1,21 @@
 function ColorPickerDialog(rootParent, setMaxSize, setScrollable, game, close)
-    setMaxSize(410, 390) -- This dialog's size
+    setMaxSize(410, 390)
 
     local colors = PossibleColors()
+    local buttonsPerRow = 3
 
     local vert = UI.CreateVerticalLayoutGroup(rootParent)
-    for _, color in ipairs(colors) do UI.CreateLabel(vert).SetText(color) end
+    local horizontalLayout;
+
+    for i, color in ipairs(colors) do
+        if (i - 1) % buttonsPerRow == 0 then
+            horizontalLayout = UI.CreateHorizontalLayoutGroup(vert)
+        end
+
+        UI.CreateButton(horizontalLayout).SetText(color).SetColor("#" .. color)
+            .SetPreferredWidth(100).SetOnClick(function()
+            GroupColorButton.SetColor("#" .. color)
+            close()
+        end)
+    end
 end

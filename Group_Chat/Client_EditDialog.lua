@@ -5,7 +5,7 @@ local ClientGame;
 local TargetGroupID;
 local TargetPlayerID
 
-local GroupColorButton;
+-- local GroupColorButton;
 local TargetPlayerBtn;
 local GroupTextName;
 local LeaveGroupButton;
@@ -177,7 +177,10 @@ function ChatGroupButton(group)
         GroupTextName.SetText(name).SetInteractable(false)
         -- Set color to match the current group, and don't allow changing it
         GroupColorButton.SetColor(group.Color)
-        GroupColorButton.SetOnClick(function() end)
+        GroupColorButton.SetOnClick(function()
+            UI.Alert(
+                "It's not possible to change the color of an existing group")
+        end)
         TargetGroupID = group.GroupID
 
         -- Check if we are owner or member
@@ -204,11 +207,7 @@ function ChatGroupClicked()
     UI.PromptFromList("Select a chat group", options)
 end
 
-function GroupColorClicked()
-    -- todo? Make a dialog to pick colors
-    GroupColorButton.SetColor(RandomColor())
-    ClientGame.CreateDialog(ColorPickerDialog)
-end
+function GroupColorClicked() ClientGame.CreateDialog(ColorPickerDialog) end
 
 function DeleteGroupConfirmed(ClientGame, payload)
     local ret = {}
