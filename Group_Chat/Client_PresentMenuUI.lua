@@ -1,9 +1,6 @@
 require("Utilities")
 require("Client_EditDialog")
 
-SkipRefresh = false;
-
-
 local ClientGame;
 local PlayerGameData;
 
@@ -44,8 +41,6 @@ function Client_PresentMenuUI(rootParent, setMaxSize, setScrollable, game, close
     ClientGame = game
     PlayerGameData = Mod.PlayerGameData
 
-    SkipRefresh = false -- This is set to true if we go to Edit or Settings Dialog
-
     print("Client_PresentMenuUI")
     PlayerSettings = GetSettings();
     Dump(PlayerSettings)
@@ -73,7 +68,6 @@ function Client_PresentMenuUI(rootParent, setMaxSize, setScrollable, game, close
         if (ChatMsgContainerArray ~= {}) then
             DestroyOldUIelements(ChatMsgContainerArray)
         end
-        SkipRefresh = true
         print("CreateGroupEditDialog")
         ClientGame.CreateDialog(CreateGroupEditDialog)
         close() -- Close this dialog.
@@ -122,7 +116,6 @@ function Client_PresentMenuUI(rootParent, setMaxSize, setScrollable, game, close
         if (ChatMsgContainerArray ~= {}) then
             DestroyOldUIelements(ChatMsgContainerArray)
         end
-        SkipRefresh = true
         ClientGame.CreateDialog(SettingsDialog)
         close() -- Close this dialog.
     end)
@@ -230,7 +223,6 @@ function RefreshMainDialog(close)
     end
 
     print("Open ClientDialog")
-    SkipRefresh = false
     MainDialog = ClientGame.CreateDialog(Client_PresentMenuUI)
 end
 
@@ -251,10 +243,6 @@ function SendChat()
 end
 
 function RefreshGroup()
-    if (SkipRefresh) then
-        print("skipRefresh chat")
-        return
-    end
     if (CurrentGroupID == nil) then
         print("RefreshChat skipped, no CurrentGroupID")
         return

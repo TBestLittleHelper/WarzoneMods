@@ -2,10 +2,8 @@ require("Utilities")
 
 local UnreadMessages;
 function Client_GameRefresh(game)
-    print(skipRefresh, "skipRefresh")
     -- Skip if we're not in the game or if the game is over.
     if (game.Us == nil or Mod.PublicGameData.GameFinalized) then return end
-    if (SkipRefresh) then return end -- skipRefresh might be nill
 
     if Mod.PlayerGameData.Settings and
         Mod.PlayerGameData.Settings.AlertUnreadChat ~= nil then
@@ -35,10 +33,13 @@ end
 -- Alert when new chat.
 function CheckUnreadChat(game)
     local PlayerGameData = Mod.PlayerGameData
-    local unreadMessages;
+    local unreadMessages = {};
 
     for groupID, group in pairs(PlayerGameData.ChatGroupMember) do
+        print(group.UnreadChat)
+        print("-----------")
         if (group.UnreadChat ~= nil) then
+            Dump(group.UnreadChat)
             unreadMessages[groupID] = {
                 SenderID = group.UnreadChat.SenderID,
                 Chat = group.UnreadChat.Chat,
@@ -46,9 +47,8 @@ function CheckUnreadChat(game)
             }
         end
     end
-    if unreadMessages ~= nil then
+    if next(unreadMessages) ~= nil then
         -- todo Improve markChatAsRead code
-        SkipRefresh = true
         local payload = {Message = "ReadChat"}
         game.SendGameCustomMessage("Marking chat as read...", payload,
                                    function(returnValue)
