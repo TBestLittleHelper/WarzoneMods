@@ -103,23 +103,24 @@ function RandomColor()
     local colors = PossibleColors()
 
     local randomColor = colors[math.random(#colors)]
-    return "#" .. randomColor
+    return randomColor
 end
 
 function PossibleColors()
     -- List of colors can be found here : https://www.warzone.com/wiki/Mod_API_Reference:UI
     return {
-    "00A0FF", "00B5FF", "F3FFAE", "43C731", "43C631", "1274A4", "1274A5",
-        "B03B3B", "0021FF", "359029", "00E9FF", "00FF21", "FFF700", "AA3A3A",
-        "43C732", "00D4FF", "B03C3C", "00F4FF", "00BFFF", "4EC4FF", "FFFF00",
-        "615DDF", "100C08", "943E3E", "0000ff", "4effff", "59009d", "008000",
-        "ff7d00", "ff0000", "606060", "00ff05", "ff697a", "94652e", "00ff8c",
-        "ff4700", "009b9d", "23a0ff", "ac0059", "ff87ff", "ffff00", "943e3e",
-        "feff9b", "ad7e7e", "b70aff", "ffaf56", "ff00b1", "8ebe57", "DAA520",
-        "990024", "00FFFF", "8F9779", "880085", "00755E", "FFE5B4", "4169E1",
-        "FF43A4", "8DB600", "40826D", "C04000", "FFDDF4", "CD7F32", "C19A6B",
-        "C09999", "B0BF1A", "3B7A57", "4B5320", "664C28", "893F45", "D2691E",
-        "36454F", "FF00FF", "76FF7A", "100C08", "BABABC", "6C73D1", "FF00ED",
-        "FFC200"
+        "#00A0FF", "#00B5FF", "#F3FFAE", "#43C731", "#43C631", "#1274A4",
+        "#1274A5", "#B03B3B", "#0021FF", "#359029", "#00E9FF", "#00FF21",
+        "#FFF700", "#AA3A3A", "#43C732", "#00D4FF", "#B03C3C", "#00F4FF",
+        "#00BFFF", "#4EC4FF", "#FFFF00", "#615DDF", "#100C08", "#943E3E",
+        "#0000FF", "#4EFFFF", "#59009D", "#008000", "#FF7D00", "#FF0000",
+        "#606060", "#00FF05", "#FF697A", "#94652E", "#00FF8C", "#FF4700",
+        "#009B9D", "#23A0FF", "#AC0059", "#FF87FF", "#FFFF00", "#943E3E",
+        "#FEFF9B", "#AD7E7E", "#B70AFF", "#FFAF56", "#FF00B1", "#8EBE57",
+        "#DAA520", "#990024", "#00FFFF", "#8F9779", "#880085", "#00755E",
+        "#FFE5B4", "#4169E1", "#FF43A4", "#8DB600", "#40826D", "#C04000",
+        "#FFDDF4", "#CD7F32", "#C19A6B", "#C09999", "#B0BF1A", "#3B7A57",
+        "#4B5320", "#664C28", "#893F45", "#D2691E", "#36454F", "#FF00FF",
+        "#76FF7A", "#100C08", "#BABABC", "#6C73D1", "#FF00ED", "#FFC200"
     }
 end

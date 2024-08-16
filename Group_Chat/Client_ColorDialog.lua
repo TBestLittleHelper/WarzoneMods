@@ -12,14 +12,14 @@ function ColorPickerDialog(rootParent, setMaxSize, setScrollable, game, close)
             horizontalLayout = UI.CreateHorizontalLayoutGroup(vert)
         end
 
-        UI.CreateButton(horizontalLayout).SetText(color).SetColor("#" .. color)
+        UI.CreateButton(horizontalLayout).SetText(color).SetColor(color)
             .SetPreferredWidth(100).SetOnClick(function()
             -- May be nill, if the parant dialog was closed
             if (GroupColorButton == nil) then
                 close()
                 return
             end
-            GroupColorButton.SetColor("#" .. color)
+            GroupColorButton.SetColor(color)
             close()
         end)
     end
