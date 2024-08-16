@@ -119,7 +119,7 @@ function AddToGroup(game, playerID, payload, setReturnTable)
 
     -- If group does not exsist, create group
     if Mod.PrivateGameData.ChatGroups[targetGroupID] == nil then
-        CreateGroup(targetGroupID, TargetGroupName, playerID, RandomColor())
+        CreateGroup(targetGroupID, TargetGroupName, playerID, payload.Color)
         -- Add the owner as a member of the group
         AddPlayerIDToGroup(targetGroupID, playerID, game)
 
