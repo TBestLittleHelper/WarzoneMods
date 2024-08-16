@@ -31,8 +31,8 @@ function UnreadChatDialog(rootParent, setMaxSize, setScrollable, game, close)
     setMaxSize(410, 390) -- This dialog's size
 
     local vert = UI.CreateVerticalLayoutGroup(rootParent)
-    UI.CreateLabel(vert).SetText("Last chat messages")
-
+    UI.CreateLabel(vert).SetText(
+        "Only one message from each group is shown! You can turn off unread alerts by going : Game -> Better Chat -> Settings")
     local horizontalLayout = UI.CreateHorizontalLayoutGroup(vert)
 
     for _, group in pairs(UnreadMessages) do
