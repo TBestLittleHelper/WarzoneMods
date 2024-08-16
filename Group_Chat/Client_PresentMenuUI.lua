@@ -1,5 +1,6 @@
 require("Utilities")
 require("Client_EditDialog")
+require("Client_AlertDialog")
 
 local ClientGame;
 local PlayerGameData;
