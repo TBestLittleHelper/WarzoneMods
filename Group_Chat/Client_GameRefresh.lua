@@ -1,9 +1,21 @@
 require("Utilities")
 
 local UnreadMessages;
+local LastRefresh;
 function Client_GameRefresh(game)
     -- Skip if we're not in the game or if the game is over.
     if (game.Us == nil or Mod.PublicGameData.GameFinalized) then return end
+
+    -- If we recently refreshed, don't do it again!
+    if (LastRefresh == nil) then
+        LastRefresh = WL.TickCount()
+        -- 6000 is 10 seconds
+    elseif (LastRefresh + 6000 > WL.TickCount()) then
+        print("Last refesh was too recent!")
+        print(WL.TickCount() - LastRefresh)
+        return
+    end
+    LastRefresh = WL.TickCount()
 
     if Mod.PlayerGameData.Settings and
         Mod.PlayerGameData.Settings.AlertUnreadChat ~= nil then
@@ -22,8 +34,7 @@ function UnreadChatDialog(rootParent, setMaxSize, setScrollable, game, close)
 
     local horizontalLayout = UI.CreateHorizontalLayoutGroup(vert)
 
-    for _, group in ipairs(UnreadMessages) do
-        print("here ----- ")
+    for _, group in pairs(UnreadMessages) do
         UI.CreateButton(horizontalLayout).SetText(group.Name)
         UI.CreateButton(horizontalLayout).SetText(group.SenderID)
         UI.CreateButton(horizontalLayout).SetText(group.Chat)
@@ -36,9 +47,7 @@ function CheckUnreadChat(game)
     local unreadMessages = {};
 
     for groupID, group in pairs(PlayerGameData.ChatGroupMember) do
-        print(group.UnreadChat)
-        print("-----------")
-        if (group.UnreadChat ~= nil) then
+        if (group.UnreadChat) then
             Dump(group.UnreadChat)
             unreadMessages[groupID] = {
                 SenderID = group.UnreadChat.SenderID,
@@ -47,12 +56,12 @@ function CheckUnreadChat(game)
             }
         end
     end
-    if next(unreadMessages) ~= nil then
+    if next(unreadMessages) then
         -- todo Improve markChatAsRead code
         local payload = {Message = "ReadChat"}
         game.SendGameCustomMessage("Marking chat as read...", payload,
                                    function(returnValue)
-            if returnValue.Status ~= nil then
+            if returnValue.Status then
                 UI.Alert(returnValue.Status)
                 return
             end
