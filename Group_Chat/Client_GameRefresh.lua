@@ -1,4 +1,5 @@
 require("Utilities")
+require("Client_AlertDialog")
 
 local UnreadMessages;
 local LastRefresh;
@@ -64,13 +65,8 @@ function CheckUnreadChat(game)
     if next(unreadMessages) then
         -- todo Improve markChatAsRead code
         local payload = {Message = "ReadChat"}
-        game.SendGameCustomMessage("Marking chat as read...", payload,
-                                   function(returnValue)
-            if returnValue.Status then
-                UI.Alert(returnValue.Status)
-                return
-            end
-        end)
+        game.SendGameCustomMessage("Marking chat as read...", payload, function(
+            returnValue) Alert(returnValue.Status, game) end)
         UnreadMessages = unreadMessages
         game.CreateDialog(UnreadChatDialog)
     end
