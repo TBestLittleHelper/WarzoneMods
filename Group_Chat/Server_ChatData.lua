@@ -11,6 +11,8 @@ function AddMessage(groupID, senderID, chat, game)
     end
 end
 function MarkUnread(groupID, senderID, playerID, chat, game)
+    -- If the senderID and playerID are the same, we don't need the notification
+    if (senderID == playerID) then return end
     -- AI's do not have PlayerGameData nor UI
     if (game.ServerGame.Game.Players[playerID].IsAI) then return end
 
