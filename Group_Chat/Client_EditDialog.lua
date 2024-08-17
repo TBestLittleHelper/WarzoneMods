@@ -1,12 +1,13 @@
 require("Utilities")
 require("Client_ColorDialog")
+require("Client_PlayerDialog")
 
 local ClientGame;
 local TargetGroupID;
 local TargetPlayerID
 
 -- local GroupColorButton;
-local TargetPlayerBtn;
+local SelectedPlayerButton;
 local GroupTextName;
 local LeaveGroupButton;
 local DeleteGroupButton;
@@ -24,9 +25,9 @@ function CreateGroupEditDialog(rootParent, setMaxSize, setScrollable, game,
     local vert = UI.CreateVerticalLayoutGroup(rootParent)
     local row1 = UI.CreateHorizontalLayoutGroup(vert)
     UI.CreateLabel(row1).SetText("Player: ")
-    TargetPlayerBtn = UI.CreateButton(row1).SetText("Select player...")
-                          .SetColor(RandomColor())
-                          .SetOnClick(TargetPlayerClicked)
+    SelectedPlayerButton = UI.CreateButton(row1).SetText("Select player...")
+                               .SetColor(RandomColor())
+                               .SetOnClick(SelectePlayerClicked)
 
     local row11 = UI.CreateHorizontalLayoutGroup(vert)
     UI.CreateLabel(row11).SetText("Group name: ")
@@ -68,8 +69,8 @@ function CreateGroupEditDialog(rootParent, setMaxSize, setScrollable, game,
 
             ClientGame.SendGameCustomMessage("Adding group member...", payload,
                                              function(returnValue)
-                TargetPlayerBtn.SetText("Select player...")
-                    .SetColor(RandomColor())
+                SelectedPlayerButton.SetText("Select player...").SetColor(
+                    RandomColor())
                 TargetPlayerID = nil -- Reset
                 GroupTextName.SetInteractable(false) -- We store the GroupID, so don't let the user change the name
             end)
@@ -102,7 +103,8 @@ function CreateGroupEditDialog(rootParent, setMaxSize, setScrollable, game,
 
         ClientGame.SendGameCustomMessage("Removing group member...", payload,
                                          function(returnValue)
-            TargetPlayerBtn.SetText("Select player...").SetColor(RandomColor())
+            SelectedPlayerButton.SetText("Select player...").SetColor(
+                RandomColor())
             TargetPlayerID = nil -- Reset
         end)
     end)
@@ -230,32 +232,22 @@ function DeleteGroupDeclined()
     return ret
 end
 
-function TargetPlayerClicked()
-    local options = Map(Filter(ClientGame.Game.Players, IsPotentialTarget),
-                        PlayerButton)
-    UI.PromptFromList(
-        "Select the player you'd like to add or remove from a group", options)
-end
+function SelectePlayerClicked() ClientGame.CreateDialog(PlayerPickerDialog) end
+
+-- local options = Map(Filter(ClientGame.Game.Players, IsPotentialTarget),
+--                    PlayerButton)
+-- UI.PromptFromList(
+--    "Select the player you'd like to add or remove from a group", options)
+-- end
 
 function PlayerButton(player)
     local displayName = player.DisplayName(nil, false)
     return {
         text = displayName,
         selected = function()
-            TargetPlayerBtn.SetText(displayName)
-                .SetColor(player.Color.HtmlColor)
+            SelectedPlayerButton.SetText(displayName).SetColor(player.Color
+                                                                   .HtmlColor)
             TargetPlayerID = player.ID
         end
     }
-end
-
--- Determins if the player is one we can interact with.
-function IsPotentialTarget(player)
-    if (ClientGame.Us.ID == player.ID) then return false end -- we can never add ourselves.
-
-    if (player.State ~= WL.GamePlayerState.Playing) then return false end -- skip players not alive anymore, or that declined the game.
-
-    if (ClientGame.Settings.SinglePlayer) then return true end -- in single player, allow proposing with everyone
-
-    return not player.IsAI -- In multi-player, never allow adding an AI.
 end
