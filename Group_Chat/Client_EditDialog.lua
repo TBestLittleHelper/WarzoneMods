@@ -4,10 +4,10 @@ require("Client_PlayerDialog")
 
 local ClientGame;
 local TargetGroupID;
-local TargetPlayerID
+-- local TargetPlayerID
 
 -- local GroupColorButton;
-local SelectedPlayerButton;
+-- local SelectedPlayerButton;
 local GroupTextName;
 local LeaveGroupButton;
 local DeleteGroupButton;
@@ -233,21 +233,3 @@ function DeleteGroupDeclined()
 end
 
 function SelectePlayerClicked() ClientGame.CreateDialog(PlayerPickerDialog) end
-
--- local options = Map(Filter(ClientGame.Game.Players, IsPotentialTarget),
---                    PlayerButton)
--- UI.PromptFromList(
---    "Select the player you'd like to add or remove from a group", options)
--- end
-
-function PlayerButton(player)
-    local displayName = player.DisplayName(nil, false)
-    return {
-        text = displayName,
-        selected = function()
-            SelectedPlayerButton.SetText(displayName).SetColor(player.Color
-                                                                   .HtmlColor)
-            TargetPlayerID = player.ID
-        end
-    }
-end
