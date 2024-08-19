@@ -19,10 +19,11 @@ function PlayerPickerDialog(rootParent, setMaxSize, setScrollable, game, close)
         end
 
         local color = ClientGame.Game.Players[player.ID].Color.HtmlColor
+        local displayName = ClientGame.Game.Players[player.ID].DisplayName(nil,
+                                                                           false)
 
-        UI.CreateButton(horizontalLayout).SetText(
-            ClientGame.Game.Players[player.ID].DisplayName(nil, false))
-            .SetColor(color).SetPreferredWidth(100).SetOnClick(function()
+        UI.CreateButton(horizontalLayout).SetText(displayName).SetColor(color)
+            .SetPreferredWidth(100).SetOnClick(function()
             print(player.ID)
 
             -- Migth be nil, if parant dialog is closed
