@@ -1,3 +1,4 @@
+---@cast WL WL
 ---@alias CurrentCombo integer  -- Current combo count
 ---@alias BestCombo integer -- Best combo this round
 ---@type table<PlayerID, {current: CurrentCombo, best: BestCombo}>  -- A table where keys are integers and values are PlayerID
@@ -43,8 +44,7 @@ function Server_AdvanceTurn_End(game, addNewOrder)
     ---@param comboScore CurrentCombo
     for playerID, comboScore in pairs(combo) do
         local comboIncomeMod = WL.IncomeMod.Create(playerID, comboScore.best,
-        msg)
-        ---@cast WL WL
+                                                   msg)
         addNewOrder(WL.GameOrderEvent.Create(playerID, msg, nil, {}, nil,
                                              {comboIncomeMod}))
     end
