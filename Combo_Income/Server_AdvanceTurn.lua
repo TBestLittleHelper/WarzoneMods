@@ -1,3 +1,4 @@
+---@diagnostic disable-next-line: unknown-cast-variable
 ---@cast WL WL
 ---@alias CurrentCombo integer  -- Current combo count
 ---@alias BestCombo integer -- Best combo this round
