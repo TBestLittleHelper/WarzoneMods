@@ -17,8 +17,8 @@ end
 ---@param addNewOrder fun(order: GameOrder) # Adds a game order, will be processed before any of the rest of the orders
 function Server_AdvanceTurn_Order(game, order, orderResult, skipThisOrder,
                                   addNewOrder)
-
     if order.proxyType == "GameOrderAttackTransfer" then
+        ---@cast orderResult GameOrderAttackTransferResult
         if orderResult.IsSuccessful then
             combo[order.PlayerID] = combo[order.PlayerID] + 1
         end
