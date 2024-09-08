@@ -40,12 +40,12 @@ end
 ---@param game GameServerHook
 ---@param addNewOrder fun(order: GameOrder) # Adds a game order, will be processed before any of the rest of the orders
 function Server_AdvanceTurn_End(game, addNewOrder)
-    local msg = "Additional income from combo score"
 
     ---@param playerID PlayerID
     ---@param comboScore CurrentCombo
     for playerID, comboScore in pairs(combo) do
         if comboScore.best < 2 then return end
+        local msg = "Bonus income from a combo of : " .. comboScore.best
 
         local bonusIncome = BonusIncome(comboScore.best)
         local comboIncomeMod = WL.IncomeMod.Create(playerID, bonusIncome, msg)
