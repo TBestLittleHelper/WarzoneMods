@@ -1,1 +1,6 @@
-Succsesful attacks in a row gives extra income. 
+Succsesful attacks in a row (a combo) gives extra income. The best combo a player gets each turn gives income as such :
+Combo -> Income
+10+ -> 10
+5-10 -> 5
+3-5 -> 1
+0-3 -> 0
