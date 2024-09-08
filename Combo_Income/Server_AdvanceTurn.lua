@@ -23,6 +23,7 @@ function Server_AdvanceTurn_Order(game, order, orderResult, skipThisOrder,
                                   addNewOrder)
     if order.proxyType == "GameOrderAttackTransfer" then
         ---@cast orderResult GameOrderAttackTransferResult
+        if not orderResult.IsAttack then return end
         if orderResult.IsSuccessful then
             combo[order.PlayerID].current = combo[order.PlayerID].current + 1
             if combo[order.PlayerID].current > combo[order.PlayerID].best then
@@ -43,6 +44,8 @@ function Server_AdvanceTurn_End(game, addNewOrder)
     ---@param playerID PlayerID
     ---@param comboScore CurrentCombo
     for playerID, comboScore in pairs(combo) do
+        if comboScore.best == 0 then return end
+
         local comboIncomeMod = WL.IncomeMod.Create(playerID, comboScore.best,
                                                    msg)
         addNewOrder(WL.GameOrderEvent.Create(playerID, msg, nil, {}, nil,
