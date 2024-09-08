@@ -14,7 +14,7 @@ function Server_AdvanceTurn_Start(game, addNewOrder)
     end
 end
 
----Server_AdvanceTurn_Order
+---Server_AdvanceTurn_Order hook
 ---@param game GameServerHook
 ---@param order GameOrder
 ---@param orderResult GameOrderResult
@@ -47,9 +47,18 @@ function Server_AdvanceTurn_End(game, addNewOrder)
     for playerID, comboScore in pairs(combo) do
         if comboScore.best < 2 then return end
 
-        local comboIncomeMod = WL.IncomeMod.Create(playerID, math.floor(
-                                                       comboScore.best / 2), msg)
+        local bonusIncome = BonusIncome(comboScore.best)
+        local comboIncomeMod = WL.IncomeMod.Create(playerID, bonusIncome, msg)
         addNewOrder(WL.GameOrderEvent.Create(playerID, msg, nil, {}, nil,
                                              {comboIncomeMod}))
     end
+end
+
+---Calculate a bonus from a score
+---@param bestCombo BestCombo
+---@return integer # Bonus Income
+function BonusIncome(bestCombo)
+    if bestCombo > 9 then return 10 end
+    if bestCombo > 4 then return 5 end
+    return 1
 end
