@@ -35,6 +35,7 @@ function Server_AdvanceTurn_End(game, addNewOrder)
     ---@param comboScore ComboCounter
     for playerID, comboScore in pairs(combo) do
         local comboIncomeMod = WL.IncomeMod.Create(playerID, comboScore, msg)
+        ---@cast WL WL
         addNewOrder(WL.GameOrderEvent.Create(playerID, msg, nil, {}, nil,
                                              {comboIncomeMod}))
     end
