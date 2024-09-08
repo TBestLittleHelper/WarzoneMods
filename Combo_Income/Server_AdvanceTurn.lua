@@ -44,11 +44,9 @@ function Server_AdvanceTurn_End(game, addNewOrder)
     ---@param playerID PlayerID
     ---@param comboScore CurrentCombo
     for playerID, comboScore in pairs(combo) do
-        if comboScore.best < 2 then return end
         local bonusIncome = BonusIncome(comboScore.best)
-
         local msg = "Income of " .. bonusIncome .. " from a combo of " ..
-        comboScore.best
+                        comboScore.best
 
         local comboIncomeMod = WL.IncomeMod.Create(playerID, bonusIncome, msg)
         addNewOrder(WL.GameOrderEvent.Create(playerID, msg, nil, {}, nil,
@@ -62,5 +60,6 @@ end
 function BonusIncome(bestCombo)
     if bestCombo > 9 then return 10 end
     if bestCombo > 4 then return 5 end
-    return 1
+    if bestCombo > 2 then return 1 end
+    return 0
 end
