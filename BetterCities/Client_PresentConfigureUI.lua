@@ -27,5 +27,7 @@ function Client_PresentConfigureUI(rootParent)
     addCheckbox("Deploy orders outside a city is skipped",
                 "Deploy orders outside a city is skipped",
                 "deployOrdersOutsideCitySkipped")
+    addCheckbox("Remove fog from cities",
+                "Cities is always visible to everyone", "unfogCities")
 
 end
