@@ -1,0 +1,1 @@
+Changes of cities works by giving them walls, extra army deploy and more. Also reduces city spam, each city is not more important!
