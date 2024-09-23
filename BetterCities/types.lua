@@ -1,8 +1,3 @@
----@alias settingsName string
-
----@class settingValue
----@field box CheckBox | nil # UI CheckBox. Can use isChecked
----@field number NumberInputField | nil # Numeric value of setting
-
----@class settingsTable
----@field [settingsName] settingValue
+---@alias settingsName string -- Name of the setting
+---@alias boxInput CheckBox  -- UI CheckBox
+---@alias numberInput NumberInputField -- UI NumberInput

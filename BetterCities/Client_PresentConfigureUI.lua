@@ -1,17 +1,18 @@
+---@type table<settingsName, {box: boxInput, number: numberInput}>  -- A table where keys are integers and values are PlayerID
+---@diagnostic disable-next-line: undefined-global
+SettingsTable = {}
+
 ---Client_PresentConfigureUI hook
 ---@param rootParent RootParent
 function Client_PresentConfigureUI(rootParent)
-
-    ---@type settingsTable
-    local settingsTable;
 
     ---@param boxText string
     ---@param labelText string
     ---@param settingsName settingsName
     local function addCheckbox(boxText, labelText, settingsName)
         local box = UI.CreateCheckBox(rootParent).SetText(boxText)
-        local label = UI.CreateLabel(rootParent).SetText(labelText)
-        table.insert(settingsTable, {settingsName = box})
+        UI.CreateLabel(rootParent).SetText(labelText)
+        SettingsTable[settingsName] = {box = box}
     end
 
     addCheckbox("City Walls", "City Walls", "cityWalls")
