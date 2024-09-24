@@ -26,7 +26,8 @@ function Client_PresentConfigureUI(rootParent)
         end
     end
 
-    addInput({isBox = false, max = 10, initial = 2}, "City Walls", "cityWalls")
+    addInput({isBox = false, max = 100, initial = 20}, "City Walls % bonus",
+             "cityWalls")
     addInput({isBox = true}, "Natural city growth", "naturalCityGrowth")
     addInput({isBox = true, max = 10, initial = 2}, "Max size of a city",
              "maxCitySize")
@@ -38,4 +39,9 @@ function Client_PresentConfigureUI(rootParent)
              "deployOrdersOutsideCitySkipped")
     addInput({isBox = true}, "Cities are always visible to everyone",
              "unfogCities")
+
+    UI.CreateLabel(rootParent).SetText(
+        "IMPORTANT: When using this mod it's strongely recomended that you make the price to build cities extremely exspensiv, to the point where players can't build cities using gold. Or just turn of the option under army settings.")
+    UI.CreateLabel(rootParent).SetText(
+        "City Walls gives a defensive bonus to a territory with a city on it. The bonus stacks, for example if 1 city gives 50% extra defence. Then 2 cities gives 100%. Bomb card can reduce the number of cities on a territory by 2. A city of any size will protect the armies in that city from the bomb card!")
 end
