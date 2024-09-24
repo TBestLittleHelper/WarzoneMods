@@ -1,14 +1,22 @@
 ---@alias settingsName string -- Name of the setting
----@alias boxInput CheckBox  -- UI CheckBox
 ---@alias numberInput NumberInputField -- UI NumberInput
-
----@class UiElementWithBox
+---@
+---@class AddCheckbox
 ---@field isBox boolean  -- When true, the element is a box.
-
----@class UiElementWithoutBox
+---@
+---@class AddNumberInput
 ---@field isBox boolean  -- When false, the element is not a box.
 ---@field max number     -- Maximum value, only if isBox is false.
 ---@field initial number -- Initial value, only if isBox is false.
-
----@alias configureUiElement UiElementWithBox | UiElementWithoutBox
--- todo enum for settings names
+---@
+---@alias addUiInput AddCheckbox | AddNumberInput
+---@
+---@alias ModSettingsNames
+---| '"cityWalls"' # The size of city Walls
+---| '"naturalCityGrowth"' # Boolean if the city can grow
+---| '"maxCitySize"' # Boolean for enforcing max city size
+---| '"bombCardDamagesCities"' # Boolean if bomb card damages a city
+---| '"wastelandNeutralCities"' # Boolean for neutral territories having cities
+---| '"extraArmiesInCity"' # Boolean for getting extra armies when deploying in a city
+---| '"deployOrdersOutsideCitySkipped"' # Boolean for only allowing deploys on a city
+---| '"unfogCities"' # Boolean for making cities visible to everyone
