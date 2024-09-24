@@ -1,6 +1,6 @@
 ---@diagnostic disable-next-line: unknown-cast-variable
 ---@cast UI UI
----@type table<settingsName, {box: CheckBox, number: numberInput}>  -- A table where keys are integers and values are PlayerID
+---@type table<settingsName, {box: CheckBox, number: numberInput, max: integer}>  -- A table where keys are integers and values are PlayerID
 ---@diagnostic disable-next-line: undefined-global
 SettingsTable = {} -- It is only accesible in Client_SaveCOnfigureUI
 
@@ -21,7 +21,7 @@ function Client_PresentConfigureUI(rootParent)
         else
             local number = UI.CreateNumberInputField(horizontalGroup)
             number.SetSliderMaxValue(uiConfig.max).SetValue(uiConfig.initial)
-            SettingsTable[settingsName] = {number = number}
+            SettingsTable[settingsName] = {number = number, max = uiConfig.max}
             UI.CreateLabel(horizontalGroup).SetText(labelText)
         end
     end
