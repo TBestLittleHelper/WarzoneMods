@@ -2,7 +2,7 @@ require("ModSettings")
 ---@diagnostic disable-next-line: unknown-cast-variable
 ---@cast UI UI
 
----@type table<ModSettingsNames, {box: CheckBox, number: numberInput, max: integer}>  -- A table where keys are integers and values are PlayerID
+---@type table<ModSettingsNames, {box: CheckBox} | {number: numberInput, max: integer}>  -- A table where keys are ModSettingsNames and values are either a checkbox or number with a max
 ---@diagnostic disable-next-line: undefined-global
 SettingsTable = {} -- It is only accesible in Client_SaveConfigureUI
 
