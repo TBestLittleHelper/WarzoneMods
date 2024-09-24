@@ -12,13 +12,15 @@
 ---@
 ---@alias addUiInput AddCheckbox | AddNumberInput
 ---@
----@alias ModSettingsNames
----| '"cityWalls"' # The size of city Walls
----| '"naturalCityGrowth"' # Boolean if the city can grow
----| '"maxCitySize"' # Boolean for enforcing max city size
----| '"bombCardDamagesCities"' # Boolean if bomb card damages a city
----| '"wastelandNeutralCities"' # Boolean for neutral territories having cities
----| '"extraArmiesInCity"' # Boolean for getting extra armies when deploying in a city
----| '"deployOrdersOutsideCitySkipped"' # Boolean for only allowing deploys on a city
----| '"unfogCities"' # Boolean for making cities visible to everyone
----
+---@class ModSettings # Extend the Mod type with custom settings fields. Use like this @cast Mod ModServerHook | ModSettings
+---@field Settings ModSettingsNames
+---@
+---@class ModSettingsNames
+---@field CityWalls integer  # The size of city Walls
+---@field NaturalCityGrowth boolean # If the city can grow
+---@field MaxCitySize boolean # Enforcing max city size
+---@field BombCardDamagesCities boolean  # If bomb card damages a city
+---@field WastelandNeutralCities boolean # Neutral territories starting with cities
+---@field ExtraArmiesInCity boolean  # Get extra armies when deploying in a city
+---@field DeployOrdersOutsideCitySkipped boolean # Only allow deploys in a city
+---@field UnfogCities boolean # Make cities visible to everyone
