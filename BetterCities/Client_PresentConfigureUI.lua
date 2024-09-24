@@ -1,44 +1,31 @@
+require("ModSettings")
 ---@diagnostic disable-next-line: unknown-cast-variable
 ---@cast UI UI
+
 ---@type table<settingsName, {box: CheckBox, number: numberInput, max: integer}>  -- A table where keys are integers and values are PlayerID
 ---@diagnostic disable-next-line: undefined-global
-SettingsTable = {} -- It is only accesible in Client_SaveCOnfigureUI
+SettingsTable = {} -- It is only accesible in Client_SaveConfigureUI
 
 ---Client_PresentConfigureUI hook
 ---@param rootParent RootParent
 function Client_PresentConfigureUI(rootParent)
 
-    ---@param uiConfig addUiInput
-    ---@param labelText string
-    ---@param settingsName ModSettingsNames
-    local function addInput(uiConfig, labelText, settingsName)
+    local ModSettings = PresentConfigureModSettings()
+
+    for modname, config in pairs(ModSettings) do
         local horizontalGroup = UI.CreateHorizontalLayoutGroup(rootParent);
 
-        if (uiConfig.isBox) then
+        if (config.isBox) then
             local box = UI.CreateCheckBox(horizontalGroup)
-            box.SetText(labelText)
-            SettingsTable[settingsName] = {box = box}
+            box.SetText(config.text)
+            SettingsTable[modname] = {box = box}
         else
             local number = UI.CreateNumberInputField(horizontalGroup)
-            number.SetSliderMaxValue(uiConfig.max).SetValue(uiConfig.initial)
-            SettingsTable[settingsName] = {number = number, max = uiConfig.max}
-            UI.CreateLabel(horizontalGroup).SetText(labelText)
+            number.SetSliderMaxValue(config.max).SetValue(config.initial)
+            SettingsTable[modname] = {number = number, max = config.max}
+            UI.CreateLabel(horizontalGroup).SetText(config.text)
         end
     end
-
-    addInput({isBox = false, max = 100, initial = 20}, "City Walls % bonus",
-             "cityWalls")
-    addInput({isBox = true}, "Natural city growth", "naturalCityGrowth")
-    addInput({isBox = true, max = 10, initial = 2}, "Max size of a city",
-             "maxCitySize")
-    addInput({isBox = true}, "Bomb card damages cities", "bombCardDamagesCities")
-    addInput({isBox = true}, "Wastland neutral cities", "wastelandNeutralCities")
-    addInput({isBox = true}, "Extra armies when deploying in a city",
-             "extraArmiesInCity")
-    addInput({isBox = true}, "Deploy orders outside a city is skipped",
-             "deployOrdersOutsideCitySkipped")
-    addInput({isBox = true}, "Cities are always visible to everyone",
-             "unfogCities")
 
     UI.CreateLabel(rootParent).SetText(
         "IMPORTANT: When using this mod it's strongely recomended that you make the price to build cities extremely exspensiv, to the point where players can't build cities using gold. Or just turn of the option under army settings.")
