@@ -20,3 +20,4 @@
 ---| '"extraArmiesInCity"' # Boolean for getting extra armies when deploying in a city
 ---| '"deployOrdersOutsideCitySkipped"' # Boolean for only allowing deploys on a city
 ---| '"unfogCities"' # Boolean for making cities visible to everyone
+---
