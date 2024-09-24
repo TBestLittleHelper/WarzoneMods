@@ -1,3 +1,4 @@
 ---@alias settingsName string -- Name of the setting
 ---@alias boxInput CheckBox  -- UI CheckBox
 ---@alias numberInput NumberInputField -- UI NumberInput
+-- todo enum for settings names
