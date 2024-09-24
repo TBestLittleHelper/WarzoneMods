@@ -3,36 +3,36 @@
 function PresentConfigureModSettings()
     ---@type SettingsTable
     local settings = {
-        cityWalls = {
+        CityWalls = {
             isBox = false,
             max = 100,
             initial = 20,
             text = "City Walls % bonus"
         },
-        naturalCityGrowth = {isBox = true, text = "Natural city growth"},
-        maxCitySize = {
+        NaturalCityGrowth = {isBox = true, text = "Natural city growth"},
+        MaxCitySize = {
             isBox = true,
             max = 10,
             initial = 2,
             text = "Max size of a city"
         },
-        bombCardDamagesCities = {
+        BombCardDamagesCities = {
             isBox = true,
             text = "Bomb card damages cities"
         },
-        wastelandNeutralCities = {
+        WastelandNeutralCities = {
             isBox = true,
             text = "Wasteland neutral cities"
         },
-        extraArmiesInCity = {
+        ExtraArmiesInCity = {
             isBox = true,
             text = "Extra armies when deploying in a city"
         },
-        deployOrdersOutsideCitySkipped = {
+        DeployOrdersOutsideCitySkipped = {
             isBox = true,
             text = "Deploy orders outside a city is skipped"
         },
-        unfogCities = {
+        UnfogCities = {
             isBox = true,
             text = "Cities are always visible to everyone"
         }
