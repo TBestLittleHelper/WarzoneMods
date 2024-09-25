@@ -5,16 +5,21 @@ local Settings = {
         max = 100,
         initial = 20,
         text = "City Walls % bonus",
-        longtext = "City Walls gives a defensive bonus to a territory with a city on it. The bonus stacks, for example if 1 city gives 50% extra defence. Then 2 cities gives 100%. Bomb card can reduce the number of cities on a territory by 2. A city of any size will protect the armies in that city from the bomb card!"
+        longtext = "City Walls gives a defensive bonus to a territory with a city on it. The bonus stacks, for example if 1 city gives 50% extra defence. Then 2 cities gives 100%."
     },
     NaturalCityGrowth = {isBox = true, text = "Natural city growth"},
     MaxCitySize = {
         isBox = true,
         max = 10,
         initial = 2,
-        text = "Max size of a city"
+        text = "Max size of a city",
+        longtext = "Recomended. Prevents stacking cities for better gameplay"
     },
-    BombCardDamagesCities = {isBox = true, text = "Bomb card damages cities"},
+    BombCardDamagesCities = {
+        isBox = true,
+        text = "Bomb card damages cities",
+        longtext = "Bomb card can reduce the number of cities on a territory by 2. A city of any size will protect the armies in that city from the bomb card!"
+    },
     WastelandNeutralCities = {isBox = true, text = "Wasteland neutral cities"},
     ExtraArmiesInCity = {
         isBox = true,
