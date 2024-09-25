@@ -76,10 +76,27 @@ function Server_AdvanceTurn_Order(game, order, orderResult, skipThisOrder,
 
     else
         if (order.proxyType == "GameOrderDeploy") then
-            if (Mod.Settings.DeployOrdersOutsideCitySkipped) then -- todo
-                return
+            ---@cast order GameOrderDeploy
+            ---@cast orderResult GameOrderDeployResult
+            local terrStructures = game.ServerGame.LatestTurnStanding
+                                       .Territories[order.DeployOn].Structures;
+
+            if (Mod.Settings.DeployOrdersOutsideCitySkipped) then
+                if (terrStructures == nil) then
+                    skipThisOrder(WL.ModOrderControl
+                                      .SkipAndSupressSkippedMessage)
+                    return
+                else
+                    if (terrStructures[WL.StructureType.City] == 0 or
+                        terrStructures[WL.StructureType.City] == nil) then
+                        skipThisOrder(WL.ModOrderControl
+                                          .SkipAndSupressSkippedMessage)
+                        return
+                    end
+                end
             end
             if (Mod.Settings.ExtraArmiesInCity) then
+
                 -- todo
             end
         end
