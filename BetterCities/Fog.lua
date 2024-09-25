@@ -20,7 +20,7 @@ end
 
 function CreateFogUnit()
     ---@type CustomSpecialUnitBuilder
-    local builder = WL.CustomSpecialUnitBuilder.Create(1);
+    local builder = WL.CustomSpecialUnitBuilder.Create(WL.PlayerID.Neutral);
     builder.Name = "";
     builder.IncludeABeforeName = false;
     builder.ImageFilename = 'empty.png';
