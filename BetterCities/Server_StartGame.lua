@@ -31,7 +31,7 @@ function Server_StartGame(game, standing)
                                                   territory.NumArmies.NumArmies,
                                                   unitArray)
                     end
-                    table.insert(PrivateGameData.Cities, territory.ID)
+                    PrivateGameData.Cities[territory.ID] = true
                 end
             end
         end
