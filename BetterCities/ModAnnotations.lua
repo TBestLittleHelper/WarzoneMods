@@ -24,3 +24,4 @@
 ---@field ExtraArmiesInCity boolean  # Get extra armies when deploying in a city
 ---@field DeployOrdersOutsideCitySkipped boolean # Only allow deploys in a city
 ---@field UnfogCities boolean # Make cities visible to everyone
+---@field SettleCity boolean # Settle a new city ( dig site -> minde - > city )

@@ -35,6 +35,10 @@ function PresentConfigureModSettings()
         UnfogCities = {
             isBox = true,
             text = "Cities are always visible to everyone"
+        },
+        SettleCity = {
+            isBox = true,
+            text = "Players can settle a city from the mod menu."
         }
     }
     return settings
