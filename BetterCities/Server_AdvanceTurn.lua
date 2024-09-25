@@ -60,7 +60,7 @@ function Server_AdvanceTurn_Order(game, order, orderResult, skipThisOrder,
             orderResult.AttackingArmiesKilled = NewAttackingArmiesKilled
             local msg = "The city has " .. tostring(defBonus * 100) ..
                             "% fortification bonus"
-
+            print("***************")
             addNewOrder(WL.GameOrderEvent.Create(game.ServerGame
                                                      .LatestTurnStanding
                                                      .Territories[order.To]
@@ -77,6 +77,7 @@ end
 function Server_AdvanceTurn_End(game, addNewOrder)
 
     if (Mod.Settings.UnfogCities) then
+        local orders = {}
         for _, territoryID in pairs(Mod.PrivateGameData.Cities) do
             local unfogUnitFound = false
             for _, unit in ipairs(
@@ -86,26 +87,24 @@ function Server_AdvanceTurn_End(game, addNewOrder)
                     ---@cast unit CustomSpecialUnit
                     if (unit.ModID == 758) then
                         unfogUnitFound = true
-                        print("unfogUnitFound found ", territoryID, " turn ",
-                              game.Game.NumberOfLogicalTurns)
                         break
                     end
                 end
             end
-            if (unfogUnitFound) then return end
-
-            print("unfogUnit missing ", territoryID)
-
-            -- Create a new unit, as the old one is missing
-            -- For example after combat
-            local unit = CreateFogUnit()
-            local addUnit = WL.TerritoryModification.Create(territoryID)
-            addUnit.AddSpecialUnits = {unit}
-            local orders = {addUnit}
-            addNewOrder(WL.GameOrderEvent.Create(WL.PlayerID.Neutral,
-                                                 "News report from the city!",
-                                                 {}, orders))
-
+            if (unfogUnitFound == false) then
+                -- Create a new unit, as the old one is missing
+                -- For example after combat
+                local unit = CreateFogUnit()
+                local addUnit = WL.TerritoryModification.Create(territoryID)
+                addUnit.AddSpecialUnits = {unit}
+                table.insert(orders, addUnit)
+            end
         end
+        local next = next -- This is faster, then using global next
+        if (next(orders) == nil) then return end
+        -- todo if orders is not empty
+        addNewOrder(WL.GameOrderEvent.Create(WL.PlayerID.Neutral,
+                                             "News report from all the cities!",
+                                             {}, orders))
     end
 end
