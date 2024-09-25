@@ -8,7 +8,7 @@
 ---@field max number     -- Maximum value, only if isBox is false.
 ---@field initial number -- Initial value, only if isBox is false.
 ---@
----@alias SettingsTable table<ModSettingsNames, {isBox:boolean, max?:number,initial?:number , text:string}>  -- Config for all Mod settings
+---@alias SettingsTable table<ModSettingsNames, {isBox:boolean, max?:number,initial?:number , text:string, longtext:string}>  -- Config for all Mod settings
 ---@
 ---@alias addUiInput AddCheckbox | AddNumberInput
 ---@
