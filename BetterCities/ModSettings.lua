@@ -1,5 +1,5 @@
 ---@diagnostic disable-next-line: unknown-cast-variable
----@cast Mod Mod
+---@cast Mod Mod  | ModSettings
 function PresentConfigureModSettings()
     ---@type SettingsTable
     local settings = {
