@@ -101,7 +101,7 @@ function Server_AdvanceTurn_Order(game, order, orderResult, skipThisOrder,
                 local extraArmies = order.NumArmies
                 ---@type TerritoryModification
                 local terrMod = WL.TerritoryModification.Create(order.DeployOn)
-                terrMod.AddStructuresOpt = {[WL.StructureType.City] = 1}
+                terrMod.AddStructuresOpt = {[WL.StructureType.City] = -1}
                 terrMod.AddArmies = order.NumArmies
                 local orders = {terrMod}
 
