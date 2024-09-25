@@ -78,26 +78,39 @@ function Server_AdvanceTurn_Order(game, order, orderResult, skipThisOrder,
         if (order.proxyType == "GameOrderDeploy") then
             ---@cast order GameOrderDeploy
             ---@cast orderResult GameOrderDeployResult
+            ---@type table<EnumStructureType, integer>
             local terrStructures = game.ServerGame.LatestTurnStanding
                                        .Territories[order.DeployOn].Structures;
 
+            local citiesOnTerritory = 0
+            if (terrStructures ~= nil) then
+                if (terrStructures[WL.StructureType.City] ~= nil) then
+                    citiesOnTerritory = terrStructures[WL.StructureType.City]
+                end
+            end
+
             if (Mod.Settings.DeployOrdersOutsideCitySkipped) then
-                if (terrStructures == nil) then
+                if (citiesOnTerritory == 0) then
                     skipThisOrder(WL.ModOrderControl
                                       .SkipAndSupressSkippedMessage)
                     return
-                else
-                    if (terrStructures[WL.StructureType.City] == 0 or
-                        terrStructures[WL.StructureType.City] == nil) then
-                        skipThisOrder(WL.ModOrderControl
-                                          .SkipAndSupressSkippedMessage)
-                        return
-                    end
                 end
             end
+            if (citiesOnTerritory == 0) then return end
             if (Mod.Settings.ExtraArmiesInCity) then
+                local extraArmies = order.NumArmies
+                ---@type TerritoryModification
+                local terrMod = WL.TerritoryModification.Create(order.DeployOn)
+                terrMod.AddStructuresOpt = {[WL.StructureType.City] = 1}
+                terrMod.AddArmies = order.NumArmies
+                local orders = {terrMod}
 
-                -- todo
+                local msg = "Deployed an extra " .. order.NumArmies .. " in " ..
+                                game.Map.Territories[order.DeployOn].Name ..
+                                " using local city resources."
+                addNewOrder(WL.GameOrderEvent.Create(order.PlayerID, msg, {},
+                                                     orders))
+
             end
         end
     end
