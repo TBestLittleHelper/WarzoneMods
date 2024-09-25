@@ -16,7 +16,7 @@ function Client_PresentConfigureUI(rootParent)
     for modname, config in pairs(ModSettings) do
         local horizontalGroup = UI.CreateHorizontalLayoutGroup(rootParent);
         UI.CreateButton(horizontalGroup).SetText("?").SetColor(blue).SetOnClick(
-            function() UI.Alert("TODO!") end)
+            function() UI.Alert(config.longtext) end)
 
         if (config.isBox) then
             local box = UI.CreateCheckBox(horizontalGroup)
