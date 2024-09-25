@@ -7,7 +7,8 @@ function PresentConfigureModSettings()
             isBox = false,
             max = 100,
             initial = 20,
-            text = "City Walls % bonus"
+            text = "City Walls % bonus",
+            longtext = "City Walls gives a defensive bonus to a territory with a city on it. The bonus stacks, for example if 1 city gives 50% extra defence. Then 2 cities gives 100%. Bomb card can reduce the number of cities on a territory by 2. A city of any size will protect the armies in that city from the bomb card!"
         },
         NaturalCityGrowth = {isBox = true, text = "Natural city growth"},
         MaxCitySize = {
