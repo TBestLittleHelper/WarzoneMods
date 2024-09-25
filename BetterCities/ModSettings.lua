@@ -35,7 +35,8 @@ function PresentConfigureModSettings()
         },
         UnfogCities = {
             isBox = true,
-            text = "Cities are always visible to everyone"
+            text = "Cities are always visible to everyone",
+            longtext = "This uses special units that's visible. One Army Must Stand Guard must be OFF for this to work!"
         },
         SettleCity = {
             isBox = true,
