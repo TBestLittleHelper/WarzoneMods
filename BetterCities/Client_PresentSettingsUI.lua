@@ -7,10 +7,9 @@ require("ModSettings")
 ---Client_PresentSettingsUI hook
 ---@param rootParent RootParent
 function Client_PresentSettingsUI(rootParent)
-    local settings = GetAllModSettings()
+    local settings = PresentSettingsModSettings()
     for modname, config in pairs(settings) do
         local horizontalGroup = UI.CreateHorizontalLayoutGroup(rootParent);
-
         if (type(config) == "boolean") then
             UI.CreateCheckBox(horizontalGroup).SetIsChecked(config)
                 .SetInteractable(false).SetText(modname)
