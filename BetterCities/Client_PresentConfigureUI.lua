@@ -12,22 +12,26 @@ function Client_PresentConfigureUI(rootParent)
 
     local ModSettings = PresentConfigureModSettings()
     local blue = "#0000FF"
+    local vert = UI.CreateVerticalLayoutGroup(rootParent)
 
     for modname, config in pairs(ModSettings) do
-        local horizontalGroup = UI.CreateHorizontalLayoutGroup(rootParent);
-        UI.CreateButton(horizontalGroup).SetText("?").SetColor(blue).SetOnClick(
-            function() UI.Alert(config.longtext) end)
+        local horizontalGroup = UI.CreateHorizontalLayoutGroup(vert);
+        UI.CreateButton(horizontalGroup).SetFlexibleWidth(0.1).SetText("?")
+            .SetColor(blue).SetOnClick(function()
+            UI.Alert(config.longtext)
+        end)
 
         if (config.isBox) then
-            local box = UI.CreateCheckBox(horizontalGroup)
-            box.SetText(config.text)
+            local box = UI.CreateCheckBox(horizontalGroup).SetText(config.text)
             SettingsTable[modname] = {box = box}
         else
             local number = UI.CreateNumberInputField(horizontalGroup)
-            number.SetSliderMaxValue(config.max).SetValue(config.initial)
+                               .SetSliderMaxValue(config.max)
+                               .SetValue(config.initial)
             SettingsTable[modname] = {number = number, max = config.max}
             UI.CreateLabel(horizontalGroup).SetText(config.text)
         end
+
     end
 
     UI.CreateLabel(rootParent).SetText(
