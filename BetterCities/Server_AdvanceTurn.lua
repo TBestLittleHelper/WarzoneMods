@@ -22,6 +22,10 @@ function Server_AdvanceTurn_Order(game, order, orderResult, skipThisOrder,
     if (order.proxyType == "GameOrderAttackTransfer") then
         ---@cast orderResult GameOrderAttackTransferResult
         ---@cast order GameOrderAttackTransfer
+
+        if (orderResult.IsAttack == false) then return end
+        if (orderResult.ActualArmies == 0) then return end
+
         if (Mod.PrivateGameData.Cities[order.To]) then
             -- Don't trust the structures to exsist, or to be bigger then 0
             if (game.ServerGame.LatestTurnStanding.Territories[order.To]
@@ -30,8 +34,9 @@ function Server_AdvanceTurn_Order(game, order, orderResult, skipThisOrder,
                 .Structures[WL.StructureType.City] == nil) then
                 return
             end
+
             if (game.ServerGame.LatestTurnStanding.Territories[order.To]
-                .Structures[WL.StructureType.City] > 0) then return end
+                .Structures[WL.StructureType.City] < 1) then return end
 
             local defBonus =
                 game.ServerGame.LatestTurnStanding.Territories[order.To]
@@ -48,8 +53,8 @@ function Server_AdvanceTurn_Order(game, order, orderResult, skipThisOrder,
             elseif (orderResult.ActualArmies.NumArmies - attackersKilled < 0) then
                 local extraDmg = attackersKilled -
                                      orderResult.ActualArmies.NumArmies
-                orderResult.DamageToSpecialUnits =
-                    orderResult.DamageToSpecialUnits + extraDmg
+                print(extraDmg, " extraDmg")
+                -- todo We need to dmg special units : https://www.warzone.com/wiki/Mod_API_Reference:GameOrderAttackTransferResult
                 attackersKilled = orderResult.ActualArmies.NumArmies
             else
                 -- round up, always
@@ -59,14 +64,24 @@ function Server_AdvanceTurn_Order(game, order, orderResult, skipThisOrder,
             local NewAttackingArmiesKilled = WL.Armies.Create(attackersKilled)
             orderResult.AttackingArmiesKilled = NewAttackingArmiesKilled
             local msg = "The city has " .. tostring(defBonus * 100) ..
-                            "% fortification bonus"
-            print("***************")
+                            "% fortification bonus. This killed " ..
+                            attackersKilled .. " armies"
             addNewOrder(WL.GameOrderEvent.Create(game.ServerGame
                                                      .LatestTurnStanding
                                                      .Territories[order.To]
                                                      .OwnerPlayerID, msg,
                                                  {order.PlayerID}, nil))
 
+        end
+
+    else
+        if (order.proxyType == "GameOrderDeploy") then
+            if (Mod.Settings.DeployOrdersOutsideCitySkipped) then -- todo
+                return
+            end
+            if (Mod.Settings.ExtraArmiesInCity) then
+                -- todo
+            end
         end
     end
 end
@@ -78,7 +93,7 @@ function Server_AdvanceTurn_End(game, addNewOrder)
 
     if (Mod.Settings.UnfogCities) then
         local orders = {}
-        for _, territoryID in pairs(Mod.PrivateGameData.Cities) do
+        for territoryID, _ in pairs(Mod.PrivateGameData.Cities) do
             local unfogUnitFound = false
             for _, unit in ipairs(
                                game.ServerGame.LatestTurnStanding.Territories[territoryID]
@@ -107,4 +122,25 @@ function Server_AdvanceTurn_End(game, addNewOrder)
                                              "News report from all the cities!",
                                              {}, orders))
     end
+end
+
+function Dump(obj)
+    if obj.proxyType ~= nil then
+        DumpProxy(obj)
+    elseif type(obj) == "table" then
+        DumpTable(obj)
+    else
+        print("Dump " .. type(obj))
+    end
+end
+function DumpTable(tbl)
+    for k, v in pairs(tbl) do
+        print("k = " .. tostring(k) .. " (" .. type(k) .. ") " .. " v = " ..
+                  tostring(v) .. " (" .. type(v) .. ")")
+    end
+end
+function DumpProxy(obj)
+    print("type=" .. obj.proxyType .. " readOnly=" .. tostring(obj.readonly) ..
+              " readableKeys=" .. table.concat(obj.readableKeys, ",") ..
+              " writableKeys=" .. table.concat(obj.writableKeys, ","))
 end
