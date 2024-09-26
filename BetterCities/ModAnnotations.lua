@@ -1,0 +1,27 @@
+---@alias numberInput NumberInputField -- UI NumberInput
+---@
+---@class AddCheckbox
+---@field isBox boolean  -- When true, the element is a box.
+---@
+---@class AddNumberInput
+---@field isBox boolean  -- When false, the element is not a box.
+---@field max number     -- Maximum value, only if isBox is false.
+---@field initial number -- Initial value, only if isBox is false.
+---@
+---@alias SettingsTable table<ModSettingsNames, {isBox:boolean, max?:number,initial?:number , text:string, longtext:string}>  -- Config for all Mod settings
+---@
+---@alias addUiInput AddCheckbox | AddNumberInput
+---@
+---@class ModSettings # Extend the Mod type with custom settings fields. Use like this @cast Mod ModServerHook | ModSettings
+---@field Settings ModSettingsNames
+---@
+---@class ModSettingsNames
+---@field CityWalls integer  # The size of city Walls
+---@field NaturalCityGrowth boolean # If the city can grow
+---@field MaxCitySize boolean # Enforcing max city size
+---@field BombCardDamagesCities boolean  # If bomb card damages a city
+---@field WastelandNeutralCities boolean # Neutral territories starting with cities
+---@field ExtraArmiesInCity boolean  # Get extra armies when deploying in a city
+---@field DeployOrdersOutsideCitySkipped boolean # Only allow deploys in a city
+---@field UnfogCities boolean # Make cities visible to everyone
+---@field SettleCity boolean # Settle a new city ( dig site -> minde - > city )
