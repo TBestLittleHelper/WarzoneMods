@@ -8,16 +8,25 @@ require("ModSettings")
 ---@param rootParent RootParent
 function Client_PresentSettingsUI(rootParent)
     local settings = PresentSettingsModSettings()
-    for modname, config in pairs(settings) do
-        local horizontalGroup = UI.CreateHorizontalLayoutGroup(rootParent);
-        if (type(config) == "boolean") then
-            UI.CreateCheckBox(horizontalGroup).SetIsChecked(config)
-                .SetInteractable(false).SetText(modname)
+
+    local vert = UI.CreateVerticalLayoutGroup(rootParent)
+    local blue = "#0000FF"
+
+    for _, config in pairs(settings) do
+        local horizontalGroup = UI.CreateHorizontalLayoutGroup(vert);
+        UI.CreateButton(horizontalGroup).SetFlexibleWidth(0.1).SetText("?")
+            .SetColor(blue).SetOnClick(function()
+            UI.Alert(config.longtext)
+        end)
+
+        if (config.isBox) then
+            UI.CreateCheckBox(horizontalGroup).SetIsChecked(config.enabled)
+                .SetInteractable(false).SetText(config.text)
         else
-            UI.CreateLabel(horizontalGroup).SetText(modname)
-            UI.CreateNumberInputField(horizontalGroup).SetValue(config)
+            UI.CreateLabel(horizontalGroup).SetText(config.text)
+            UI.CreateNumberInputField(horizontalGroup).SetValue(config.value).SetSliderMinValue(0)
+                .SetSliderMaxValue(config.max)
                 .SetInteractable(false)
         end
     end
-
 end

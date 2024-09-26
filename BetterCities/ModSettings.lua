@@ -31,7 +31,7 @@ local Settings = {
     DeployOrdersOutsideCitySkipped = {
         isBox = true,
         text = "Deploy orders outside a city is skipped",
-        longtext="I don't know what text to put here."
+        longtext = "I don't know what text to put here."
     },
     UnfogCities = {
         isBox = true,
@@ -40,7 +40,8 @@ local Settings = {
     },
     SettleCity = {
         isBox = true,
-        text = "Players can settle a city from the mod menu."
+        text = "Players can settle a city from the mod menu.",
+        longtext = "Maybe for a big hit to income? Like all the income for the next turn"
     }
 }
 
@@ -48,18 +49,18 @@ local Settings = {
 ---@cast Mod Mod  | ModSettings
 function PresentConfigureModSettings() return Settings end
 
+---Returns data the UI can use to show settings in game settings
+---@return table<ModSettingsNames, { isBox: boolean, max: number, initial: number, text: string, longtext: string , enabled?:boolean, value?:integer}>
 function PresentSettingsModSettings()
-    local presentSetting = Mod.Settings
+    local presentSetting = Settings
 
-    ---Lookup the long text
-    ---@param settingsName ModSettingsNames
-    ---@return string
-    local function getLongText(settingsName)
-        return Settings[settingsName].longtext
+    for setting, defultConfig in pairs(presentSetting) do
+        if (defultConfig.isBox) then
+            presentSetting[setting].enabled = Mod.Settings[setting]
+        else
+            presentSetting[setting].value = Mod.Settings[setting]
+        end
     end
-    for settingsName, _ in pairs(presentSetting) do
-        presentSetting[settingsName].longtext = getLongText(settingsName)
-    end
-
+    ---@cast presentSetting table<ModSettingsNames, { isBox: boolean, max: number, initial: number, text: string, longtext: string , enabled?:boolean, value?:integer}>
     return presentSetting
 end
