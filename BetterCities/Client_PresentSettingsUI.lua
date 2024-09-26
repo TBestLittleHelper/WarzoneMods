@@ -10,7 +10,7 @@ function Client_PresentSettingsUI(rootParent)
     local settings = PresentSettingsModSettings()
 
     local vert = UI.CreateVerticalLayoutGroup(rootParent)
-    local emerald = "#50B2E3"
+    local emerald = "#4EC4FF"
 
     for _, config in pairs(settings) do
         local horizontalGroup = UI.CreateHorizontalLayoutGroup(vert);
