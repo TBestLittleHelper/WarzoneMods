@@ -9,7 +9,23 @@ require("Fog")
 ---Server_AdvanceTurn_Start hook
 ---@param game GameServerHook
 ---@param addNewOrder fun(order: GameOrder) # Adds a game order, will be processed before any of the rest of the orders
-function Server_AdvanceTurn_Start(game, addNewOrder) end
+function Server_AdvanceTurn_Start(game, addNewOrder)
+    if (Mod.Settings.NaturalCityGrowth) then
+        if ((game.Game.NumberOfTurns + 1) % 5 == 0) then
+            local newOrders = {}
+            for territoryID, _ in pairs(Mod.PrivateGameData.Cities) do
+                local cities = CitiesOnTerritory(territoryID, game)
+                if (cities > 0) then
+                    local terrMod = WL.TerritoryModification.Create(territoryID)
+                    terrMod.AddStructuresOpt = {[WL.StructureType.City] = 1}
+                end
+            end
+            addNewOrder(WL.GameOrderEvent.Create(WL.PlayerID.Neutral,
+                                                 "Smaller cities have grown",
+                                                 nil, newOrders))
+        end
+    end
+end
 
 ---Server_AdvanceTurn_Order
 ---@param game GameServerHook
