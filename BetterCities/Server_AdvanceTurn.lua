@@ -18,6 +18,7 @@ function Server_AdvanceTurn_Start(game, addNewOrder)
                 if (cities > 0) then
                     local terrMod = WL.TerritoryModification.Create(territoryID)
                     terrMod.AddStructuresOpt = { [WL.StructureType.City] = 1 }
+                    table.insert(newOrders, terrMod)
                 end
             end
             addNewOrder(WL.GameOrderEvent.Create(WL.PlayerID.Neutral,
