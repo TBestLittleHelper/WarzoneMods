@@ -1,7 +1,7 @@
 require("Fog")
 
 ---@diagnostic disable-next-line: unknown-cast-variable
----@cast Mod ModServerHook
+---@cast Mod ModServerHook  | ModSettings
 ---@diagnostic disable-next-line: unknown-cast-variable
 ---@cast WL WL
 ---Server_StartGame
@@ -10,7 +10,7 @@ require("Fog")
 function Server_StartGame(game, standing)
     PrivateGameData = Mod.PrivateGameData
     PrivateGameData.Cities = {}
-    if (Mod.Settings.wastelandNeutralCities) then
+    if (Mod.Settings.WastelandNeutralCities) then
         ---@type table<EnumStructureType[]>
         local structure = {}
         Cities = WL.StructureType.City
@@ -19,17 +19,17 @@ function Server_StartGame(game, standing)
         for _, territory in pairs(standing.Territories) do
             if (territory.IsNeutral) then
                 if (territory.NumArmies.NumArmies == game.Settings.WastelandSize and
-                    territory.IsNeutral == true) then
+                        territory.IsNeutral == true) then
                     -- Wastelands starts with 2 cities.
                     structure[Cities] = 2
                     territory.Structures = structure
 
                     if (Mod.Settings.UnfogCities) then
                         local unit = CreateFogUnit()
-                        local unitArray = {unit}
+                        local unitArray = { unit }
                         territory.NumArmies = WL.Armies.Create(
-                                                  territory.NumArmies.NumArmies,
-                                                  unitArray)
+                            territory.NumArmies.NumArmies,
+                            unitArray)
                     end
                     PrivateGameData.Cities[territory.ID] = true
                 end
