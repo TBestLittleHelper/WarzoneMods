@@ -10,12 +10,12 @@ function Client_PresentSettingsUI(rootParent)
     local settings = PresentSettingsModSettings()
 
     local vert = UI.CreateVerticalLayoutGroup(rootParent)
-    local blue = "#0000FF"
+    local emerald = "50B2E3"
 
     for _, config in pairs(settings) do
         local horizontalGroup = UI.CreateHorizontalLayoutGroup(vert);
         UI.CreateButton(horizontalGroup).SetFlexibleWidth(0.1).SetText("?")
-            .SetColor(blue).SetOnClick(function()
+            .SetColor(emerald).SetOnClick(function()
             UI.Alert(config.longtext)
         end)
 
