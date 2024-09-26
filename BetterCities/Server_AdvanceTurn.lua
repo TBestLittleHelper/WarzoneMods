@@ -26,6 +26,7 @@ function Server_AdvanceTurn_Order(game, order, orderResult, skipThisOrder,
         if (orderResult.IsAttack == false) then return end
         if (orderResult.ActualArmies == 0) then return end
 
+        -- todo use CitiesOnTerritory()
         if (Mod.PrivateGameData.Cities[order.To]) then
             -- Don't trust the structures to exsist, or to be bigger then 0
             if (game.ServerGame.LatestTurnStanding.Territories[order.To]
@@ -60,7 +61,7 @@ function Server_AdvanceTurn_Order(game, order, orderResult, skipThisOrder,
                 -- round up, always
                 attackersKilled = math.ceil(attackersKilled)
             end
-            -- Write to GameOrderResult	 (result)
+            -- Write to GameOrderResult     (result)
             local NewAttackingArmiesKilled = WL.Armies.Create(attackersKilled)
             orderResult.AttackingArmiesKilled = NewAttackingArmiesKilled
             local msg = "The city has " .. tostring(defBonus * 100) ..
@@ -71,32 +72,22 @@ function Server_AdvanceTurn_Order(game, order, orderResult, skipThisOrder,
                                                      .Territories[order.To]
                                                      .OwnerPlayerID, msg,
                                                  {order.PlayerID}, nil))
-
         end
-
     else
         if (order.proxyType == "GameOrderDeploy") then
             ---@cast order GameOrderDeploy
             ---@cast orderResult GameOrderDeployResult
-            ---@type table<EnumStructureType, integer>
-            local terrStructures = game.ServerGame.LatestTurnStanding
-                                       .Territories[order.DeployOn].Structures;
 
-            local citiesOnTerritory = 0
-            if (terrStructures ~= nil) then
-                if (terrStructures[WL.StructureType.City] ~= nil) then
-                    citiesOnTerritory = terrStructures[WL.StructureType.City]
-                end
-            end
+            local citiesOnTerritory = CitiesOnTerritory(order.DeployOn, game)
 
-            if (Mod.Settings.DeployOrdersOutsideCitySkipped) then
-                if (citiesOnTerritory == 0) then
+            if (citiesOnTerritory == 0) then
+                if (Mod.Settings.DeployOrdersOutsideCitySkipped) then
                     skipThisOrder(WL.ModOrderControl
                                       .SkipAndSupressSkippedMessage)
-                    return
                 end
+                return
             end
-            if (citiesOnTerritory == 0) then return end
+
             if (Mod.Settings.ExtraArmiesInCity) then
                 local extraArmies = order.NumArmies
                 ---@type TerritoryModification
@@ -110,10 +101,46 @@ function Server_AdvanceTurn_Order(game, order, orderResult, skipThisOrder,
                                 " using local city resources."
                 addNewOrder(WL.GameOrderEvent.Create(order.PlayerID, msg, {},
                                                      orders))
-
+            end
+        else
+            if (order.proxyType == "GameOrderPlayCardBomb") then
+                ---@cast order GameOrderPlayCardBomb
+                ---@cast orderResult GameOrderPlayCardBombResult
+                if (Mod.Settings.BombCardDamagesCities) then
+                    local citiesOnTerritory = CitiesOnTerritory(
+                                                  order.TargetTerritoryID, game)
+                    if (citiesOnTerritory > 0) then
+                        ---@type TerritoryModification
+                        local terrMod = WL.TerritoryModification.Create(
+                                            order.TargetTerritoryID)
+                        terrMod.AddStructuresOpt = {
+                            [WL.StructureType.City] = -1
+                        }
+                        local msg = "The bomb damaged the city!"
+                        addNewOrder(WL.GameOrderEvent.Create(order.PlayerID,
+                                                             msg, {}, {terrMod}))
+                    end
+                end
             end
         end
     end
+end
+
+---Returns the number of cities or 0
+---@param territoryID TerritoryID
+---@param game GameServerHook
+---@return integer
+function CitiesOnTerritory(territoryID, game)
+    local cities = 0
+    local terrStructures =
+        game.ServerGame.LatestTurnStanding.Territories[territoryID].Structures;
+    if (terrStructures ~= nil) then
+        if (terrStructures[WL.StructureType.City] ~= nil) then
+            cities = terrStructures[WL.StructureType.City]
+        end
+    end
+    return cities
+
 end
 
 ---Server_AdvanceTurn_End hook
@@ -139,10 +166,7 @@ function Server_AdvanceTurn_End(game, addNewOrder)
             if (unfogUnitFound == false) then
                 -- Create a new unit, as the old one is missing
                 -- For example after combat
-                local unit = CreateFogUnit()
-                local addUnit = WL.TerritoryModification.Create(territoryID)
-                addUnit.AddSpecialUnits = {unit}
-                table.insert(orders, addUnit)
+                table.insert(orders, AddTerritoryFogMod(territoryID))
             end
         end
         local next = next -- This is faster, then using global next
