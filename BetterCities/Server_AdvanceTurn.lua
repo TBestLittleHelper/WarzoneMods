@@ -17,12 +17,12 @@ function Server_AdvanceTurn_Start(game, addNewOrder)
                 local cities = CitiesOnTerritory(territoryID, game)
                 if (cities > 0) then
                     local terrMod = WL.TerritoryModification.Create(territoryID)
-                    terrMod.AddStructuresOpt = {[WL.StructureType.City] = 1}
+                    terrMod.AddStructuresOpt = { [WL.StructureType.City] = 1 }
                 end
             end
             addNewOrder(WL.GameOrderEvent.Create(WL.PlayerID.Neutral,
-                                                 "Smaller cities have grown",
-                                                 nil, newOrders))
+                "Smaller cities have grown",
+                nil, newOrders))
         end
     end
 end
@@ -46,22 +46,26 @@ function Server_AdvanceTurn_Order(game, order, orderResult, skipThisOrder,
         if (Mod.PrivateGameData.Cities[order.To]) then
             -- Don't trust the structures to exsist, or to be bigger then 0
             if (game.ServerGame.LatestTurnStanding.Territories[order.To]
-                .Structures == nil) then return end
+                    .Structures == nil) then
+                return
+            end
             if (game.ServerGame.LatestTurnStanding.Territories[order.To]
-                .Structures[WL.StructureType.City] == nil) then
+                    .Structures[WL.StructureType.City] == nil) then
                 return
             end
 
             if (game.ServerGame.LatestTurnStanding.Territories[order.To]
-                .Structures[WL.StructureType.City] < 1) then return end
+                    .Structures[WL.StructureType.City] < 1) then
+                return
+            end
 
             local defBonus =
                 game.ServerGame.LatestTurnStanding.Territories[order.To]
-                    .Structures[WL.StructureType.City] *
-                    (Mod.Settings.CityWalls * 0.01)
+                .Structures[WL.StructureType.City] *
+                (Mod.Settings.CityWalls * 0.01)
             local attackersKilled =
                 orderResult.AttackingArmiesKilled.NumArmies +
-                    orderResult.AttackingArmiesKilled.NumArmies * defBonus
+                orderResult.AttackingArmiesKilled.NumArmies * defBonus
 
             -- Minimum kill 1 attacking army
             if (attackersKilled == 0) then
@@ -69,7 +73,7 @@ function Server_AdvanceTurn_Order(game, order, orderResult, skipThisOrder,
                 attackersKilled = 1
             elseif (orderResult.ActualArmies.NumArmies - attackersKilled < 0) then
                 local extraDmg = attackersKilled -
-                                     orderResult.ActualArmies.NumArmies
+                    orderResult.ActualArmies.NumArmies
                 print(extraDmg, " extraDmg")
                 -- todo We need to dmg special units : https://www.warzone.com/wiki/Mod_API_Reference:GameOrderAttackTransferResult
                 attackersKilled = orderResult.ActualArmies.NumArmies
@@ -81,13 +85,13 @@ function Server_AdvanceTurn_Order(game, order, orderResult, skipThisOrder,
             local NewAttackingArmiesKilled = WL.Armies.Create(attackersKilled)
             orderResult.AttackingArmiesKilled = NewAttackingArmiesKilled
             local msg = "The city has " .. tostring(defBonus * 100) ..
-                            "% fortification bonus. This killed " ..
-                            attackersKilled .. " armies"
+                "% fortification bonus. This killed " ..
+                attackersKilled .. " armies"
             addNewOrder(WL.GameOrderEvent.Create(game.ServerGame
-                                                     .LatestTurnStanding
-                                                     .Territories[order.To]
-                                                     .OwnerPlayerID, msg,
-                                                 {order.PlayerID}, nil))
+                .LatestTurnStanding
+                .Territories[order.To]
+                .OwnerPlayerID, msg,
+                { order.PlayerID }, nil))
         end
     else
         if (order.proxyType == "GameOrderDeploy") then
@@ -99,7 +103,7 @@ function Server_AdvanceTurn_Order(game, order, orderResult, skipThisOrder,
             if (citiesOnTerritory == 0) then
                 if (Mod.Settings.DeployOrdersOutsideCitySkipped) then
                     skipThisOrder(WL.ModOrderControl
-                                      .SkipAndSupressSkippedMessage)
+                        .SkipAndSupressSkippedMessage)
                 end
                 return
             end
@@ -108,15 +112,15 @@ function Server_AdvanceTurn_Order(game, order, orderResult, skipThisOrder,
                 local extraArmies = order.NumArmies
                 ---@type TerritoryModification
                 local terrMod = WL.TerritoryModification.Create(order.DeployOn)
-                terrMod.AddStructuresOpt = {[WL.StructureType.City] = -1}
+                terrMod.AddStructuresOpt = { [WL.StructureType.City] = -1 }
                 terrMod.AddArmies = order.NumArmies
-                local orders = {terrMod}
+                local orders = { terrMod }
 
                 local msg = "Deployed an extra " .. order.NumArmies .. " in " ..
-                                game.Map.Territories[order.DeployOn].Name ..
-                                " using local city resources."
+                    game.Map.Territories[order.DeployOn].Name ..
+                    " using local city resources."
                 addNewOrder(WL.GameOrderEvent.Create(order.PlayerID, msg, {},
-                                                     orders))
+                    orders))
             end
         else
             if (order.proxyType == "GameOrderPlayCardBomb") then
@@ -124,17 +128,17 @@ function Server_AdvanceTurn_Order(game, order, orderResult, skipThisOrder,
                 ---@cast orderResult GameOrderPlayCardBombResult
                 if (Mod.Settings.BombCardDamagesCities) then
                     local citiesOnTerritory = CitiesOnTerritory(
-                                                  order.TargetTerritoryID, game)
+                        order.TargetTerritoryID, game)
                     if (citiesOnTerritory > 0) then
                         ---@type TerritoryModification
                         local terrMod = WL.TerritoryModification.Create(
-                                            order.TargetTerritoryID)
+                            order.TargetTerritoryID)
                         terrMod.AddStructuresOpt = {
                             [WL.StructureType.City] = -1
                         }
                         local msg = "The bomb damaged the city!"
                         addNewOrder(WL.GameOrderEvent.Create(order.PlayerID,
-                                                             msg, {}, {terrMod}))
+                            msg, {}, { terrMod }))
                     end
                 end
             end
@@ -156,21 +160,19 @@ function CitiesOnTerritory(territoryID, game)
         end
     end
     return cities
-
 end
 
 ---Server_AdvanceTurn_End hook
 ---@param game GameServerHook
 ---@param addNewOrder fun(order: GameOrder) # Adds a game order, will be processed before any of the rest of the orders
 function Server_AdvanceTurn_End(game, addNewOrder)
-
     if (Mod.Settings.UnfogCities) then
         local orders = {}
         for territoryID, _ in pairs(Mod.PrivateGameData.Cities) do
             local unfogUnitFound = false
             for _, unit in ipairs(
-                               game.ServerGame.LatestTurnStanding.Territories[territoryID]
-                                   .NumArmies.SpecialUnits) do
+                game.ServerGame.LatestTurnStanding.Territories[territoryID]
+                .NumArmies.SpecialUnits) do
                 if (unit.proxyType == "CustomSpecialUnit") then
                     ---@cast unit CustomSpecialUnit
                     if (unit.ModID == 758) then
@@ -189,8 +191,8 @@ function Server_AdvanceTurn_End(game, addNewOrder)
         if (next(orders) == nil) then return end
         -- todo if orders is not empty
         addNewOrder(WL.GameOrderEvent.Create(WL.PlayerID.Neutral,
-                                             "News report from all the cities!",
-                                             {}, orders))
+            "News report from all the cities!",
+            {}, orders))
     end
 end
 
@@ -203,14 +205,16 @@ function Dump(obj)
         print("Dump " .. type(obj))
     end
 end
+
 function DumpTable(tbl)
     for k, v in pairs(tbl) do
         print("k = " .. tostring(k) .. " (" .. type(k) .. ") " .. " v = " ..
-                  tostring(v) .. " (" .. type(v) .. ")")
+            tostring(v) .. " (" .. type(v) .. ")")
     end
 end
+
 function DumpProxy(obj)
     print("type=" .. obj.proxyType .. " readOnly=" .. tostring(obj.readonly) ..
-              " readableKeys=" .. table.concat(obj.readableKeys, ",") ..
-              " writableKeys=" .. table.concat(obj.writableKeys, ","))
+        " readableKeys=" .. table.concat(obj.readableKeys, ",") ..
+        " writableKeys=" .. table.concat(obj.writableKeys, ","))
 end
