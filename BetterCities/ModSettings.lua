@@ -18,7 +18,7 @@ local Settings = {
     BombCardDamagesCities = {
         isBox = true,
         text = "Bomb card damages cities",
-        longtext = "Bomb card can reduce the number of cities on a territory by 2. A city of any size will protect the armies in that city from the bomb card!"
+        longtext = "Bomb card can reduce the number of cities on a territory by 1. A city of any size will protect the armies in that city from the bomb card!"
     },
     WastelandNeutralCities = {isBox = true, text = "Wasteland neutral cities"},
     ExtraArmiesInCity = {
