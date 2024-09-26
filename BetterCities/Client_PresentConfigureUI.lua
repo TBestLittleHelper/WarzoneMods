@@ -12,7 +12,7 @@ SettingsTable = {} -- It is only accesible in Client_SaveConfigureUI
 ---@param rootParent RootParent
 function Client_PresentConfigureUI(rootParent)
     local ModSettings = PresentConfigureModSettings()
-    local emerald = "50B2E3"
+    local emerald = "#50B2E3"
     local vert = UI.CreateVerticalLayoutGroup(rootParent)
 
     for modname, config in pairs(ModSettings) do
