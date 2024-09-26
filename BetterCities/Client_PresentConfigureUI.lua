@@ -12,13 +12,12 @@ SettingsTable = {} -- It is only accesible in Client_SaveConfigureUI
 ---@param rootParent RootParent
 function Client_PresentConfigureUI(rootParent)
     local ModSettings = PresentConfigureModSettings()
-    local emerald = "#4EC4FF"
     local vert = UI.CreateVerticalLayoutGroup(rootParent)
 
     for modname, config in pairs(ModSettings) do
         local horizontalGroup = UI.CreateHorizontalLayoutGroup(vert);
         UI.CreateButton(horizontalGroup).SetFlexibleWidth(0.1).SetText("?")
-            .SetColor(emerald).SetOnClick(function()
+            .SetColor(UiHelpColor()).SetOnClick(function()
             UI.Alert(config.longtext)
         end)
 

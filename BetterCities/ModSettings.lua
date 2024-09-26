@@ -64,3 +64,9 @@ function PresentSettingsModSettings()
     ---@cast presentSetting table<ModSettingsNames, { isBox: boolean, max: number, initial: number, text: string, longtext: string , enabled?:boolean, value?:integer}>
     return presentSetting
 end
+
+---Returns the hex code of piction blue
+---@return string
+function UiHelpColor()
+    return "#4EC4FF"
+end
