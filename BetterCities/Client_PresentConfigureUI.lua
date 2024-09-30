@@ -38,5 +38,5 @@ function Client_PresentConfigureUI(rootParent)
     end
 
     UI.CreateLabel(rootParent).SetText(
-        "IMPORTANT: When using this mod it's strongely recomended that you make the price to build cities extremely exspensiv, to the point where players can't build cities using gold. Or just turn of the option under army settings.")
+        "IMPORTANT: Turn off the option to build cities under army settings. Some mod functions only applies to cities the mod created.")
 end
