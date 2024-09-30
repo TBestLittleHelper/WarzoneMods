@@ -1,4 +1,4 @@
----@type SettingsTable
+---@enum Settings
 local Settings = {
     CityWalls = {
         isBox = false,

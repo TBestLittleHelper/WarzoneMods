@@ -8,8 +8,6 @@
 ---@field max number     -- Maximum value, only if isBox is false.
 ---@field initial number -- Initial value, only if isBox is false.
 ---@
----@alias SettingsTable table<ModSettingsNames, {isBox:boolean, max?:number,initial?:number , text:string, longtext:string}>  -- Config for all Mod settings
----@
 ---@alias addUiInput AddCheckbox | AddNumberInput
 ---@
 ---@class ModSettings # Extend the Mod type with custom settings fields. Use like this @cast Mod ModServerHook | ModSettings
