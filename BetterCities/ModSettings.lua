@@ -38,11 +38,6 @@ local Settings = {
         text = "Cities are always visible to everyone",
         longtext = "This uses special units that's visible. One Army Must Stand Guard must be OFF for this to work!"
     },
-    SettleCity = {
-        isBox = true,
-        text = "Players can settle a city from the mod menu.",
-        longtext = "Maybe for a big hit to income? Like all the income for the next turn"
-    }
 }
 
 ---@diagnostic disable-next-line: unknown-cast-variable
@@ -65,8 +60,9 @@ function PresentSettingsModSettings()
     return presentSetting
 end
 
----Returns the hex code of piction blue
----@return string
+---@return string # A hex code
 function UiHelpColor()
-    return "#4EC4FF"
+    ---@enum PictionBlue
+    local ColorPictionBlue = "#4EC4FF"
+    return ColorPictionBlue
 end
