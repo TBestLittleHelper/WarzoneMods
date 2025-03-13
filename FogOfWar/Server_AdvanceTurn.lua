@@ -67,7 +67,8 @@ function Server_AdvanceTurn_End(game, addNewOrder)
         print(game.Map.Territories[targetID].Name .. " is being fogged")
         local fogMod = CreateFog(targetID)
         FoggedTerritories[targetID] = { duration = 2, id = fogMod.ID }
-        local event = WL.GameOrderEvent.Create(WL.PlayerID.Neutral, 'Fog of War hides the armies', {});
+        local msg = "Fog in " .. game.Map.Territories[targetID].Name
+        local event = WL.GameOrderEvent.Create(WL.PlayerID.Neutral, msg, {});
         event.FogModsOpt = { fogMod };
         addNewOrder(event);
     end
