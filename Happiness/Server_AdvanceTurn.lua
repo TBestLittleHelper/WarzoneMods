@@ -21,12 +21,9 @@ function Server_AdvanceTurn_Order(game, order, orderResult, skipThisOrder, addNe
 		return;
 	end
 	if (order.proxyType == "GameOrderDiscard") then
-		-- todo check card type
+		-- todo check card type when supported https://www.warzone.com/Forum/816730-mod-incude-customcardid-discard-order
 		skipThisOrder(WL.ModOrderControl
 			.SkipAndSupressSkippedMessage)
-		print("discard card skip")
-		Dump(order);
-		print(order.CardInstanceID)
 	end
 end
 
@@ -38,16 +35,12 @@ function Server_AdvanceTurn_End(game, addNewOrder)
 	print("card game")
 
 	-- Give income based on happiness state
-	for playerID, player in pairs(game.ServerGame.Game.PlayingPlayers) do
+	for playerID, _ in pairs(game.ServerGame.Game.PlayingPlayers) do
 		local cards = standing.Cards[playerID].WholeCards
 		local oldCardID = Mod.Settings.Cards.Content.cardID
 		local oldCardPieces = 0;
 
 		for cardInstance, card in pairs(cards) do
-			print(card.CardID)
-			Dump(Mod.Settings.AllCardIDs)
-			print(Mod.Settings.AllCardIDs[card.CardID])
-
 			if (Mod.Settings.AllCardIDs[card.CardID]) then
 				oldCardID = card.CardID
 
@@ -58,22 +51,12 @@ function Server_AdvanceTurn_End(game, addNewOrder)
 				addNewOrder(WL.GameOrderEvent.Create(playerID, msg, nil, {}, nil,
 					{ incomeMod }))
 
-				-- Remove old the old card and old card pices
+				-- Remove the old card and old card pices
 				-- https://www.warzone.com/wiki/Mod_API_Reference:GameOrderEvent
 				local event = WL.GameOrderEvent.Create(WL.PlayerID.Neutral, "Removing old happiness cards", {});
 				event.RemoveWholeCardsOpt = { [playerID] = cardInstance };
-				print(playerID, "playerID")
-				print(oldCardID, "oldCardID")
-				print(oldCardPieces, "oldCardPieces")
 
-				--todo check if we can just lookup instead of loop
-				for cardID, pices in pairs(standing.Cards[playerID].Pieces) do
-					if (cardID == oldCardID) then
-						oldCardPieces = pices;
-						break;
-					end
-				end
-
+				oldCardPieces = standing.Cards[playerID].Pieces[oldCardID]
 				event.AddCardPiecesOpt = { [playerID] = { [oldCardID] = -oldCardPieces } };
 				addNewOrder(event);
 
