@@ -1,0 +1,1 @@
+Happiness is a new status you have to account for. Very happy will result in extra income, and low happiness in reduced income. The current happiness is shown using a card.
