@@ -10,19 +10,19 @@ function Client_SaveConfigureUI(alert, addCard)
 		cardWeight);
 	local happyCardID = addCard("Happy",
 		"Your territories are happy. They will produce 5 extra income.",
-		"Celebrating.png", Mod.Settings.NumPieces, minPieces, initialPieces,
+		"Happy.png", Mod.Settings.NumPieces, minPieces, initialPieces,
 		cardWeight);
 	local contentCardID = addCard("Content",
 		"People are content and there is no effect on your income.",
-		"Celebrating.png", Mod.Settings.NumPieces, minPieces, 21,
+		"Content.png", Mod.Settings.NumPieces, minPieces, 21,
 		cardWeight);
-	local misserableCardID = addCard("Misserable",
-		"People are misserable. You earn 10 less income.",
-		"Celebrating.png", Mod.Settings.NumPieces, minPieces, initialPieces,
+	local MiserableCardID = addCard("Miserable",
+		"People are Miserable. You earn 10 less income.",
+		"Miserable.png", Mod.Settings.NumPieces, minPieces, initialPieces,
 		cardWeight);
 	local riotingCardID = addCard("Rioting",
 		"People are rioting. Your income is reduced by 50.",
-		"Celebrating.png", Mod.Settings.NumPieces, minPieces, initialPieces,
+		"Rioting.png", Mod.Settings.NumPieces, minPieces, initialPieces,
 		cardWeight);
 
 	Mod.Settings.Cards = {
@@ -30,14 +30,15 @@ function Client_SaveConfigureUI(alert, addCard)
 		,
 		Happy = { cardID = happyCardID, income = 5 },
 		Content = { cardID = contentCardID, income = 0 },
-		Misserable = { cardID = misserableCardID, income = -10 },
+		Miserable = { cardID = MiserableCardID, income = -10 },
 		Rioting = { cardID = riotingCardID, income = -50 },
 	};
 	Mod.Settings.AllCardIDs = {
 		[celebratingCardID] = true,
 		[happyCardID] = true,
 		[contentCardID] = true,
-		[misserableCardID] = true,
+		[MiserableCardID] = true,
 		[riotingCardID] = true
 	}
+	Mod.Settings.HappinessEachTurn = -5;
 end

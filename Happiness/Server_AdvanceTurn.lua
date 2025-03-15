@@ -34,7 +34,7 @@ function Server_AdvanceTurn_End(game, addNewOrder)
 	local standing = game.ServerGame.LatestTurnStanding;
 	print("card game")
 
-	-- Give income based on happiness state
+	-- Give income based on happiness card
 	for playerID, _ in pairs(game.ServerGame.Game.PlayingPlayers) do
 		local cards = standing.Cards[playerID].WholeCards
 		local oldCardID = Mod.Settings.Cards.Content.cardID
@@ -64,33 +64,25 @@ function Server_AdvanceTurn_End(game, addNewOrder)
 			end
 		end
 
-		-- Calculate happiness
-		--todo change happiness in some way
-		local oldHappiness = oldCardPieces + CardIDtoHappiness(oldCardID);
-		print(oldHappiness, "oldHappiness")
+		-- Calculate new happiness
+		local happinessDelta = Mod.Settings.HappinessEachTurn;
 
+		-- Take the old card pices. Add the change. Move down a level if neg. Move up a level if pos.
+		local newHappiness = oldCardPieces + happinessDelta;
 
-		local newCardEvent = WL.GameOrderEvent.Create(WL.PlayerID.Neutral, "Adding new happiness card", {});
-		Dump(newCardEvent)
-		local newCardID = Mod.Settings.Cards.Content.cardID;
-
-		if (oldHappiness >= 100) then
-			newCardID = Mod.Settings.Cards.Celebrating.cardID;
-			oldHappiness = oldHappiness - 100;
-		elseif (oldHappiness >= 75) then
-			newCardID = Mod.Settings.Cards.Happy.cardID;
-			oldHappiness = oldHappiness - 75;
-		elseif (oldHappiness >= 50) then
-			newCardID = Mod.Settings.Cards.Content.cardID;
-			oldHappiness = oldHappiness - 50;
-		elseif (oldHappiness >= 25) then
-			newCardID = Mod.Settings.Cards.Misserable.cardID;
-			oldHappiness = oldHappiness - 25;
-		else
-			newCardID = Mod.Settings.Cards.Rioting.cardID;
+		-- Create new card pices. Plus add pieces for a "display" card.
+		local newHappinessLevel = CardIDtoHappinessLevel(oldCardID);
+		if (newHappiness < 0) then
+			newHappinessLevel = newHappinessLevel - 1
+		elseif (newHappiness > 100) then
+			newHappinessLevel = newHappinessLevel + 1
 		end
 
-		local newPartialAndWholeCardPices = oldHappiness + Mod.Settings.NumPieces;
+		local newCardEvent = WL.GameOrderEvent.Create(WL.PlayerID.Neutral, "Adding new happiness card", {});
+		local newCardID = HappinessLevelToCardID(newHappinessLevel);
+		print(newCardID, "newCardID")
+
+		local newPartialAndWholeCardPices = newHappiness + Mod.Settings.NumPieces;
 		newCardEvent.AddCardPiecesOpt = { [playerID] = { [newCardID] = newPartialAndWholeCardPices } };
 		addNewOrder(newCardEvent);
 	end
@@ -114,24 +106,29 @@ function CardIDtoCardName(cardID)
 	return "";
 end
 
-function CardIDtoHappiness(cardID)
-	local cardName = CardIDtoCardName(cardID);
-	if (cardName == "Celebrating") then
-		return 100;
-	end
-	if (cardName == "Happy") then
-		return 75;
-	end
-	if (cardName == "Content") then
-		return 50;
-	end
-	if (cardName == "Misserable") then
-		return 25;
-	end
-	if (cardName == "Rioting") then
-		return 0;
-	end
-	return 50;
+function CardIDtoHappinessLevel(cardID)
+	print(cardID, "cardID")
+	local cardIDToHappinessLevel = {
+		[Mod.Settings.Cards.Celebrating.cardID] = 4,
+		[Mod.Settings.Cards.Happy.cardID] = 3,
+		[Mod.Settings.Cards.Content.cardID] = 2,
+		[Mod.Settings.Cards.Miserable.cardID] = 1,
+		[Mod.Settings.Cards.Rioting.cardID] = 0
+	}
+	return cardIDToHappinessLevel[cardID] or 0;
+end
+
+function HappinessLevelToCardID(happinessLevel)
+	local happinessLevelToCardID = {
+		[4] = Mod.Settings.Cards.Celebrating.cardID,
+		[3] = Mod.Settings.Cards.Happy.cardID,
+		[2] = Mod.Settings.Cards.Content.cardID,
+		[1] = Mod.Settings.Cards.Miserable.cardID,
+		[0] = Mod.Settings.Cards.Rioting.cardID
+	}
+	return happinessLevelToCardID[happinessLevel] or
+		Mod.Settings.Cards.Rioting
+		.cardID
 end
 
 function Dump(obj)
