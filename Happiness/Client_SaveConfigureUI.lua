@@ -14,7 +14,7 @@ function Client_SaveConfigureUI(alert, addCard)
 		cardWeight);
 	local contentCardID = addCard("Content",
 		"People are content and there is no effect on your income.",
-		"Content.png", Mod.Settings.NumPieces, minPieces, 100,
+		"Content.png", Mod.Settings.NumPieces, minPieces, Mod.Settings.NumPieces,
 		cardWeight);
 	local MiserableCardID = addCard("Miserable",
 		"People are Miserable. You earn 10 less income.",
