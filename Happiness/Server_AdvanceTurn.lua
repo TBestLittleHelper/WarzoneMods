@@ -1,8 +1,13 @@
 ---@diagnostic disable-next-line: unknown-cast-variable
 ---@cast WL WL
 
-function Server_AdvanceTurn_Start(game, addNewOrder)
+-- Drafting armies makes people unhappy. The more armies behind max deploy, the bigger bonus.
+local playerDeployment = {}
 
+function Server_AdvanceTurn_Start(game, addNewOrder)
+	for playerID in pairs(game.ServerGame.Game.PlayingPlayers) do
+		playerDeployment[playerID] = 0
+	end
 end
 
 ---Server_AdvanceTurn_Order
@@ -12,8 +17,15 @@ end
 ---@param skipThisOrder fun(modOrderControl: EnumModOrderControl) # Allows you to skip the current order
 ---@param addNewOrder fun(order: GameOrder) # Adds a game order, will be processed before any of the rest of the orders
 function Server_AdvanceTurn_Order(game, order, orderResult, skipThisOrder, addNewOrder)
+	-- Count the number of
+	if (order.proxyType == 'GameOrderDeploy') then
+		---@cast order GameOrderDeploy
+		playerDeployment[order.PlayerID] = playerDeployment[order.PlayerID] + order.NumArmies;
+	end
+
 	-- Normal players orders can't play or dissmiss the card.
 	if (order.proxyType == 'GameOrderPlayCardCustom') then
+		---@cast order GameOrderPlayCardCustom
 		if (Mod.Settings.AllCardIDs[order.CustomCardID] ~= nil) then
 			skipThisOrder(WL.ModOrderControl
 				.SkipAndSupressSkippedMessage)
@@ -21,6 +33,7 @@ function Server_AdvanceTurn_Order(game, order, orderResult, skipThisOrder, addNe
 		return;
 	end
 	if (order.proxyType == "GameOrderDiscard") then
+		---@cast order GameOrderDiscard
 		-- todo check card type when supported https://www.warzone.com/Forum/816730-mod-incude-customcardid-discard-order
 		skipThisOrder(WL.ModOrderControl
 			.SkipAndSupressSkippedMessage)
@@ -31,6 +44,13 @@ end
 ---@param game GameServerHook
 ---@param addNewOrder fun(order: GameOrder) # Adds a game order, will be processed before any of the rest of the orders
 function Server_AdvanceTurn_End(game, addNewOrder)
+	local maxDeploy = 0;
+	for _, deploy in pairs(playerDeployment) do
+		if (deploy > maxDeploy) then
+			maxDeploy = deploy;
+		end
+	end
+
 	local standing = game.ServerGame.LatestTurnStanding;
 	print("card game")
 
@@ -64,23 +84,31 @@ function Server_AdvanceTurn_End(game, addNewOrder)
 			end
 		end
 
-		-- Calculate new happiness
-		local happinessDelta = Mod.Settings.HappinessEachTurn;
+		-- Calculate new happiness level
+		local deploymentBonus = (maxDeploy - playerDeployment[playerID]) * 2;
+		print(deploymentBonus, "deploymentBonus")
+		local newHappiness = oldCardPieces + Mod.Settings.HappinessEachTurn + deploymentBonus;
 
-		-- Take the old card pices. Add the change. Move down a level if neg. Move up a level if pos.
-		local newHappiness = oldCardPieces + happinessDelta;
-
-		-- Create new card pices. Plus add pieces for a "display" card.
+		-- Create new card pices. Plus make sure we always have a whole "display" card.
 		local newHappinessLevel = CardIDtoHappinessLevel(oldCardID);
 		if (newHappiness < 0) then
 			newHappinessLevel = newHappinessLevel - 1
-		elseif (newHappiness > 100) then
+			newHappiness = newHappiness + Mod.Settings.NumPieces;
+			-- Max down 1 level each turn
+			if (newHappiness < 0) then
+				newHappiness = 0
+			end
+		elseif (newHappiness > Mod.Settings.NumPieces) then
 			newHappinessLevel = newHappinessLevel + 1
+			newHappiness = newHappiness - Mod.Settings.NumPieces;
+			-- Max up 1 level each turn
+			if (newHappiness > Mod.Settings.NumPieces) then
+				newHappiness = Mod.Settings.NumPieces - 1
+			end
 		end
 
 		local newCardEvent = WL.GameOrderEvent.Create(WL.PlayerID.Neutral, "Adding new happiness card", {});
 		local newCardID = HappinessLevelToCardID(newHappinessLevel);
-		print(newCardID, "newCardID")
 
 		local newPartialAndWholeCardPices = newHappiness + Mod.Settings.NumPieces;
 		newCardEvent.AddCardPiecesOpt = { [playerID] = { [newCardID] = newPartialAndWholeCardPices } };
@@ -119,6 +147,12 @@ function CardIDtoHappinessLevel(cardID)
 end
 
 function HappinessLevelToCardID(happinessLevel)
+	if (happinessLevel < 0) then
+		happinessLevel = 0
+	elseif (happinessLevel > 4) then
+		happinessLevel = 4
+	end
+
 	local happinessLevelToCardID = {
 		[4] = Mod.Settings.Cards.Celebrating.cardID,
 		[3] = Mod.Settings.Cards.Happy.cardID,
