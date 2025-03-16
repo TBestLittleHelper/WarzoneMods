@@ -1,5 +1,5 @@
 function Client_SaveConfigureUI(alert, addCard)
-	Mod.Settings.NumPieces = 20;
+	Mod.Settings.NumPieces = 100;
 	local cardWeight = 0;
 	local minPieces = 0;
 	local initialPieces = 0;
@@ -14,7 +14,7 @@ function Client_SaveConfigureUI(alert, addCard)
 		cardWeight);
 	local contentCardID = addCard("Content",
 		"People are content and there is no effect on your income.",
-		"Content.png", Mod.Settings.NumPieces, minPieces, 21,
+		"Content.png", Mod.Settings.NumPieces, minPieces, 100,
 		cardWeight);
 	local MiserableCardID = addCard("Miserable",
 		"People are Miserable. You earn 10 less income.",
