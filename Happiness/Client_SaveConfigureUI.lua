@@ -1,5 +1,5 @@
 function Client_SaveConfigureUI(alert, addCard)
-	Mod.Settings.NumPieces = 100;
+	Mod.Settings.NumPieces = 100; -- Must be 1 or greater
 	local cardWeight = 0;
 	local minPieces = 0;
 	local initialPieces = 0;
