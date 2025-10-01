@@ -6,13 +6,13 @@ local CELL_SIZE = 100
 -- TODO custom types
 -- Terrain types
 local terrainTypes = {
-    Desert = { structureType = "Arena" },
-    Grassland = { structureType = "DigSite" },
-    Forest = { structureType = "ArmyCache" },
-    --Mountain = { "Mountain" },
-    Water = { structureType = "MoneyCache" }
+    Desert = { structureType = "Desert" },
+    Grassland = { structureType = "Grassland" },
+    Forest = { structureType = "Forest" },
+    Mountain = { structureType = "Mountain" },
 }
 
+---@return string
 local function randomTerrainType()
     local keys = {}
     for k in pairs(terrainTypes) do
@@ -24,14 +24,14 @@ end
 local function getWarzoneSites(territories)
     local sites = {}
     for _, territory in pairs(territories) do
-        local terrain = randomTerrainType();
+        local terrainType = randomTerrainType();
         sites[territory.ID] = {
             ID = territory.ID,
             x = territory.MiddlePointX,
             y = territory.MiddlePointY,
-            structureType = terrain,
+            terrainType = terrainType,
+            customStructureName = terrainTypes[terrainType].structureType,
         }
-        -- print(sites[territory.ID].structureType)
     end
     return sites
 end
@@ -53,17 +53,14 @@ local function closest_site(x, y, sites)
 end
 
 local function placeStructures(sites, standing)
-    for _, territory in pairs(standing.Territories) do
+    for territoryID, territory in pairs(standing.Territories) do
+        local site = sites[territoryID];
+
         local structure = {}
-        --  local structureType = WL.StructureType.Custom("Mountain");
+        local structureType = WL.StructureType.Custom(site.customStructureName);
         --territory.Structures = structure
-        --  structure[structureType] = 1
-
-        Cities = WL.StructureType.Custom("Mountain")
-        structure[Cities] = 1
+        structure[structureType] = 1
         territory.Structures = structure
-
-        -- TODO Call WL.StructureType.Custom("MyStructure") to get a StructureType. You can pass this anyplace you would pass one of the above entries.
     end
 end
 
@@ -75,11 +72,12 @@ end
 ---@param game GameServerHook
 ---@param standing GameStanding
 function Server_StartGame(game, standing)
-    print(WL.TickCount)
+    local tickCount = WL.TickCount()
+    print("TickCount: " .. tickCount)
     -- math.randomseed(WL.TickCount())
 
-    -- todo fix structure type typeing
-    ---@type table<integer, {x: number, y: number, structureType: any}>
+    -- todo fix structure type terrainType
+    ---@type table<integer, {x: number, y: number, terrainType:any, customStructureName: string}>
     local warzoneSites = getWarzoneSites(game.Map.Territories);
     print("Got warzoneSites")
     placeStructures(warzoneSites, standing);
