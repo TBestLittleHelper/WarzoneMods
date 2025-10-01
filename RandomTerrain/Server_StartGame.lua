@@ -1,6 +1,12 @@
 require("Voronoi")
 
--- Resolution control
+    --TODO config for Voronoi generation 
+
+local config = {
+        SVG_OUTPUT = false,
+        RANDOM_SEED = 1000
+    }-- Resolution control
+
 local WIDTH, HEIGHT = 3500, 2500 -- Max size of a map
 local NUM_SITES = 500            -- Unused, we can experiment later
 local CELL_SIZE = 100
@@ -9,11 +15,17 @@ local CELL_SIZE = 100
 ---@param standing GameStanding
 local function placeStructures(TerritoryStructure, standing)
     for territoryID, territory in pairs(standing.Territories) do
-        local site = sites[territoryID]
-        local structure = {}
-        local structureType = WL.StructureType.Custom(site.customStructureName)
-        structure[structureType] = 1
-        territory.Structures = structure
+        local site = TerritoryStructure[territoryID]
+        print (site)
+        print(site.customStructureName)
+        if (site ~= nil) then
+            local structure = {}
+            local structureType = WL.StructureType.Custom(site.customStructureName)
+            structure[structureType] = 1
+            territory.Structures = structure
+        else            
+            print("No site found for territoryID: " .. territoryID)
+        end       
     end
 end
 
@@ -25,8 +37,9 @@ function Server_StartGame(game, standing)
     print("TickCount: " .. tickCount)
     -- math.randomseed(tickCount)
 
-    --TODO config for Voronoi generation 
-    local TerritoryStructure = GenerateVoronoi(nil, game)
+    print(config.SVG_OUTPUT)
+
+    local TerritoryStructure = GenerateVoronoi(config, game)
     print("GeneratedVoronoi")
     placeStructures(TerritoryStructure, standing)
     print("Placed structures")

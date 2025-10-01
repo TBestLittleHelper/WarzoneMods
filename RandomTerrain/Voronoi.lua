@@ -12,9 +12,17 @@ local terrainType = {
         {structureType = "Desert", weight = 0.2, color = "#EDC9AF"},
         {structureType = "Grassland", weight = 0.4, color = "#C8FFC8"},
         {structureType = "Forest", weight = 0.3, color = "#044e04ff"},
-        {structureType = "Mountain", weight = 0.1, color = "#A9A9A9"},
+        {structureType = "Mountain", weight = 0.1, color = "#A9A9A9"}
     }
-end
+
+-- Terrain adjacency influence rules
+local terrainInfluenceRules = {
+    ["Forest"] = { preferred = {"Grassland"}, avoid = {"Desert"} },
+    ["Grassland"] = { preferred = {"Forest", "Desert"}, avoid = {"Mountain"} },
+    ["Desert"] = { preferred = {"Grassland"}, avoid = {"Forest"} },
+    ["Mountain"] = { preferred = {"Forest"}, avoid = {} },
+}
+
 
 local function setConfigOpt(config)
     print("Setting config options")
@@ -23,7 +31,7 @@ local function setConfigOpt(config)
     if config.NUM_SITES then NUM_SITES = config.NUM_SITES end
     if config.CELL_SIZE then CELL_SIZE = config.CELL_SIZE end
     if config.SVG_OUTPUT ~= nil then SVG_OUTPUT = config.SVG_OUTPUT end
-    if config.RANDOM_SEED then math.randomseed(config.RANDOM_SEED) else math.randomseed(os.time()) end
+   -- if config.RANDOM_SEED then math.randomseed(config.RANDOM_SEED) else math.randomseed(os.time()) end
     if config.TERRAIN_TYPE then terrainType = config.TERRAIN_TYPE end
 end
 
@@ -101,10 +109,10 @@ local function generate_svg(sites)
 
     table.insert(svg, '</svg>')
 
-    local output = table.concat(svg, "\n")
-    local file = io.open("voronoi_map.svg", "w")
-    file:write(output)
-    file:close()
+--    local output = table.concat(svg, "\n")
+--    local file = io.open("voronoi_map.svg", "w")
+--    file:write(output)
+--    file:close()
     print("SVG map generated: voronoi_map.svg")
 end
 
@@ -115,10 +123,7 @@ local function generate_wz_points(sites, territories)
     local territories = {}
     process_cells(sites, function(x, y, site)
         table.insert(territories, {
-            x = x,
-            y = y,
-            structureType = site.terrain.structureType,
-            owner = 0
+           customStructureName = site.terrain.structureType
         })
     end)
     return territories
@@ -127,7 +132,7 @@ end
 ---@cast WL WL
 ---@param configOpt table|nil
 ---@param game GameServerHook
-local function GenerateVoronoi(configOpt, game)
+function GenerateVoronoi(configOpt, game)
     if configOpt then setConfigOpt(configOpt) end
     local sites = generate_sites(NUM_SITES)
     if SVG_OUTPUT then
