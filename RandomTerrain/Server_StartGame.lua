@@ -6,10 +6,10 @@ local CELL_SIZE = 100
 -- TODO custom types
 -- Terrain types
 local terrainTypes = {
-    Desert = { structureType = "Desert" },
-    Grassland = { structureType = "Grassland" },
-    Forest = { structureType = "Forest" },
-    Mountain = { structureType = "Mountain" },
+    Desert = { structureType = "Desert", weight = 0.2 },
+    Grassland = { structureType = "Grassland", weight = 0.4 },
+    Forest = { structureType = "Forest", weight = 0.3 },
+    Mountain = { structureType = "Mountain", weight = 0.1 },
 }
 
 ---@return string
