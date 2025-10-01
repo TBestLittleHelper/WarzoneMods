@@ -5,36 +5,36 @@ local CELL_SIZE = 100
 
 -- Terrain types
 local terrainTypes = {
-    Desert = { structureType = "Desert", weight = 0.2 },
-    Grassland = { structureType = "Grassland", weight = 0.4 },
-    Forest = { structureType = "Forest", weight = 0.3 },
-    Mountain = { structureType = "Mountain", weight = 0.1 },
+    { structureType = "Desert", weight = 0.2 },
+    { structureType = "Grassland", weight = 0.4 },
+    { structureType = "Forest", weight = 0.3 },
+    { structureType = "Mountain", weight = 0.1 },
 }
 
-local function totalWeight()
+
+local function calculateTotalWeight()
     local total = 0
-    for _, t in pairs(terrainTypes) do
+    for _, t in ipairs(terrainTypes) do
         total = total + t.weight
     end
     return total
 end
 
-
----@return string
 local function randomTerrainType(totalWeight)
-    local keys = {}
-    for k in pairs(terrainTypes) do
-        table.insert(keys, k)
+    local rnd = math.random() * totalWeight
+    for _, t in ipairs(terrainTypes) do
+        rnd = rnd - t.weight
+        if rnd <= 0 then
+            return t.structureType
+        end
     end
-    local name = keys[math.random(#keys)]
-    return terrainTypes[name].structureType
-
-
+    print("randomTerrainType failed ", rnd)
+    return terrainTypes[#terrainTypes].structureType
+end
 end
 
-
 local function getWarzoneSites(territories)
-    local totalWeight = totalWeight()
+    local totalWeight = calculateTotalWeight()
     print("totalWeight: " .. totalWeight)
 
     local sites = {}
