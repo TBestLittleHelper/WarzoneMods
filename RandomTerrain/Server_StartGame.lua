@@ -3,7 +3,6 @@ local WIDTH, HEIGHT = 3500, 2500 -- Max size of a map
 local NUM_SITES = 500            -- Unused, we can experiment later
 local CELL_SIZE = 100
 
--- TODO custom types
 -- Terrain types
 local terrainTypes = {
     Desert = { structureType = "Desert", weight = 0.2 },
@@ -12,19 +11,35 @@ local terrainTypes = {
     Mountain = { structureType = "Mountain", weight = 0.1 },
 }
 
+local function totalWeight()
+    local total = 0
+    for _, t in pairs(terrainTypes) do
+        total = total + t.weight
+    end
+    return total
+end
+
+
 ---@return string
-local function randomTerrainType()
+local function randomTerrainType(totalWeight)
     local keys = {}
     for k in pairs(terrainTypes) do
         table.insert(keys, k)
     end
     local name = keys[math.random(#keys)]
     return terrainTypes[name].structureType
+
+
 end
+
+
 local function getWarzoneSites(territories)
+    local totalWeight = totalWeight()
+    print("totalWeight: " .. totalWeight)
+
     local sites = {}
     for _, territory in pairs(territories) do
-        local terrainType = randomTerrainType();
+        local terrainType = randomTerrainType(totalWeight);
         sites[territory.ID] = {
             ID = territory.ID,
             x = territory.MiddlePointX,
