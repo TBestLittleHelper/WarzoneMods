@@ -109,6 +109,7 @@ local function generate_svg(sites)
 
     table.insert(svg, '</svg>')
 
+    -- NOTE! The following file operations are disabled in Warzone environment. Uncomment if running locally. When submitting to Warzone, ensure these lines remain commented out.
 --    local output = table.concat(svg, "\n")
 --    local file = io.open("voronoi_map.svg", "w")
 --    file:write(output)
