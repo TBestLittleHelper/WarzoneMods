@@ -3,9 +3,9 @@
 local SVG_OUTPUT = true -- Set to false for WZ map points
 
 -- Default configuration
-local WIDTH, HEIGHT = 3500, 2500
-local NUM_SITES = 100
-local CELL_SIZE = 60 -- Resolution control
+local WIDTH, HEIGHT = 4000, 2500
+local NUM_SITES = 500
+local CELL_SIZE = 100 -- Resolution control
 
 -- Terrain types with color codes (for svg output)
 local terrainType = {
@@ -150,15 +150,19 @@ end
 ---@diagnostic disable-next-line: unknown-cast-variable
 ---@cast WL WL
 ---@param configOpt table|nil
----@param game GameServerHook
+---@param game GameServerHook|nil
 function GenerateVoronoi(configOpt, game)
     if configOpt then setConfigOpt(configOpt) end
     local sites = generate_sites(NUM_SITES)
     if SVG_OUTPUT then
         generate_svg(sites)
     else
-        local TerritoryStructures = generate_wz_points(sites, game.Map.Territories)
-        return TerritoryStructures;
+        if (game) then
+            local TerritoryStructures = generate_wz_points(sites, game.Map.Territories)
+            return TerritoryStructures;
+        else
+            print("Game is nil. Make sure you run in WZ OR set SVG_OUTPUT to true")
+        end
     end
 end
 
