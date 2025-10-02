@@ -7,8 +7,9 @@ local config = {
     RANDOM_SEED = 1000,
     WIDTH = 4500,
     HEIGHT = 2500,
+    NUM_SITES = 500,
+    CELL_SIZE = 100,
 }
-local CELL_SIZE = 100
 
 ---Places structures on the map based on the sites.
 ---@param standing GameStanding
