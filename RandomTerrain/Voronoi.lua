@@ -2,7 +2,7 @@
 
 local SVG_OUTPUT = true -- Set to false for WZ map points
 
--- Configuration
+-- Default configuration
 local WIDTH, HEIGHT = 3500, 2500
 local NUM_SITES = 100
 local CELL_SIZE = 60 -- Resolution control
