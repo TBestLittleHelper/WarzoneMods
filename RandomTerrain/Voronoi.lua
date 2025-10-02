@@ -144,4 +144,4 @@ function GenerateVoronoi(configOpt, game)
     end
 end
 
-GenerateVoronoi()
+--GenerateVoronoi()
