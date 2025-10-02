@@ -64,9 +64,19 @@ local function generate_sites(n)
     return sites
 end
 
--- Nearest site for a given cell
+---@class VoronoiSite
+---@field x number
+---@field y number
+---@field terrain table
+
+---Find the nearest site for a given cell
+---@param sites VoronoiSite[]
+---@param x number
+---@param y number
+---@return VoronoiSite
 local function find_nearest_site(sites, x, y)
-    local nearest, min_dist2 = nil, math.huge
+    local nearest = sites[1]
+    local min_dist2 = math.huge
     for _, site in ipairs(sites) do
         local dx = x - site.x
         local dy = y - site.y
@@ -124,14 +134,17 @@ end
 
 -- Warzone Structure generation
 local function generate_wz_points(sites, territories)
-    -- todo wz territories to find closest site and assing that structure type
-    local territories = {}
-    process_cells(sites, function(x, y, site)
-        table.insert(territories, {
-            customStructureName = site.terrain.structureType
-        })
-    end)
-    return territories
+    local territoryStructures = {}
+
+    for _, territory in pairs(territories) do
+        local nearestSite = find_nearest_site(sites, territory.MiddlePointX, territory.MiddlePointY)
+
+        territoryStructures[territory.ID] = {
+            customStructureName = nearestSite.terrain.structureType
+        }
+    end
+
+    return territoryStructures
 end
 
 ---@cast WL WL
