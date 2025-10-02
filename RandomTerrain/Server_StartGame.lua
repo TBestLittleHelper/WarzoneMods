@@ -5,7 +5,7 @@ require("Voronoi")
 local config = {
     SVG_OUTPUT = false,
     RANDOM_SEED = 1000,
-    WIDTH = 4500,
+    WIDTH = 4000,
     HEIGHT = 2500,
     NUM_SITES = 500,
     CELL_SIZE = 100,
