@@ -26,12 +26,16 @@ local terrainInfluenceRules = {
 
 local function setConfigOpt(config)
     print("Setting config options")
+    -- print k and v for each key value pair in config
+    for k, v in pairs(config) do
+        print(k, v)
+    end
     if config.WIDTH then WIDTH = config.WIDTH end
     if config.HEIGHT then HEIGHT = config.HEIGHT end
     if config.NUM_SITES then NUM_SITES = config.NUM_SITES end
     if config.CELL_SIZE then CELL_SIZE = config.CELL_SIZE end
     if config.SVG_OUTPUT ~= nil then SVG_OUTPUT = config.SVG_OUTPUT end
-   -- if config.RANDOM_SEED then math.randomseed(config.RANDOM_SEED) else math.randomseed(os.time()) end
+    if config.RANDOM_SEED then math.randomseed(config.RANDOM_SEED) else math.randomseed(os.time()) end
     if config.TERRAIN_TYPE then terrainType = config.TERRAIN_TYPE end
 end
 
