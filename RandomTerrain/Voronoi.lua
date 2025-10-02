@@ -1,26 +1,26 @@
 --- Generate a Voronoi map with random terrain types. Output as SVG or as points for a WZ map.
 
-local SVG_OUTPUT = true  -- Set to false for WZ map points
+local SVG_OUTPUT = true -- Set to false for WZ map points
 
 -- Configuration
-local WIDTH, HEIGHT =  3500, 2500
+local WIDTH, HEIGHT = 3500, 2500
 local NUM_SITES = 100
-local CELL_SIZE = 60  -- Resolution control
+local CELL_SIZE = 60 -- Resolution control
 
 -- Terrain types with color codes (for svg output)
 local terrainType = {
-        {structureType = "Desert", weight = 0.2, color = "#EDC9AF"},
-        {structureType = "Grassland", weight = 0.4, color = "#C8FFC8"},
-        {structureType = "Forest", weight = 0.3, color = "#044e04ff"},
-        {structureType = "Mountain", weight = 0.1, color = "#A9A9A9"}
-    }
+    { structureType = "Desert",    weight = 0.2, color = "#EDC9AF" },
+    { structureType = "Grassland", weight = 0.4, color = "#C8FFC8" },
+    { structureType = "Forest",    weight = 0.3, color = "#044e04ff" },
+    { structureType = "Mountain",  weight = 0.1, color = "#A9A9A9" }
+}
 
 -- Terrain adjacency influence rules
 local terrainInfluenceRules = {
-    ["Forest"] = { preferred = {"Grassland"}, avoid = {"Desert"} },
-    ["Grassland"] = { preferred = {"Forest", "Desert"}, avoid = {"Mountain"} },
-    ["Desert"] = { preferred = {"Grassland"}, avoid = {"Forest"} },
-    ["Mountain"] = { preferred = {"Forest"}, avoid = {} },
+    ["Forest"] = { preferred = { "Grassland" }, avoid = { "Desert" } },
+    ["Grassland"] = { preferred = { "Forest", "Desert" }, avoid = { "Mountain" } },
+    ["Desert"] = { preferred = { "Grassland" }, avoid = { "Forest" } },
+    ["Mountain"] = { preferred = { "Forest" }, avoid = {} },
 }
 
 
@@ -114,10 +114,10 @@ local function generate_svg(sites)
     table.insert(svg, '</svg>')
 
     -- NOTE! The following file operations are disabled in Warzone environment. Uncomment if running locally. When submitting to Warzone, ensure these lines remain commented out.
---    local output = table.concat(svg, "\n")
---    local file = io.open("voronoi_map.svg", "w")
---    file:write(output)
---    file:close()
+    --    local output = table.concat(svg, "\n")
+    --    local file = io.open("voronoi_map.svg", "w")
+    --    file:write(output)
+    --    file:close()
     print("SVG map generated: voronoi_map.svg")
 end
 
@@ -128,7 +128,7 @@ local function generate_wz_points(sites, territories)
     local territories = {}
     process_cells(sites, function(x, y, site)
         table.insert(territories, {
-           customStructureName = site.terrain.structureType
+            customStructureName = site.terrain.structureType
         })
     end)
     return territories
