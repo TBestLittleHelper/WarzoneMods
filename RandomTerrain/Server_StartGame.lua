@@ -4,7 +4,7 @@ require("Voronoi")
 
 local config = {
         SVG_OUTPUT = false,
-        RANDOM_SEED = 1000
+        RANDOM_SEED = 1000,
     }-- Resolution control
 
 local WIDTH, HEIGHT = 3500, 2500 -- Max size of a map
@@ -35,9 +35,7 @@ end
 function Server_StartGame(game, standing)
     local tickCount = WL.TickCount()
     print("TickCount: " .. tickCount)
-    -- math.randomseed(tickCount)
-
-    print(config.SVG_OUTPUT)
+    config.RANDOM_SEED = tickCount
 
     local TerritoryStructure = GenerateVoronoi(config, game)
     print("GeneratedVoronoi")
