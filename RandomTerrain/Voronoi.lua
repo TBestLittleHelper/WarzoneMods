@@ -35,7 +35,7 @@ local function setConfigOpt(config)
     if config.NUM_SITES then NUM_SITES = config.NUM_SITES end
     if config.CELL_SIZE then CELL_SIZE = config.CELL_SIZE end
     if config.SVG_OUTPUT ~= nil then SVG_OUTPUT = config.SVG_OUTPUT end
-    if config.RANDOM_SEED then math.randomseed(config.RANDOM_SEED) else math.randomseed(os.time()) end
+    --    if config.RANDOM_SEED then math.randomseed(config.RANDOM_SEED) else math.randomseed(os.time()) end
     if config.TERRAIN_TYPE then terrainType = config.TERRAIN_TYPE end
 end
 
