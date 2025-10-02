@@ -147,6 +147,7 @@ local function generate_wz_points(sites, territories)
     return territoryStructures
 end
 
+---@diagnostic disable-next-line: unknown-cast-variable
 ---@cast WL WL
 ---@param configOpt table|nil
 ---@param game GameServerHook
