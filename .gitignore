@@ -1,2 +1,6 @@
-/.vscode/
+# VS Code
+.vscode/
+*.code-workspace
+
+# Other
 voronoi_map.svg
