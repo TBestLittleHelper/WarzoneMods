@@ -22,7 +22,9 @@ function Client_PresentMenuUI(rootParent, setMaxSize, setScrollable, game, close
 
 	-- Track created upgrade UI elements for destruction later
 	local upgradeUIElements = {}
-	UpgradePoints = 0
+
+	UpgradePoints = {}
+	GetPlayerPointsFromServer(game)
 
 	local function DestroyOldAdvancmentUpgrades()
 		for i = #upgradeUIElements, 1, -1 do
@@ -45,7 +47,7 @@ function Client_PresentMenuUI(rootParent, setMaxSize, setScrollable, game, close
 			if UnlockedUpgrades[upgrade.UID] then
 				btn.SetInteractable(false).SetColor("#00FF00")
 			else
-				local isAffordable = upgrade.Cost <= UpgradePoints
+				local isAffordable = upgrade.Cost <= UpgradePoints[advancment]
 				btn.SetInteractable(isAffordable).SetColor(isAffordable and "#FFFFFF" or "#FF0000")
 			end
 
@@ -111,6 +113,14 @@ function UpdateAdvancmentData(returnData)
 end
 
 function GetPlayerPointsFromServer(game)
+	-- Set points to zero, in case server request fails
+	for advancmentName, advancment in pairs(Mod.Settings.Advancements) do
+		if advancment.Enabled then
+			UpgradePoints[advancmentName] = 0
+		end
+		UpgradePoints[advancmentName] = 0
+	end
+
 	local pointsPayload = { Type = "GetPlayerPoints" }
 	game.SendGameCustomMessage("Getting advancment points", pointsPayload, function(returnData)
 		UpdatePlayerPoints(returnData)
@@ -123,5 +133,10 @@ function UpdatePlayerPoints(returnData)
 		UI.Alert(returnData.Message)
 		return
 	end
-	UpgradePoints = returnData.Points
+
+	for advancmentName, advancment in pairs(Mod.Settings.Advancements) do
+		if advancment.Enabled then
+			UpgradePoints[advancmentName] = returnData.Points[advancmentName] or 0
+		end
+	end
 end
