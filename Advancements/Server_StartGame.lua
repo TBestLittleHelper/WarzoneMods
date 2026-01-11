@@ -26,6 +26,7 @@ function Server_StartGame(game, standing)
 				privateGameData[player.ID][advancmentName] = { Points = 0 }
 			end
 
+			privateGameData[advancmentName] = {}
 			local Upgrades = advancement.Upgrades
 			for _, upgrade in pairs(Upgrades) do
 				privateGameData[advancmentName][upgrade.UID] = {
