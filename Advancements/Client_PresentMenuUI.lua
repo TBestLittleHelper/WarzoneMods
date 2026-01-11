@@ -4,6 +4,10 @@ function Client_PresentMenuUI(rootParent, setMaxSize, setScrollable, game, close
 		return
 	end
 
+	UnlockedUpgrades = {}
+	GetUnlockedFromServer(game)
+
+
 	setMaxSize(550, 650)
 	setScrollable(false, true)
 
@@ -18,7 +22,7 @@ function Client_PresentMenuUI(rootParent, setMaxSize, setScrollable, game, close
 
 	-- Track created upgrade UI elements for destruction later
 	local upgradeUIElements = {}
-	local upgradePoints = 0
+	UpgradePoints = 0
 
 	local function DestroyOldAdvancmentUpgrades()
 		for i = #upgradeUIElements, 1, -1 do
@@ -36,14 +40,21 @@ function Client_PresentMenuUI(rootParent, setMaxSize, setScrollable, game, close
 			local line = UI.CreateHorizontalLayoutGroup(advancmentUpgradeArea)
 			table.insert(upgradeUIElements, line)
 
-			local isAffordable = upgrade.Cost <= upgradePoints
-			local btn = UI.CreateButton(line).SetText(upgrade.Name).SetInteractable(isAffordable)
+			local btn = UI.CreateButton(line).SetText(upgrade.Name)
+
+			if UnlockedUpgrades[upgrade.UID] then
+				btn.SetInteractable(false).SetColor("#00FF00")
+			else
+				local isAffordable = upgrade.Cost <= UpgradePoints
+				btn.SetInteractable(isAffordable).SetColor(isAffordable and "#FFFFFF" or "#FF0000")
+			end
+
 			table.insert(upgradeUIElements, btn)
 		end
 	end
 
 	-- Buttons
-	UI.CreateButton(advancmentButtons).SetInteractable(false).SetText(upgradePoints .. " Points")
+	UI.CreateButton(advancmentButtons).SetInteractable(false).SetText(UpgradePoints .. " Points")
 
 
 	if Advancements.Economy.Enabled then
@@ -73,9 +84,44 @@ function Client_PresentMenuUI(rootParent, setMaxSize, setScrollable, game, close
 			end)
 	end
 
-	-- todo test
-	UI.CreateButton(advancmentButtons).SetText("Refresh").SetOnClick(function()
-		close()
-		Client_PresentMenuUI(rootParent, setMaxSize, setScrollable, game, close)
+	-- Refresh button to manually get updated data from server
+	UI.CreateButton(advancmentButtons).SetText("Refresh data").SetOnClick(function()
+		GetPlayerPointsFromServer(game)
+		GetUnlockedFromServer(game)
+		DestroyOldAdvancmentUpgrades()
 	end)
+end
+
+function GetUnlockedFromServer(game)
+	local unlockPayload = { Type = "GetUnlocked" }
+	game.SendGameCustomMessage("Getting unlocked advancments", unlockPayload, function(returnData)
+		UpdateAdvancmentData(returnData)
+	end)
+end
+
+function UpdateAdvancmentData(returnData)
+	print(returnData)
+	if not returnData.Success then
+		print(returnData.Message)
+		UI.Alert(returnData.Message)
+		return
+	end
+	print("Received unlocked upgrades data.")
+	UnlockedUpgrades = returnData
+end
+
+function GetPlayerPointsFromServer(game)
+	local pointsPayload = { Type = "GetPlayerPoints" }
+	game.SendGameCustomMessage("Getting advancment points", pointsPayload, function(returnData)
+		UpdatePlayerPoints(returnData)
+	end)
+end
+
+function UpdatePlayerPoints(returnData)
+	if not returnData.Success then
+		print(returnData.Message)
+		UI.Alert(returnData.Message)
+		return
+	end
+	UpgradePoints = returnData.Points
 end
