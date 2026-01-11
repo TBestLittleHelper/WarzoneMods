@@ -6,7 +6,7 @@ local Advancments = {
 		PointsPerIncome = 1,
 		Upgrades = {
 			{ UID = 1, Name = "Buy Stocks",  Description = "Earn 1 extra point for every 5 income you have.",  IncomeThreshold = 5,  PointsPerIncome = 1, Cost = 5 },
-			{ ID = 2, Name = "Build Farms", Description = "Earn 1 extra point for every 10 income you have.", IncomeThreshold = 10, PointsPerIncome = 1, Cost = 10 }
+			{ UID = 2, Name = "Build Farms", Description = "Earn 1 extra point for every 10 income you have.", IncomeThreshold = 10, PointsPerIncome = 1, Cost = 10 }
 		},
 	},
 	Culture = {
