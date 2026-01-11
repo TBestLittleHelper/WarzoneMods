@@ -18,6 +18,7 @@ function Client_PresentMenuUI(rootParent, setMaxSize, setScrollable, game, close
 
 	-- Track created upgrade UI elements for destruction later
 	local upgradeUIElements = {}
+	local upgradePoints = 0
 
 	local function DestroyOldAdvancmentUpgrades()
 		for i = #upgradeUIElements, 1, -1 do
@@ -35,12 +36,16 @@ function Client_PresentMenuUI(rootParent, setMaxSize, setScrollable, game, close
 			local line = UI.CreateHorizontalLayoutGroup(advancmentUpgradeArea)
 			table.insert(upgradeUIElements, line)
 
-			local btn = UI.CreateButton(line).SetText(upgrade.Name)
+			local isAffordable = upgrade.Cost <= upgradePoints
+			local btn = UI.CreateButton(line).SetText(upgrade.Name).SetInteractable(isAffordable)
 			table.insert(upgradeUIElements, btn)
 		end
 	end
 
 	-- Buttons
+	UI.CreateButton(advancmentButtons).SetInteractable(false).SetText(upgradePoints .. " Points")
+
+
 	if Advancements.Economy.Enabled then
 		UI.CreateButton(advancmentButtons)
 			.SetText("Economy")
@@ -67,4 +72,10 @@ function Client_PresentMenuUI(rootParent, setMaxSize, setScrollable, game, close
 				SelectAdvancment("Armies", Advancements.Armies.Upgrades)
 			end)
 	end
+
+	-- todo test
+	UI.CreateButton(advancmentButtons).SetText("Refresh").SetOnClick(function()
+		close()
+		Client_PresentMenuUI(rootParent, setMaxSize, setScrollable, game, close)
+	end)
 end
