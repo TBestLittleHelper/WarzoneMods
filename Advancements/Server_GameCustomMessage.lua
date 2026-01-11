@@ -1,4 +1,10 @@
 function Server_GameCustomMessage(game, playerID, payload, setReturnTable)
+	local returnData = {
+		Success = false,
+		Message = "Invalid request."
+	}
+	setReturnTable(returnData)
+
 	if payload == nil or payload.Type == nil then
 		return
 	end
@@ -7,19 +13,16 @@ function Server_GameCustomMessage(game, playerID, payload, setReturnTable)
 
 	if payload.Type == "GetUnlocked" then
 		local unlocked = GetUnlockedByPlayerID(playerID, privateGameData)
-
-		setReturnTable(unlocked)
+		returnData = {
+			Success = true,
+			Message = "Unlocked upgrades retrieved successfully.",
+			UnlockedUpgrades = unlocked
+		}
+		setReturnTable(returnData)
 		return
 	end
 
 	if payload.Type == "UnlockUpgrade" then
-		-- Validate payload
-		local returnData = {
-			Success = false,
-			Message = "Failed to unlock upgrade."
-		}
-		setReturnTable(returnData)
-
 		local advancmentName = payload.AdvancmentName or ""
 		if advancmentName == "" then
 			returnData.Message = "Invalid advancment name."
@@ -62,10 +65,7 @@ function Server_GameCustomMessage(game, playerID, payload, setReturnTable)
 	end
 
 	if payload.Type == "GetPlayerPoints" then
-		local returnData = {
-			Success = false,
-			Message = "Failed to get player points."
-		}
+		returnData.Message = "Failed to get player points."
 		setReturnTable(returnData)
 
 		local Points = {};
