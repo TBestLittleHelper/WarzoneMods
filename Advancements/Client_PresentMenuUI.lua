@@ -4,17 +4,21 @@ function Client_PresentMenuUI(rootParent, setMaxSize, setScrollable, game, close
 		return
 	end
 
+	local Advancements = Mod.Settings.Advancments
+
+	-- Data we get from server
 	UnlockedUpgrades = {}
 	GetUnlockedFromServer(game)
+	UpgradePoints = {}
+	GetPlayerPointsFromServer(game, Advancements)
 
+	-- UI setup
+	---@type UI
+	UI = UI
+	AdvancementView = "Economy" -- todo maybe we select a different one if economy is disabled
 
 	setMaxSize(550, 650)
 	setScrollable(false, true)
-
-	local Advancements = Mod.Settings.Advancments
-
-	---@type UI
-	UI = UI
 
 	local verticalMainLayout = UI.CreateVerticalLayoutGroup(rootParent)
 	local advancmentButtons = UI.CreateHorizontalLayoutGroup(verticalMainLayout)
@@ -23,8 +27,7 @@ function Client_PresentMenuUI(rootParent, setMaxSize, setScrollable, game, close
 	-- Track created upgrade UI elements for destruction later
 	local upgradeUIElements = {}
 
-	UpgradePoints = {}
-	GetPlayerPointsFromServer(game)
+
 
 	local function DestroyOldAdvancmentUpgrades()
 		for i = #upgradeUIElements, 1, -1 do
@@ -34,6 +37,7 @@ function Client_PresentMenuUI(rootParent, setMaxSize, setScrollable, game, close
 	end
 
 	local function SelectAdvancment(advancment, upgrades)
+		AdvancementView = advancment
 		DestroyOldAdvancmentUpgrades()
 
 		print("Selected Advancment: " .. advancment)
@@ -56,7 +60,10 @@ function Client_PresentMenuUI(rootParent, setMaxSize, setScrollable, game, close
 	end
 
 	-- Buttons
-	UI.CreateButton(advancmentButtons).SetInteractable(false).SetText(UpgradePoints .. " Points")
+	PointsButton = UI.CreateButton(advancmentButtons)
+		.SetInteractable(false)
+		.SetText(UpgradePoints[AdvancementView] ..
+			" Points")
 
 
 	if Advancements.Economy.Enabled then
@@ -88,7 +95,7 @@ function Client_PresentMenuUI(rootParent, setMaxSize, setScrollable, game, close
 
 	-- Refresh button to manually get updated data from server
 	UI.CreateButton(advancmentButtons).SetText("Refresh data").SetOnClick(function()
-		GetPlayerPointsFromServer(game)
+		GetPlayerPointsFromServer(game, Advancements)
 		GetUnlockedFromServer(game)
 		DestroyOldAdvancmentUpgrades()
 	end)
@@ -102,7 +109,6 @@ function GetUnlockedFromServer(game)
 end
 
 function UpdateAdvancmentData(returnData)
-	print(returnData)
 	if not returnData.Success then
 		print(returnData.Message)
 		UI.Alert(returnData.Message)
@@ -112,9 +118,9 @@ function UpdateAdvancmentData(returnData)
 	UnlockedUpgrades = returnData
 end
 
-function GetPlayerPointsFromServer(game)
+function GetPlayerPointsFromServer(game, Advancment)
 	-- Set points to zero, in case server request fails
-	for advancmentName, advancment in pairs(Mod.Settings.Advancements) do
+	for advancmentName, advancment in pairs(Advancment) do
 		if advancment.Enabled then
 			UpgradePoints[advancmentName] = 0
 		end
@@ -123,20 +129,22 @@ function GetPlayerPointsFromServer(game)
 
 	local pointsPayload = { Type = "GetPlayerPoints" }
 	game.SendGameCustomMessage("Getting advancment points", pointsPayload, function(returnData)
-		UpdatePlayerPoints(returnData)
+		UpdatePlayerPoints(returnData, Advancment)
 	end)
 end
 
-function UpdatePlayerPoints(returnData)
+function UpdatePlayerPoints(returnData, Advancment)
 	if not returnData.Success then
 		print(returnData.Message)
 		UI.Alert(returnData.Message)
 		return
 	end
 
-	for advancmentName, advancment in pairs(Mod.Settings.Advancements) do
+	for advancmentName, advancment in pairs(Advancment) do
 		if advancment.Enabled then
 			UpgradePoints[advancmentName] = returnData.Points[advancmentName] or 0
+			print("Received " .. UpgradePoints[advancmentName] .. " points for " .. advancmentName)
 		end
 	end
+	PointsButton.SetText(UpgradePoints[AdvancementView] .. " Points")
 end
