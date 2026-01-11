@@ -60,6 +60,28 @@ function Server_GameCustomMessage(game, playerID, payload, setReturnTable)
 		returnData.Message = "Upgrade unlocked successfully."
 		setReturnTable(returnData)
 	end
+
+	if payload.Type == "GetPlayerPoints" then
+		local returnData = {
+			Success = false,
+			Message = "Failed to get player points."
+		}
+		setReturnTable(returnData)
+
+		local Points = {};
+		for advancmentName, advancement in pairs(Mod.Settings.Advancments) do
+			if advancement.Enabled then
+				Points[advancmentName] = privateGameData[playerID][advancmentName].Points or 0
+			end
+		end
+
+		returnData.Success = true
+		returnData.Message = "Player points retrieved successfully."
+		returnData.Points = Points
+		setReturnTable(returnData)
+
+		return
+	end
 end
 
 function GetUnlockedByPlayerID(playerID, privateGameData)
