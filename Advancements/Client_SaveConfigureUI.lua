@@ -1,3 +1,5 @@
+
+---@type Advancments
 local Advancments = {
 	-- Economy ID start at 1, Culture at 30, Armies at 60 to avoid ID conflicts
 	Economy = {
@@ -5,12 +7,12 @@ local Advancments = {
 		Enabled = true,
 		PointsPerIncome = 1,
 		Upgrades = {
-			{ UID = 1, Name = "Buy Stocks",  Description = "Earn 1 extra point for every 5 income you have.",  IncomeThreshold = 5,  PointsPerIncome = 1, Cost = 5, AdvanceTurn = "End" },
-			{ UID = 2, Name = "Build Farms", Description = "Earn 1 extra point for every 10 income you have.", IncomeThreshold = 10, PointsPerIncome = 1, Cost = 10 , AdvanceTurn = "End" },
+			{ UID = 1, Name = "Trade Stocks",  Description = "Earn 1 extra point for every 5 income you have.",  IncomeThreshold = 5,  PointsPerIncome = 1, Cost = 5, AdvanceTurn = "End" },
+			{ UID = 2, Name = "Industrial Farms", Description = "Earn 1 extra point for every 10 income you have.", IncomeThreshold = 10, PointsPerIncome = 1, Cost = 10 , AdvanceTurn = "End" },
 		},
 	},
 	Culture = {
-		Color = "#00FFAA",
+		Color = "#880085",
 		Enabled = true,
 		PointsPerCity = 2,
 		Upgrades = {
@@ -18,7 +20,7 @@ local Advancments = {
 		},
 	},
 	Armies = {
-		Color = "#FF00AA",
+		Color = "#990024",
 		Enabled = true,
 		PointsPerArmy = 1,
 		Upgrades = {
