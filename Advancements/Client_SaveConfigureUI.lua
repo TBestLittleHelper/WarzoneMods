@@ -23,8 +23,8 @@ local Advancments = {
 		Enabled = true,
 		PointsPerArmy = 1,
 		Upgrades = {
-			{ UID = 60, Name = "Mercenaries", Description = "Every 5 deployed armies comes with 1 extra army.",                     ArmiesThreshold = 5, DeployBonus = 1,      Cost = 12, AdvanceTurn = "Order" },
-			{ UID = 61, Name = "Spy Network", Description = "Get a report of one random players status at the start of your turn.", Cost = 15,           AdvanceTurn = "Start" },
+			{ UID = 60, Name = "Mercenaries", Description = "Every 5 deployed armies comes with 1 extra army.",                     ArmiesThreshold = 5, DeployBonus = 1, Cost = 12,            AdvanceTurn = "Order" },
+			{ UID = 61, Name = "Spy Network", Description = "Get a report of one random players status at the start of your turn.", SpyReports = 1,      Cost = 15,       AdvanceTurn = "Start" },
 		},
 	},
 }
