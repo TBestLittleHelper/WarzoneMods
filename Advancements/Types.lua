@@ -1,3 +1,4 @@
+-- Mod.Settings.Advancments data structure
 ---@alias AdvanceTurn "Start" | "Order" | "End"
 
 ---@class AdvancementUpgrade
