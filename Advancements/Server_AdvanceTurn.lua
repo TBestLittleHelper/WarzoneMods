@@ -1,5 +1,5 @@
 ---@type WL WL
-WL=WL
+WL = WL
 
 function Server_AdvanceTurn_Start(game, addNewOrder)
 	-- We need to know what advancments happen when
@@ -68,9 +68,7 @@ end
 function Server_AdvanceTurn_End(game, addNewOrder)
 	-- For each advancment that triggers at end turn, give points to players who have it unlocked
 
-
-	for
-
+	-- todo dry, extract dupe code
 	-- Income Threshold Advancments
 	if ActiveAdvancmentsEnd[1] then
 		local incomeThreshold = Mod.Settings.Advancments.Economy.Upgrades[1].IncomeThreshold
