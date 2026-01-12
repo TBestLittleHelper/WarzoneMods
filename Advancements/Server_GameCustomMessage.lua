@@ -43,7 +43,7 @@ function Server_GameCustomMessage(game, playerID, payload, setReturnTable)
 			return
 		end
 
-		local playerPoints = privateGameData[playerID][payload.AdvancmentName].Points
+		local playerPoints = privateGameData[playerID][advancmentName].Points
 		local cost = Mod.Settings.Advancments[advancmentName].Upgrades[upgradeUID].Cost
 
 		if playerPoints < cost then
@@ -53,7 +53,7 @@ function Server_GameCustomMessage(game, playerID, payload, setReturnTable)
 		end
 
 		-- Remove points and unlock upgrade
-		privateGameData[playerID][payload.AdvancmentName].Points = playerPoints - cost
+		privateGameData[playerID][advancmentName].Points = playerPoints - cost
 		privateGameData[advancmentName][upgradeUID].UnlockedBy[playerID] = true
 
 		---@diagnostic disable-next-line: inject-field
