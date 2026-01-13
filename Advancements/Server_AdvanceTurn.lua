@@ -152,23 +152,8 @@ function StandingCounter(LatestTurnStanding, players)
 		Counters.Territories[ownerID] = Counters.Territories[ownerID] + 1
 		Counters.Armies[ownerID] = Counters.Armies[ownerID] + territory.NumArmies.NumArmies;
 
-
-		--todo test
-		local cityCount = structures and structures[WL.StructureType.City]
-		print("city count 1")
-		if cityCount then
-			Counters.Cities[ownerID] = Counters.Cities[ownerID] + cityCount
-		end
-		print("city count 1")
 		local cities = (structures and structures[WL.StructureType.City]) or 0
 		Counters.Cities[ownerID] = Counters.Cities[ownerID] + cities
-
-		print("city count 3")
-		if structures ~= nil then
-			if structures[WL.StructureType.City] ~= nil then
-				Counters.Cities[ownerID] = Counters.Cities[ownerID] + structures[WL.StructureType.City]
-			end
-		end
 	end
 
 	return Counters
