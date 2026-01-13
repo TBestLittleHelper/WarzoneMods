@@ -108,9 +108,25 @@ function Server_AdvanceTurn_End(game, addNewOrder)
 		for _, playerID in pairs(ActiveAdvancementsEnd[CultureSongCompetitionUID]) do
 			--https://www.warzone.com/wiki/Mod_API_Reference:GamePlayer
 			local numCities = Counters.Cities[playerID] or 0
-
 			local bonusPoints = math.floor(numCities / citiesThreshold) * pointsPerCity
+
+			print("Player " ..
+				playerID .. " has " .. numCities .. " cities, earning " .. bonusPoints .. " culture points.")
 			PrivateGameData[playerID].Culture.Points = PrivateGameData[playerID].Culture.Points + bonusPoints
+		end
+	end
+
+	-- Passive points so you never get stuck at zero
+	local passivePoints = 1
+	for advancementName, advancement in pairs(Mod.Settings.Advancements) do
+		if advancement.Enabled then
+			for _, player in pairs(game.ServerGame.Game.PlayingPlayers) do
+				PrivateGameData[player.ID][advancementName].Points = PrivateGameData[player.ID][advancementName].Points +
+					passivePoints
+
+				print("Player " .. player.ID .. " has " .. PrivateGameData[player.ID][advancementName].Points ..
+					" total " .. advancementName .. " points.")
+			end
 		end
 	end
 
