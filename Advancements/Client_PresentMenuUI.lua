@@ -15,8 +15,7 @@ function Client_PresentMenuUI(rootParent, setMaxSize, setScrollable, game, close
 	-- UI setup
 	---@type UI
 	UI = UI
-	AdvancementView = "Economy" -- todo maybe we select a different one if economy is disabled
-
+	local advancementView = GetDefaultView(Advancements)
 	setMaxSize(550, 650)
 	setScrollable(false, true)
 
@@ -36,11 +35,12 @@ function Client_PresentMenuUI(rootParent, setMaxSize, setScrollable, game, close
 		end
 	end
 
-	local function SelectAdvancment(advancment, upgrades)
-		AdvancementView = advancment
+	function UpdateView()
 		DestroyOldAdvancmentUpgrades()
 
-		print("Selected Advancment: " .. advancment)
+		print("Selected Advancment: " .. advancementView)
+
+		local upgrades = Advancements[advancementView].Upgrades
 
 		for _, upgrade in ipairs(upgrades) do
 			local line = UI.CreateHorizontalLayoutGroup(advancmentUpgradeArea)
@@ -51,7 +51,7 @@ function Client_PresentMenuUI(rootParent, setMaxSize, setScrollable, game, close
 			if UnlockedUpgrades[upgrade.UID] then
 				btn.SetInteractable(false).SetColor("#00FF00")
 			else
-				local isAffordable = upgrade.Cost <= UpgradePoints[advancment]
+				local isAffordable = upgrade.Cost <= UpgradePoints[advancementView]
 				btn.SetInteractable(isAffordable).SetColor(isAffordable and "#FFFFFF" or "#FF0000")
 			end
 
@@ -59,10 +59,15 @@ function Client_PresentMenuUI(rootParent, setMaxSize, setScrollable, game, close
 		end
 	end
 
+	local function SelectAdvancment(advancment)
+		advancementView = advancment
+		UpdateView()
+	end
+
 	-- Buttons
 	PointsButton = UI.CreateButton(advancmentButtons)
 		.SetInteractable(false)
-		.SetText(UpgradePoints[AdvancementView] ..
+		.SetText(UpgradePoints[advancementView] ..
 			" Points")
 
 
@@ -71,7 +76,7 @@ function Client_PresentMenuUI(rootParent, setMaxSize, setScrollable, game, close
 			.SetText("Economy")
 			.SetColor(Advancements.Economy.Color)
 			.SetOnClick(function()
-				SelectAdvancment("Economy", Advancements.Economy.Upgrades)
+				SelectAdvancment("Economy")
 			end)
 	end
 
@@ -80,7 +85,7 @@ function Client_PresentMenuUI(rootParent, setMaxSize, setScrollable, game, close
 			.SetText("Culture")
 			.SetColor(Advancements.Culture.Color)
 			.SetOnClick(function()
-				SelectAdvancment("Culture", Advancements.Culture.Upgrades)
+				SelectAdvancment("Culture")
 			end)
 	end
 
@@ -89,7 +94,7 @@ function Client_PresentMenuUI(rootParent, setMaxSize, setScrollable, game, close
 			.SetText("Armies")
 			.SetColor(Advancements.Armies.Color)
 			.SetOnClick(function()
-				SelectAdvancment("Armies", Advancements.Armies.Upgrades)
+				SelectAdvancment("Armies")
 			end)
 	end
 
@@ -99,6 +104,9 @@ function Client_PresentMenuUI(rootParent, setMaxSize, setScrollable, game, close
 		GetUnlockedFromServer(game)
 		DestroyOldAdvancmentUpgrades()
 	end)
+
+	-- Show default view
+	UpdateView()
 end
 
 function GetUnlockedFromServer(game)
@@ -146,5 +154,18 @@ function UpdatePlayerPoints(returnData, Advancment)
 			print("Received " .. UpgradePoints[advancmentName] .. " points for " .. advancmentName)
 		end
 	end
-	PointsButton.SetText(UpgradePoints[AdvancementView] .. " Points")
+	UpdateView()
+end
+
+function GetDefaultView(Advancements)
+	if Advancements.Economy.Enabled then
+		return "Economy"
+	elseif Advancements.Culture.Enabled then
+		return "Culture"
+	elseif Advancements.Armies.Enabled then
+		return "Armies"
+	else
+		UI.Alert("No Advancments are enabled in the mod settings. This should not be possible.")
+		return ""
+	end
 end
