@@ -13,11 +13,8 @@ function Server_AdvanceTurn_Start(game, addNewOrder)
 	ActiveAdvancmentsOrder = {}
 	ActiveAdvancmentsEnd = {}
 
-	for advancmentName, advancment in pairs(Mod.Settings.Advancments) do
+	for _, advancment in pairs(Mod.Settings.Advancments) do
 		if advancment.Enabled then
-			ActiveAdvancmentsStart[advancmentName] = {}
-			ActiveAdvancmentsOrder[advancmentName] = {}
-			ActiveAdvancmentsEnd[advancmentName] = {}
 
 			local Upgrades = advancment.Upgrades
 			for _, upgrade in pairs(Upgrades) do
