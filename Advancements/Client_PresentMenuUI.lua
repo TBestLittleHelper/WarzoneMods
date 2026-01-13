@@ -40,6 +40,8 @@ function Client_PresentMenuUI(rootParent, setMaxSize, setScrollable, game, close
 
 		print("Selected Advancment: " .. advancementView)
 
+		PointsButton.SetText(UpgradePoints[advancementView] .. " Points")
+
 		local upgrades = Advancements[advancementView].Upgrades
 
 		for _, upgrade in ipairs(upgrades) do
