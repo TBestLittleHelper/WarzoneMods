@@ -152,7 +152,7 @@ function StandingCounter(LatestTurnStanding, players)
 		Counters.Territories[ownerID] = Counters.Territories[ownerID] + 1
 		Counters.Armies[ownerID] = Counters.Armies[ownerID] + territory.NumArmies.NumArmies;
 
-		if structures ~= nil and structures ~= {} then
+		if structures ~= nil then
 			if structures[WL.StructureType.City] ~= nil then
 				Counters.Cities[ownerID] = Counters.Cities[ownerID] + structures[WL.StructureType.City]
 			end
