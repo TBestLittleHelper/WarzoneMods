@@ -142,17 +142,17 @@ function GetPlayerPointsFromServer(game, Advancment)
 	end)
 end
 
-function UpdatePlayerPoints(returnData, Advancment)
+function UpdatePlayerPoints(returnData, Advancements)
 	if not returnData.Success then
 		print(returnData.Message)
 		UI.Alert(returnData.Message)
 		return
 	end
 
-	for advancmentName, advancment in pairs(Advancment) do
-		if advancment.Enabled then
-			UpgradePoints[advancmentName] = returnData.Points[advancmentName] or 0
-			print("Received " .. UpgradePoints[advancmentName] .. " points for " .. advancmentName)
+	for advancementsName, advancements in pairs(Advancements) do
+		if advancements.Enabled then
+			UpgradePoints[advancementsName] = returnData.Points[advancementsName] or 0
+			print("Received " .. UpgradePoints[advancementsName] .. " points for " .. advancementsName)
 		end
 	end
 	UpdateView()
