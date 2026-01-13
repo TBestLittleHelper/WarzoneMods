@@ -1,3 +1,5 @@
+--todo refactor to Enums
+
 ---@type Advancements
 local Advancements = {
 	-- Economy ID start at 1, Culture at 30, Armies at 60 to avoid ID conflicts
