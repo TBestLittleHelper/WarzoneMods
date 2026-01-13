@@ -42,7 +42,8 @@ function Server_AdvanceTurn_Start(game, addNewOrder)
 						table.insert(otherPlayers, player)
 					end
 				end
-				if #otherPlayers > 0 then
+                if #otherPlayers > 0 then
+					-- todo redo random
 					local randomIndex = math.random(1, #otherPlayers)
 					local targetPlayer = otherPlayers[randomIndex]
 
