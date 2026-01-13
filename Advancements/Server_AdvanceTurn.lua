@@ -67,13 +67,20 @@ end
 
 function Server_AdvanceTurn_End(game, addNewOrder)
 	-- For each advancment that triggers at end turn, give points to players who have it unlocked
+	local Counters = StandingCounter(game.ServerGame.LatestTurnStanding, game.ServerGame.Game.Players)
+
+
+	local EconomyStocksUID = 1
+	local EconomyFarmsUID = 2
+
+	local CultureSongCompetitionUID = 30
 
 	-- todo dry, extract dupe code
 	-- Income Threshold Advancments
-	if ActiveAdvancmentsEnd[1] then
-		local incomeThreshold = Mod.Settings.Advancments.Economy.Upgrades[1].IncomeThreshold
-		local pointsPerIncome = Mod.Settings.Advancments.Economy.Upgrades[1].PointsPerIncome
-		for _, playerID in pairs(ActiveAdvancmentsEnd[1]) do
+	if ActiveAdvancmentsEnd[EconomyStocksUID] then
+		local incomeThreshold = Mod.Settings.Advancments.Economy.Upgrades[EconomyStocksUID].IncomeThreshold
+		local pointsPerIncome = Mod.Settings.Advancments.Economy.Upgrades[EconomyStocksUID].PointsPerIncome
+		for _, playerID in pairs(ActiveAdvancmentsEnd[EconomyStocksUID]) do
 			--https://www.warzone.com/wiki/Mod_API_Reference:GamePlayer
 			local income = game.ServerGame.Game.Players[playerID].Income(0, game.ServerGame.LatestTurnStanding, false,
 				false)
@@ -82,10 +89,10 @@ function Server_AdvanceTurn_End(game, addNewOrder)
 			PrivateGameData[playerID].Economy.Points = PrivateGameData[playerID].Economy.Points + bonusPoints
 		end
 	end
-	if ActiveAdvancmentsEnd[2] then
-		local incomeThreshold = Mod.Settings.Advancments.Economy.Upgrades[2].IncomeThreshold
-		local pointsPerIncome = Mod.Settings.Advancments.Economy.Upgrades[2].PointsPerIncome
-		for _, playerID in pairs(ActiveAdvancmentsEnd[2]) do
+	if ActiveAdvancmentsEnd[EconomyFarmsUID] then
+		local incomeThreshold = Mod.Settings.Advancments.Economy.Upgrades[EconomyFarmsUID].IncomeThreshold
+		local pointsPerIncome = Mod.Settings.Advancments.Economy.Upgrades[EconomyFarmsUID].PointsPerIncome
+		for _, playerID in pairs(ActiveAdvancmentsEnd[EconomyFarmsUID]) do
 			--https://www.warzone.com/wiki/Mod_API_Reference:GamePlayer
 			local income = game.ServerGame.Game.Players[playerID].Income(0, game.ServerGame.LatestTurnStanding, false,
 				false)
@@ -95,6 +102,20 @@ function Server_AdvanceTurn_End(game, addNewOrder)
 		end
 	end
 
+	-- Culture
+	if ActiveAdvancmentsEnd[CultureSongCompetitionUID] then
+		local citiesThreshold = Mod.Settings.Advancments.Culture.Upgrades[CultureSongCompetitionUID].CitiesThreshold
+		local pointsPerCity = Mod.Settings.Advancments.Culture.Upgrades[CultureSongCompetitionUID].PointsPerCity
+
+
+		for _, playerID in pairs(ActiveAdvancmentsEnd[CultureSongCompetitionUID]) do
+			--https://www.warzone.com/wiki/Mod_API_Reference:GamePlayer
+			local numCities = #game.ServerGame.Game.Players[playerID]:GetTerritories(WL.TerritoryType.City, nil)
+
+			local bonusPoints = math.floor(numCities / citiesThreshold) * pointsPerCity
+			PrivateGameData[playerID].Culture.Points = PrivateGameData[playerID].Culture.Points + bonusPoints
+		end
+	end
 
 
 	-- Write back to server Mod object
@@ -116,4 +137,32 @@ function GetUnlockedByAdvancmentID(advancmentID, privateGameData)
 		end
 	end
 	return unlockedBy
+end
+
+function StandingCounter(LatestTurnStanding, players)
+	local Counters = { Cities = { [WL.PlayerID.Neutral] = 0 }, Armies = { [WL.PlayerID.Neutral] = 0 }, Territories = { [WL.PlayerID.Neutral] = 0 } }
+
+	for playerID, _ in pairs(players) do
+		Counters.Cities[playerID] = 0
+		Counters.Armies[playerID] = 0
+		Counters.Territories[playerID] = 0
+	end
+
+	for _, territory in pairs(LatestTurnStanding.Territories) do
+		local ownerID = territory.OwnerPlayerID
+		local structures = territory.Structure
+
+		Counters.Territories[ownerID] = Counters.Territories[ownerID] + 1
+		Counters.Armies[ownerID] = Counters.Armies[ownerID] + territory.NumArmies.NumArmies;
+
+		if structures ~= nil and structures ~= {} then
+			if structures[WL.StructureType.City] ~= nil then
+				Counters.Cities[ownerID] = Counters.Cities[ownerID] + structures[WL.StructureType.City]
+			end
+		end
+
+		Counters.Territories[ownerID] = Counters.Territories[ownerID] + 1
+	end
+
+	return Counters
 end
