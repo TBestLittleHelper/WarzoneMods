@@ -100,9 +100,9 @@ function Client_PresentMenuUI(rootParent, setMaxSize, setScrollable, game, close
 
 	-- Refresh button to manually get updated data from server
 	UI.CreateButton(advancmentButtons).SetText("Refresh data").SetOnClick(function()
+		-- View is updated by the callbacks
 		GetPlayerPointsFromServer(game, Advancements)
 		GetUnlockedFromServer(game)
-		DestroyOldAdvancmentUpgrades()
 	end)
 
 	-- Show default view
@@ -124,6 +124,7 @@ function UpdateAdvancmentData(returnData)
 	end
 	print("Received unlocked upgrades data.")
 	UnlockedUpgrades = returnData
+	UpdateView()
 end
 
 function GetPlayerPointsFromServer(game, Advancment)
