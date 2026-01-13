@@ -33,5 +33,5 @@ function Client_SaveConfigureUI()
 	---@type Mod Mod
 	Mod = Mod
 	Mod.Settings.Version = 1
-	Mod.Settings.Advancments = Advancements
+	Mod.Settings.Advancements = Advancements
 end
