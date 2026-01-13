@@ -15,7 +15,6 @@ function Server_AdvanceTurn_Start(game, addNewOrder)
 
 	for _, advancment in pairs(Mod.Settings.Advancments) do
 		if advancment.Enabled then
-
 			local Upgrades = advancment.Upgrades
 			for _, upgrade in pairs(Upgrades) do
 				local unlockedBy = GetUnlockedByAdvancmentID(upgrade.UID, PrivateGameData)
@@ -47,8 +46,8 @@ function Server_AdvanceTurn_Start(game, addNewOrder)
 					local randomIndex = math.random(1, #otherPlayers)
 					local targetPlayer = otherPlayers[randomIndex]
 
-					-- todo display name
-					local message = targetPlayer .. " has Territories and Income"
+					-- todo display name? Move or remove upgrade from start hook, so we only loop end of turn?
+					local message = targetPlayer .. " has X Territories and Y Income"
 					-- Create a report order
 					local spyReportOrder = WL.GameOrderEvent.Create(playerID, message, {})
 					addNewOrder(spyReportOrder)
