@@ -147,7 +147,7 @@ function StandingCounter(LatestTurnStanding, players)
 
 	for _, territory in pairs(LatestTurnStanding.Territories) do
 		local ownerID = territory.OwnerPlayerID
-		local structures = territory.Structure
+		local structures = territory.Structures or nil
 
 		Counters.Territories[ownerID] = Counters.Territories[ownerID] + 1
 		Counters.Armies[ownerID] = Counters.Armies[ownerID] + territory.NumArmies.NumArmies;
