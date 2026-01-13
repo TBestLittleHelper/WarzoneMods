@@ -1,4 +1,4 @@
--- Mod.Settings.Advancments data structure
+-- Mod.Settings.Advancements data structure
 ---@alias AdvanceTurn "Start" | "Order" | "End"
 
 ---@class AdvancementUpgrade
@@ -23,7 +23,7 @@
 ---@field PointsPerArmy number?        -- Army base
 ---@field Upgrades AdvancementUpgrade[]
 
----@class Advancments
+---@class Advancements
 ---@field Economy AdvancementCategory
 ---@field Culture AdvancementCategory
 ---@field Armies AdvancementCategory

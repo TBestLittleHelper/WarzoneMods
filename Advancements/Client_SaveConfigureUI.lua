@@ -1,5 +1,5 @@
----@type Advancments
-local Advancments = {
+---@type Advancements
+local Advancements = {
 	-- Economy ID start at 1, Culture at 30, Armies at 60 to avoid ID conflicts
 	Economy = {
 		Color = "#FFF700",
@@ -33,5 +33,5 @@ function Client_SaveConfigureUI()
 	---@type Mod Mod
 	Mod = Mod
 	Mod.Settings.Version = 1
-	Mod.Settings.Advancments = Advancments
+	Mod.Settings.Advancments = Advancements
 end

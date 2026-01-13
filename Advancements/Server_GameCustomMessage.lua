@@ -36,7 +36,7 @@ function Server_GameCustomMessage(game, playerID, payload, setReturnTable)
 			return
 		end
 
-		local upgrade = Mod.Settings.Advancments[advancmentName].Upgrades[payload.UID]
+		local upgrade = Mod.Settings.Advancements[advancmentName].Upgrades[payload.UID]
 		if upgrade == nil then
 			returnData.Message = "No upgrade found with UID " .. payload.UID .. "."
 			setReturnTable(returnData)
@@ -44,7 +44,7 @@ function Server_GameCustomMessage(game, playerID, payload, setReturnTable)
 		end
 
 		local playerPoints = privateGameData[playerID][advancmentName].Points
-		local cost = Mod.Settings.Advancments[advancmentName].Upgrades[upgradeUID].Cost
+		local cost = Mod.Settings.Advancements[advancmentName].Upgrades[upgradeUID].Cost
 
 		if playerPoints < cost then
 			returnData.Message = "Not enough points to unlock upgrade."
@@ -69,9 +69,9 @@ function Server_GameCustomMessage(game, playerID, payload, setReturnTable)
 		setReturnTable(returnData)
 
 		local Points = {};
-		for advancmentName, advancement in pairs(Mod.Settings.Advancments) do
+		for advancementName, advancement in pairs(Mod.Settings.Advancements) do
 			if advancement.Enabled then
-				Points[advancmentName] = privateGameData[playerID][advancmentName].Points or 0
+				Points[advancementName] = privateGameData[playerID][advancementName].Points or 0
 			end
 		end
 
@@ -86,10 +86,10 @@ end
 
 function GetUnlockedByPlayerID(playerID, privateGameData)
 	local unlockables = {}
-	for advancmentName, advancement in pairs(Mod.Settings.Advancments) do
+	for advancementName, advancement in pairs(Mod.Settings.Advancements) do
 		if advancement.Enabled then
 			for _, upgrade in pairs(advancement.Upgrades) do
-				if privateGameData[advancmentName][upgrade.UID].UnlockedBy[playerID] then
+				if privateGameData[advancementName][upgrade.UID].UnlockedBy[playerID] then
 					table.insert(unlockables, upgrade.UID)
 				end
 			end

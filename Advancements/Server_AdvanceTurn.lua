@@ -2,37 +2,37 @@
 WL = WL
 
 function Server_AdvanceTurn_Start(game, addNewOrder)
-	-- We need to know what advancments happen when
+	-- We need to know what advancements happen when
 	-- All points are saved during the end turn hook.
 
 	-- Globals work in all advanceturn hooks
 	PrivateGameData = Mod.PrivateGameData
 
-	-- For all advancments, check if any players have them unlocked
-	ActiveAdvancmentsStart = {}
-	ActiveAdvancmentsOrder = {}
-	ActiveAdvancmentsEnd = {}
+	-- For all advancements, check if any players have them unlocked
+	ActiveAdvancementsStart = {}
+	ActiveAdvancementsOrder = {}
+	ActiveAdvancementsEnd = {}
 
-	for _, advancment in pairs(Mod.Settings.Advancments) do
-		if advancment.Enabled then
-			local Upgrades = advancment.Upgrades
+	for _, advancement in pairs(Mod.Settings.Advancements) do
+		if advancement.Enabled then
+			local Upgrades = advancement.Upgrades
 			for _, upgrade in pairs(Upgrades) do
-				local unlockedBy = GetUnlockedByAdvancmentID(upgrade.UID, PrivateGameData)
+				local unlockedBy = GetUnlockedByAdvancementID(upgrade.UID, PrivateGameData)
 				if #unlockedBy > 0 then
 					if upgrade.AdvanceTurn == "Start" then
-						ActiveAdvancmentsStart[upgrade.UID] = unlockedBy
+						ActiveAdvancementsStart[upgrade.UID] = unlockedBy
 					elseif upgrade.AdvanceTurn == "Order" then
-						ActiveAdvancmentsOrder[upgrade.UID] = unlockedBy
+						ActiveAdvancementsOrder[upgrade.UID] = unlockedBy
 					elseif upgrade.AdvanceTurn == "End" then
-						ActiveAdvancmentsEnd[upgrade.UID] = unlockedBy
+						ActiveAdvancementsEnd[upgrade.UID] = unlockedBy
 					end
 				end
 			end
 		end
 	end
 
-	-- Start of turn advancments run right away
-	for upgradeUID, playerIDs in pairs(ActiveAdvancmentsStart) do
+	-- Start of turn advancements run right away
+	for upgradeUID, playerIDs in pairs(ActiveAdvancementsStart) do
 		if upgradeUID == 61 then -- Spy Network
 			for _, playerID in pairs(playerIDs) do
 				-- Get a random other player
@@ -73,11 +73,11 @@ function Server_AdvanceTurn_End(game, addNewOrder)
 	local CultureSongCompetitionUID = 30
 
 	-- todo dry, extract dupe code
-	-- Income Threshold Advancments
-	if ActiveAdvancmentsEnd[EconomyStocksUID] then
-		local incomeThreshold = Mod.Settings.Advancments.Economy.Upgrades[EconomyStocksUID].IncomeThreshold
-		local pointsPerIncome = Mod.Settings.Advancments.Economy.Upgrades[EconomyStocksUID].PointsPerIncome
-		for _, playerID in pairs(ActiveAdvancmentsEnd[EconomyStocksUID]) do
+	-- Income Threshold Advancements
+	if ActiveAdvancementsEnd[EconomyStocksUID] then
+		local incomeThreshold = Mod.Settings.Advancements.Economy.Upgrades[EconomyStocksUID].IncomeThreshold
+		local pointsPerIncome = Mod.Settings.Advancements.Economy.Upgrades[EconomyStocksUID].PointsPerIncome
+		for _, playerID in pairs(ActiveAdvancementsEnd[EconomyStocksUID]) do
 			--https://www.warzone.com/wiki/Mod_API_Reference:GamePlayer
 			local income = game.ServerGame.Game.Players[playerID].Income(0, game.ServerGame.LatestTurnStanding, false,
 				false)
@@ -86,10 +86,10 @@ function Server_AdvanceTurn_End(game, addNewOrder)
 			PrivateGameData[playerID].Economy.Points = PrivateGameData[playerID].Economy.Points + bonusPoints
 		end
 	end
-	if ActiveAdvancmentsEnd[EconomyFarmsUID] then
-		local incomeThreshold = Mod.Settings.Advancments.Economy.Upgrades[EconomyFarmsUID].IncomeThreshold
-		local pointsPerIncome = Mod.Settings.Advancments.Economy.Upgrades[EconomyFarmsUID].PointsPerIncome
-		for _, playerID in pairs(ActiveAdvancmentsEnd[EconomyFarmsUID]) do
+	if ActiveAdvancementsEnd[EconomyFarmsUID] then
+		local incomeThreshold = Mod.Settings.Advancements.Economy.Upgrades[EconomyFarmsUID].IncomeThreshold
+		local pointsPerIncome = Mod.Settings.Advancements.Economy.Upgrades[EconomyFarmsUID].PointsPerIncome
+		for _, playerID in pairs(ActiveAdvancementsEnd[EconomyFarmsUID]) do
 			--https://www.warzone.com/wiki/Mod_API_Reference:GamePlayer
 			local income = game.ServerGame.Game.Players[playerID].Income(0, game.ServerGame.LatestTurnStanding, false,
 				false)
@@ -100,14 +100,14 @@ function Server_AdvanceTurn_End(game, addNewOrder)
 	end
 
 	-- Culture
-	if ActiveAdvancmentsEnd[CultureSongCompetitionUID] then
-		local citiesThreshold = Mod.Settings.Advancments.Culture.Upgrades[CultureSongCompetitionUID].CitiesThreshold
-		local pointsPerCity = Mod.Settings.Advancments.Culture.Upgrades[CultureSongCompetitionUID].PointsPerCity
+	if ActiveAdvancementsEnd[CultureSongCompetitionUID] then
+		local citiesThreshold = Mod.Settings.Advancements.Culture.Upgrades[CultureSongCompetitionUID].CitiesThreshold
+		local pointsPerCity = Mod.Settings.Advancements.Culture.Upgrades[CultureSongCompetitionUID].PointsPerCity
 
 
-		for _, playerID in pairs(ActiveAdvancmentsEnd[CultureSongCompetitionUID]) do
+		for _, playerID in pairs(ActiveAdvancementsEnd[CultureSongCompetitionUID]) do
 			--https://www.warzone.com/wiki/Mod_API_Reference:GamePlayer
-			local numCities = #game.ServerGame.Game.Players[playerID]:GetTerritories(WL.TerritoryType.City, nil)
+			local numCities = Counters.Cities[playerID] or 0
 
 			local bonusPoints = math.floor(numCities / citiesThreshold) * pointsPerCity
 			PrivateGameData[playerID].Culture.Points = PrivateGameData[playerID].Culture.Points + bonusPoints
@@ -120,13 +120,13 @@ function Server_AdvanceTurn_End(game, addNewOrder)
 	Mod.PrivateGameData = PrivateGameData
 end
 
-function GetUnlockedByAdvancmentID(advancmentID, privateGameData)
+function GetUnlockedByAdvancementID(advancementID, privateGameData)
 	local unlockedBy = {}
-	for advancmentName, advancement in pairs(Mod.Settings.Advancments) do
+	for advancementName, advancement in pairs(Mod.Settings.Advancements) do
 		if advancement.Enabled then
 			for _, upgrade in pairs(advancement.Upgrades) do
-				if upgrade.UID == advancmentID then
-					for playerID, _ in pairs(privateGameData[advancmentName][upgrade.UID].UnlockedBy) do
+				if upgrade.UID == advancementID then
+					for playerID, _ in pairs(privateGameData[advancementName][upgrade.UID].UnlockedBy) do
 						table.insert(unlockedBy, playerID)
 					end
 				end
@@ -152,6 +152,18 @@ function StandingCounter(LatestTurnStanding, players)
 		Counters.Territories[ownerID] = Counters.Territories[ownerID] + 1
 		Counters.Armies[ownerID] = Counters.Armies[ownerID] + territory.NumArmies.NumArmies;
 
+
+		--todo test
+		local cityCount = structures and structures[WL.StructureType.City]
+		print("city count 1")
+		if cityCount then
+			Counters.Cities[ownerID] = Counters.Cities[ownerID] + cityCount
+		end
+		print("city count 1")
+		local cities = (structures and structures[WL.StructureType.City]) or 0
+		Counters.Cities[ownerID] = Counters.Cities[ownerID] + cities
+
+		print("city count 3")
 		if structures ~= nil then
 			if structures[WL.StructureType.City] ~= nil then
 				Counters.Cities[ownerID] = Counters.Cities[ownerID] + structures[WL.StructureType.City]

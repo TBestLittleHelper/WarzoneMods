@@ -4,7 +4,7 @@ function Client_PresentMenuUI(rootParent, setMaxSize, setScrollable, game, close
 		return
 	end
 
-	local Advancements = Mod.Settings.Advancments
+	local Advancements = Mod.Settings.Advancements
 
 	-- Data we get from server
 	UnlockedUpgrades = {}
@@ -111,7 +111,7 @@ end
 
 function GetUnlockedFromServer(game)
 	local unlockPayload = { Type = "GetUnlocked" }
-	game.SendGameCustomMessage("Getting unlocked advancments", unlockPayload, function(returnData)
+	game.SendGameCustomMessage("Getting unlocked advancements", unlockPayload, function(returnData)
 		UpdateAdvancmentData(returnData)
 	end)
 end
