@@ -22,7 +22,7 @@ function Server_AdvanceTurn_Start(game, addNewOrder)
 			local Upgrades = advancment.Upgrades
 			for _, upgrade in pairs(Upgrades) do
 				local unlockedBy = GetUnlockedByAdvancmentID(upgrade.UID, PrivateGameData)
-				if unlockedBy ~= {} then
+				if #unlockedBy > 0 then
 					if upgrade.AdvanceTurn == "Start" then
 						ActiveAdvancmentsStart[upgrade.UID] = unlockedBy
 					elseif upgrade.AdvanceTurn == "Order" then
