@@ -42,7 +42,7 @@ function Server_AdvanceTurn_Start(game, addNewOrder)
 						table.insert(otherPlayers, player)
 					end
 				end
-                if #otherPlayers > 0 then
+				if #otherPlayers > 0 then
 					-- todo redo random
 					local randomIndex = math.random(1, #otherPlayers)
 					local targetPlayer = otherPlayers[randomIndex]
@@ -157,8 +157,6 @@ function StandingCounter(LatestTurnStanding, players)
 				Counters.Cities[ownerID] = Counters.Cities[ownerID] + structures[WL.StructureType.City]
 			end
 		end
-
-		Counters.Territories[ownerID] = Counters.Territories[ownerID] + 1
 	end
 
 	return Counters
