@@ -56,7 +56,9 @@ function Client_PresentMenuUI(rootParent, setMaxSize, setScrollable, game, close
 				local isAffordable = upgrade.Cost <= UpgradePoints[advancementView]
 				upgradebtn.SetInteractable(isAffordable).SetColor(isAffordable and "#FFFFFF" or "#FF0000")
 			end
-			local buyButton = UI.CreateButton(line).SetText("Unlock (" .. upgrade.Cost .. " pts)")
+			local buyButton = UI.CreateButton(line).SetText("Unlock (" .. upgrade.Cost .. " pts)").SetOnClick(function()
+				UnlockUpgrade(upgrade.UID, advancementView, game)
+			end)
 			local helpButton = UI.CreateButton(line).SetText("?").SetOnClick
 				(function()
 					UI.Alert(upgrade.Description)
@@ -118,9 +120,25 @@ function Client_PresentMenuUI(rootParent, setMaxSize, setScrollable, game, close
 	UpdateView()
 end
 
+function UnlockUpgrade(upgradeUID, advancementView, game)
+	local unlockPayload = { Type = "UnlockUpgrade", UpgradeUID = upgradeUID, AdvancementName = advancementView }
+	game.SendGameCustomMessage("Unlocking upgrade", unlockPayload, function(returnData)
+		UpdateUnlockUpgrade(returnData)
+	end)
+end
+
+function UpdateUnlockUpgrade(returnData)
+	if returnData.Success then
+		UpdateView()
+		UI.Alert(returnData.Message)
+	else
+		UI.Alert(returnData.Message)
+	end
+end
+
 function GetUnlockedFromServer(game)
-	local unlockPayload = { Type = "GetUnlocked" }
-	game.SendGameCustomMessage("Getting unlocked advancements", unlockPayload, function(returnData)
+	local getUnlockPayload = { Type = "GetUnlocked" }
+	game.SendGameCustomMessage("Getting unlocked advancements", getUnlockPayload, function(returnData)
 		UpdateAdvancmentData(returnData)
 	end)
 end
