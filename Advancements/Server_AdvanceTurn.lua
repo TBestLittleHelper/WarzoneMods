@@ -1,3 +1,5 @@
+require("Enums")
+
 ---@type WL WL
 WL = WL
 
@@ -19,11 +21,11 @@ function Server_AdvanceTurn_Start(game, addNewOrder)
 			for _, upgrade in pairs(Upgrades) do
 				local unlockedBy = GetUnlockedByAdvancementID(upgrade.UID, PrivateGameData)
 				if #unlockedBy > 0 then
-					if upgrade.AdvanceTurn == "Start" then
+					if upgrade.AdvanceTurn == AdvanceTurn.Start then
 						ActiveAdvancementsStart[upgrade.UID] = unlockedBy
-					elseif upgrade.AdvanceTurn == "Order" then
+					elseif upgrade.AdvanceTurn == AdvanceTurn.Order then
 						ActiveAdvancementsOrder[upgrade.UID] = unlockedBy
-					elseif upgrade.AdvanceTurn == "End" then
+					elseif upgrade.AdvanceTurn == AdvanceTurn.End then
 						ActiveAdvancementsEnd[upgrade.UID] = unlockedBy
 					end
 				end
@@ -33,7 +35,7 @@ function Server_AdvanceTurn_Start(game, addNewOrder)
 
 	-- Start of turn advancements run right away
 	for upgradeUID, playerIDs in pairs(ActiveAdvancementsStart) do
-		if upgradeUID == 61 then -- Spy Network
+		if upgradeUID == UpgradeUID.SpyNetwork then
 			for _, playerID in pairs(playerIDs) do
 				-- Get a random other player
 				local otherPlayers = {}
@@ -67,10 +69,10 @@ function Server_AdvanceTurn_End(game, addNewOrder)
 	local Counters = StandingCounter(game.ServerGame.LatestTurnStanding, game.ServerGame.Game.Players)
 
 
-	local EconomyStocksUID = 1
-	local EconomyFarmsUID = 2
+	local EconomyStocksUID = UpgradeUID.TradeStocks
+	local EconomyFarmsUID = UpgradeUID.IndustrialFarms
 
-	local CultureSongCompetitionUID = 30
+	local CultureSongUID = UpgradeUID.NationalSong
 
 	-- todo dry, extract dupe code
 	-- Income Threshold Advancements
@@ -100,12 +102,12 @@ function Server_AdvanceTurn_End(game, addNewOrder)
 	end
 
 	-- Culture
-	if ActiveAdvancementsEnd[CultureSongCompetitionUID] then
-		local citiesThreshold = Mod.Settings.Advancements.Culture.Upgrades[CultureSongCompetitionUID].CitiesThreshold
-		local pointsPerCity = Mod.Settings.Advancements.Culture.Upgrades[CultureSongCompetitionUID].PointsPerCity
+	if ActiveAdvancementsEnd[CultureSongUID] then
+		local citiesThreshold = Mod.Settings.Advancements.Culture.Upgrades[CultureSongUID].CitiesThreshold
+		local pointsPerCity = Mod.Settings.Advancements.Culture.Upgrades[CultureSongUID].PointsPerCity
 
 
-		for _, playerID in pairs(ActiveAdvancementsEnd[CultureSongCompetitionUID]) do
+		for _, playerID in pairs(ActiveAdvancementsEnd[CultureSongUID]) do
 			--https://www.warzone.com/wiki/Mod_API_Reference:GamePlayer
 			local numCities = Counters.Cities[playerID] or 0
 			local bonusPoints = math.floor(numCities / citiesThreshold) * pointsPerCity
