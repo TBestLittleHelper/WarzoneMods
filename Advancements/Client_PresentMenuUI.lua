@@ -48,16 +48,23 @@ function Client_PresentMenuUI(rootParent, setMaxSize, setScrollable, game, close
 			local line = UI.CreateHorizontalLayoutGroup(advancmentUpgradeArea)
 			table.insert(upgradeUIElements, line)
 
-			local btn = UI.CreateButton(line).SetText(upgrade.Name)
+			local upgradebtn = UI.CreateButton(line).SetText(upgrade.Name)
 
 			if UnlockedUpgrades[upgrade.UID] then
-				btn.SetInteractable(false).SetColor("#00FF00")
+				upgradebtn.SetInteractable(false).SetColor("#00FF00")
 			else
 				local isAffordable = upgrade.Cost <= UpgradePoints[advancementView]
-				btn.SetInteractable(isAffordable).SetColor(isAffordable and "#FFFFFF" or "#FF0000")
+				upgradebtn.SetInteractable(isAffordable).SetColor(isAffordable and "#FFFFFF" or "#FF0000")
 			end
+			local buyButton = UI.CreateButton(line).SetText("Unlock (" .. upgrade.Cost .. " pts)")
+			local helpButton = UI.CreateButton(line).SetText("?").SetOnClick
+				(function()
+					UI.Alert(upgrade.Description)
+				end)
 
-			table.insert(upgradeUIElements, btn)
+			table.insert(upgradeUIElements, upgradebtn)
+			table.insert(upgradeUIElements, buyButton)
+			table.insert(upgradeUIElements, helpButton)
 		end
 	end
 
