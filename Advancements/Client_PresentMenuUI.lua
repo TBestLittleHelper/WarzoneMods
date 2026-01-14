@@ -20,7 +20,7 @@ function Client_PresentMenuUI(rootParent, setMaxSize, setScrollable, game, close
 	setScrollable(false, true)
 
 	local verticalMainLayout = UI.CreateVerticalLayoutGroup(rootParent)
-	local advancmentButtons = UI.CreateHorizontalLayoutGroup(verticalMainLayout)
+	local advancementButtons = UI.CreateHorizontalLayoutGroup(verticalMainLayout)
 	local advancmentUpgradeArea = UI.CreateVerticalLayoutGroup(verticalMainLayout)
 
 	-- Track created upgrade UI elements for destruction later
@@ -76,14 +76,14 @@ function Client_PresentMenuUI(rootParent, setMaxSize, setScrollable, game, close
 	end
 
 	-- Buttons
-	PointsButton = UI.CreateButton(advancmentButtons)
+	PointsButton = UI.CreateButton(advancementButtons)
 		.SetInteractable(false)
 		.SetText(UpgradePoints[advancementView] ..
 			" Points")
 
 
 	if Advancements.Economy.Enabled then
-		UI.CreateButton(advancmentButtons)
+		UI.CreateButton(advancementButtons)
 			.SetText("Economy")
 			.SetColor(Advancements.Economy.Color)
 			.SetOnClick(function()
@@ -92,7 +92,7 @@ function Client_PresentMenuUI(rootParent, setMaxSize, setScrollable, game, close
 	end
 
 	if Advancements.Culture.Enabled then
-		UI.CreateButton(advancmentButtons)
+		UI.CreateButton(advancementButtons)
 			.SetText("Culture")
 			.SetColor(Advancements.Culture.Color)
 			.SetOnClick(function()
@@ -101,7 +101,7 @@ function Client_PresentMenuUI(rootParent, setMaxSize, setScrollable, game, close
 	end
 
 	if Advancements.Armies.Enabled then
-		UI.CreateButton(advancmentButtons)
+		UI.CreateButton(advancementButtons)
 			.SetText("Armies")
 			.SetColor(Advancements.Armies.Color)
 			.SetOnClick(function()
@@ -110,7 +110,7 @@ function Client_PresentMenuUI(rootParent, setMaxSize, setScrollable, game, close
 	end
 
 	-- Refresh button to manually get updated data from server
-	UI.CreateButton(advancmentButtons).SetText("Refresh data").SetOnClick(function()
+	UI.CreateButton(advancementButtons).SetText("Refresh data").SetOnClick(function()
 		-- View is updated by the callbacks
 		GetPlayerPointsFromServer(game, Advancements)
 		GetUnlockedFromServer(game)
@@ -129,6 +129,7 @@ end
 
 function UpdateUnlockUpgrade(returnData)
 	if returnData.Success then
+		-- todo this will not update the state of the UI ( points and unlocked )
 		UpdateView()
 		UI.Alert(returnData.Message)
 	else
