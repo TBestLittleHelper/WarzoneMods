@@ -52,6 +52,8 @@ function Server_GameCustomMessage(game, playerID, payload, setReturnTable)
 			return
 		end
 
+		--Todo check if already unlocked
+
 		-- Remove points and unlock upgrade
 		privateGameData[playerID][advancementName].Points = playerPoints - cost
 		privateGameData[advancementName][upgradeUID].UnlockedBy[playerID] = true
