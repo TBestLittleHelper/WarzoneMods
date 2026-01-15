@@ -36,25 +36,19 @@ function Server_AdvanceTurn_Start(game, addNewOrder)
 	-- Start of turn advancements run right away
 	for upgradeUID, playerIDs in pairs(ActiveAdvancementsStart) do
 		if upgradeUID == UpgradeUID.SpyNetwork then
+			local fogLevel = WL.StandingFogLevel.OwnerOnly
+			local fogPriority = 500            -- Less then other WZ effects, like cards
+			local fogTerritories = game.Map.Territories -- todo check that this works
+			-- https://www.warzone.com/wiki/Mod_API_Reference:FogMod
 			for _, playerID in pairs(playerIDs) do
-				-- Get a random other player
-				local otherPlayers = {}
-				for _, player in pairs(game.ServerGame.Game.PlayingPlayers) do
-					if player.ID ~= playerID then
-						table.insert(otherPlayers, player)
-					end
-				end
-				if #otherPlayers > 0 then
-					-- todo redo random
-					local randomIndex = math.random(1, #otherPlayers)
-					local targetPlayer = otherPlayers[randomIndex]
+				local fogMod = WL.FogMod.Create("Spy Network", fogLevel, fogPriority, fogTerritories, playerID)
 
-					-- todo display name? Move or remove upgrade from start hook, so we only loop end of turn?
-					local message = targetPlayer .. " has X Territories and Y Income"
-					-- Create a report order
-					local spyReportOrder = WL.GameOrderEvent.Create(playerID, message, {})
-					addNewOrder(spyReportOrder)
-				end
+				local message = "Spy Network shows you who controls the world"
+				local orders = {}
+				table.insert(orders, fogMod)
+				-- Create a report order
+				local spyReportOrder = WL.GameOrderEvent.Create(playerID, message, {}, orders)
+				addNewOrder(spyReportOrder)
 			end
 		end
 	end
