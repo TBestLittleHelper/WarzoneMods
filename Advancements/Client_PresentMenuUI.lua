@@ -10,7 +10,7 @@ function Client_PresentMenuUI(rootParent, setMaxSize, setScrollable, game, close
 	UnlockedUpgrades = {}
 	GetUnlockedFromServer(game)
 	UpgradePoints = {}
-	GetPlayerPointsFromServer(game, Advancements)
+	GetPlayerPointsFromServer(game)
 
 	-- UI setup
 	---@type UI
