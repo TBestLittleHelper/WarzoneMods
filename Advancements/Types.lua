@@ -37,21 +37,21 @@
 ---@field Color string
 ---@field Enabled boolean
 ---@field PointsPerIncome number
----@field Upgrades EconomyUpgrade[]
+---@field Upgrades table<UpgradeUID, EconomyUpgrade[]>
 
 ---@class CultureCategory
 ---@field Color string
 ---@field Enabled boolean
 ---@field PointsPerCity number
----@field Upgrades CultureUpgrade[]
+---@field Upgrades table<UpgradeUID, CultureUpgrade[]>
 
 ---@class ArmiesCategory
 ---@field Color string
 ---@field Enabled boolean
 ---@field PointsPerArmy number
----@field Upgrades ArmyUpgrade[]
+---@field Upgrades table<UpgradeUID, ArmyUpgrade[]>
 
 ---@class Advancements
 ---@field Economy EconomyCategory
 ---@field Culture CultureCategory
----@field Armies ArmyCategory
+---@field Armies ArmiesCategory
