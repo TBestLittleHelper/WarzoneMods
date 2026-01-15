@@ -56,7 +56,7 @@ function Client_PresentMenuUI(rootParent, setMaxSize, setScrollable, game, close
 
 		local upgrades = Advancements[advancementView].Upgrades
 
-		for _, upgrade in ipairs(upgrades) do
+		for _, upgrade in pairs(upgrades) do
 			local line = UI.CreateHorizontalLayoutGroup(advancementUpgradeArea)
 			table.insert(upgradeUIElements, line)
 
