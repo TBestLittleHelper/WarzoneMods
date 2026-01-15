@@ -140,11 +140,11 @@ end
 function GetUnlockedFromServer(game)
 	local getUnlockPayload = { Type = "GetUnlocked" }
 	game.SendGameCustomMessage("Getting unlocked advancements", getUnlockPayload, function(returnData)
-		UpdateAdvancmentData(returnData)
+		UpdateAdvancementsData(returnData)
 	end)
 end
 
-function UpdateAdvancmentData(returnData)
+function UpdateAdvancementsData(returnData)
 	if not returnData.Success then
 		print(returnData.Message)
 		UI.Alert(returnData.Message)
