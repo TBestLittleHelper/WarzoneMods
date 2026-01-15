@@ -156,28 +156,19 @@ function UpdateAdvancmentData(returnData)
 end
 
 function GetPlayerPointsFromServer(game)
-	-- Set points to zero, in case server request fails
-	local Advancements = Mod.Settings.Advancements
-	for advancementsName, advancment in pairs(Advancements) do
-		if advancment.Enabled then
-			UpgradePoints[advancementsName] = 0
-		end
-		UpgradePoints[advancementsName] = 0
-	end
-
 	local pointsPayload = { Type = "GetPlayerPoints" }
 	game.SendGameCustomMessage("Getting advancements points", pointsPayload, function(returnData)
-		UpdatePlayerPoints(returnData, Advancements)
+		UpdatePlayerPoints(returnData)
 	end)
 end
 
-function UpdatePlayerPoints(returnData, Advancements)
+function UpdatePlayerPoints(returnData)
 	if not returnData.Success then
 		print(returnData.Message)
 		UI.Alert(returnData.Message)
 		return
 	end
-
+	local Advancements = Mod.Settings.Advancements
 	for advancementsName, advancements in pairs(Advancements) do
 		if advancements.Enabled then
 			UpgradePoints[advancementsName] = returnData.Points[advancementsName] or 0
