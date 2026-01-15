@@ -155,7 +155,7 @@ function UpdateAdvancementsData(returnData)
 		return
 	end
 	print("Received unlocked upgrades data.")
-	UnlockedUpgrades = returnData
+	UnlockedUpgrades = returnData.UnlockedUpgrades
 	UpdateView()
 end
 
