@@ -1,3 +1,8 @@
+local ClientState = {
+	UnlockedUpgrades = {},
+	UpgradePoints = {}
+}
+
 function Client_PresentMenuUI(rootParent, setMaxSize, setScrollable, game, close)
 	if game.Us == nil then
 		UI.Alert("You can't do anything as a spectator.")
@@ -6,10 +11,7 @@ function Client_PresentMenuUI(rootParent, setMaxSize, setScrollable, game, close
 
 	local Advancements = Mod.Settings.Advancements
 
-	-- Data we get from server
-	UnlockedUpgrades = {}
 	GetUnlockedFromServer(game)
-	UpgradePoints = {}
 	GetPlayerPointsFromServer(game)
 
 	-- UI setup
@@ -37,6 +39,8 @@ function Client_PresentMenuUI(rootParent, setMaxSize, setScrollable, game, close
 
 	function UpdateView()
 		DestroyOldAdvancmentUpgrades()
+
+		local UpgradePoints = ClientState.UpgradePoints
 
 		print("Selected Advancment: " .. advancementView)
 
@@ -78,7 +82,7 @@ function Client_PresentMenuUI(rootParent, setMaxSize, setScrollable, game, close
 	-- Buttons
 	PointsButton = UI.CreateButton(advancementButtons)
 		.SetInteractable(false)
-		.SetText(UpgradePoints[advancementView] ..
+		.SetText(ClientState.UpgradePoints[advancementView] ..
 			" Points")
 
 
@@ -171,8 +175,8 @@ function UpdatePlayerPoints(returnData)
 	local Advancements = Mod.Settings.Advancements
 	for advancementsName, advancements in pairs(Advancements) do
 		if advancements.Enabled then
-			UpgradePoints[advancementsName] = returnData.Points[advancementsName] or 0
-			print("Received " .. UpgradePoints[advancementsName] .. " points for " .. advancementsName)
+			ClientState.UpgradePoints[advancementsName] = returnData.Points[advancementsName] or 0
+			print("Received " .. ClientState.UpgradePoints[advancementsName] .. " points for " .. advancementsName)
 		end
 	end
 	UpdateView()
