@@ -112,7 +112,7 @@ function Client_PresentMenuUI(rootParent, setMaxSize, setScrollable, game, close
 	-- Refresh button to manually get updated data from server
 	UI.CreateButton(advancementButtons).SetText("Refresh data").SetOnClick(function()
 		-- View is updated by the callbacks
-		GetPlayerPointsFromServer(game, Advancements)
+		GetPlayerPointsFromServer(game)
 		GetUnlockedFromServer(game)
 	end)
 
@@ -155,8 +155,9 @@ function UpdateAdvancmentData(returnData)
 	UpdateView()
 end
 
-function GetPlayerPointsFromServer(game, Advancements)
+function GetPlayerPointsFromServer(game)
 	-- Set points to zero, in case server request fails
+	local Advancements = Mod.Settings.Advancements
 	for advancementsName, advancment in pairs(Advancements) do
 		if advancment.Enabled then
 			UpgradePoints[advancementsName] = 0
