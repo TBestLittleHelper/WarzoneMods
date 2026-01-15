@@ -4,6 +4,8 @@ local ClientState = {
 }
 
 function Client_PresentMenuUI(rootParent, setMaxSize, setScrollable, game, close)
+	local uiReady = false
+
 	if game.Us == nil then
 		UI.Alert("You can't do anything as a spectator.")
 		return
@@ -23,7 +25,7 @@ function Client_PresentMenuUI(rootParent, setMaxSize, setScrollable, game, close
 
 	local verticalMainLayout = UI.CreateVerticalLayoutGroup(rootParent)
 	local advancementButtons = UI.CreateHorizontalLayoutGroup(verticalMainLayout)
-	local advancmentUpgradeArea = UI.CreateVerticalLayoutGroup(verticalMainLayout)
+	local advancementUpgradeArea = UI.CreateVerticalLayoutGroup(verticalMainLayout)
 
 	-- Track created upgrade UI elements for destruction later
 	local upgradeUIElements = {}
@@ -38,26 +40,32 @@ function Client_PresentMenuUI(rootParent, setMaxSize, setScrollable, game, close
 	end
 
 	function UpdateView()
+		if not uiReady then
+			print("ui not ready!")
+			return
+		end
 		DestroyOldAdvancmentUpgrades()
 
 		local UpgradePoints = ClientState.UpgradePoints
+		local points = UpgradePoints[advancementView] or 0
 
 		print("Selected Advancment: " .. advancementView)
+		print("points " .. points)
 
-		PointsButton.SetText(UpgradePoints[advancementView] .. " Points")
+		PointsButton.SetText(points .. " Points")
 
 		local upgrades = Advancements[advancementView].Upgrades
 
 		for _, upgrade in ipairs(upgrades) do
-			local line = UI.CreateHorizontalLayoutGroup(advancmentUpgradeArea)
+			local line = UI.CreateHorizontalLayoutGroup(advancementUpgradeArea)
 			table.insert(upgradeUIElements, line)
 
 			local upgradebtn = UI.CreateButton(line).SetText(upgrade.Name)
 
-			if UnlockedUpgrades[upgrade.UID] then
+			if ClientState.UnlockedUpgrades[upgrade.UID] then
 				upgradebtn.SetInteractable(false).SetColor("#00FF00")
 			else
-				local isAffordable = upgrade.Cost <= UpgradePoints[advancementView]
+				local isAffordable = upgrade.Cost <= points
 				upgradebtn.SetInteractable(isAffordable).SetColor(isAffordable and "#FFFFFF" or "#FF0000")
 			end
 			local buyButton = UI.CreateButton(line).SetText("Unlock (" .. upgrade.Cost .. " pts)").SetOnClick(function()
@@ -79,11 +87,12 @@ function Client_PresentMenuUI(rootParent, setMaxSize, setScrollable, game, close
 		UpdateView()
 	end
 
+	print("advancementButtons")
+	print(advancementButtons)
 	-- Buttons
 	PointsButton = UI.CreateButton(advancementButtons)
 		.SetInteractable(false)
-		.SetText(ClientState.UpgradePoints[advancementView] ..
-			" Points")
+		.SetText("0 Points")
 
 
 	if Advancements.Economy.Enabled then
@@ -120,6 +129,7 @@ function Client_PresentMenuUI(rootParent, setMaxSize, setScrollable, game, close
 		GetUnlockedFromServer(game)
 	end)
 
+	uiReady = true
 	-- Show default view
 	UpdateView()
 end
@@ -156,7 +166,7 @@ function UpdateAdvancementsData(returnData)
 		return
 	end
 	print("Received unlocked upgrades data.")
-	UnlockedUpgrades = returnData.UnlockedUpgrades
+	ClientState.UnlockedUpgrades = returnData.UnlockedUpgrades
 	UpdateView()
 end
 
