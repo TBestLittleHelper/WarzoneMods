@@ -37,18 +37,22 @@ function Server_AdvanceTurn_Start(game, addNewOrder)
 	for upgradeUID, playerIDs in pairs(ActiveAdvancementsStart) do
 		if upgradeUID == UpgradeUID.SpyNetwork then
 			local fogLevel = WL.StandingFogLevel.OwnerOnly
-			local fogPriority = 500            -- Less then other WZ effects, like cards
-			local fogTerritories = game.Map.Territories -- todo check that this works
+			local fogPriority = 500 -- Less then other WZ effects, like cards
+			local fogTerritories = {} -- todo consider picking one player?
+			for territoryID, _ in pairs(game.Map.Territories) do
+				table.insert(fogTerritories, territoryID)
+			end
 			-- https://www.warzone.com/wiki/Mod_API_Reference:FogMod
 			for _, playerID in pairs(playerIDs) do
-				local fogMod = WL.FogMod.Create("Spy Network", fogLevel, fogPriority, fogTerritories, playerID)
+				local playersAffectedOpt = {}
+				table.insert(playersAffectedOpt, playerID)
+				local fogMod = WL.FogMod.Create("Spy Network", fogLevel, fogPriority, fogTerritories, playersAffectedOpt)
 
 				local message = "Spy Network shows you who controls the world"
-				local orders = {}
-				table.insert(orders, fogMod)
-				-- Create a report order
-				local spyReportOrder = WL.GameOrderEvent.Create(playerID, message, {}, orders)
-				addNewOrder(spyReportOrder)
+				-- Create a spy report order
+				local spyReportEventOrder = WL.GameOrderEvent.Create(playerID, message, {})
+				spyReportEventOrder.FogModsOpt = { fogMod }
+				addNewOrder(spyReportEventOrder)
 			end
 		end
 	end
@@ -59,8 +63,10 @@ function Server_AdvanceTurn_Order(game, order, result, skipThisOrder, addNewOrde
 end
 
 function Server_AdvanceTurn_End(game, addNewOrder)
+	local players = game.ServerGame.Game.Players
+
 	-- For each advancment that triggers at end turn, give points to players who have it unlocked
-	local Counters = StandingCounter(game.ServerGame.LatestTurnStanding, game.ServerGame.Game.Players)
+	local Counters = StandingCounter(game.ServerGame.LatestTurnStanding, players)
 
 
 	local EconomyStocksUID = UpgradeUID.TradeStocks
@@ -75,9 +81,10 @@ function Server_AdvanceTurn_End(game, addNewOrder)
 		local pointsPerIncome = Mod.Settings.Advancements.Economy.Upgrades[EconomyStocksUID].PointsPerIncome
 		for _, playerID in pairs(ActiveAdvancementsEnd[EconomyStocksUID]) do
 			--https://www.warzone.com/wiki/Mod_API_Reference:GamePlayer
+			local player = players[playerID]
+			--todo use player and test
 			local income = game.ServerGame.Game.Players[playerID].Income(0, game.ServerGame.LatestTurnStanding, false,
-				false)
-
+				false).Total
 			local bonusPoints = math.floor(income / incomeThreshold) * pointsPerIncome
 			PrivateGameData[playerID].Economy.Points = PrivateGameData[playerID].Economy.Points + bonusPoints
 		end
@@ -88,7 +95,7 @@ function Server_AdvanceTurn_End(game, addNewOrder)
 		for _, playerID in pairs(ActiveAdvancementsEnd[EconomyFarmsUID]) do
 			--https://www.warzone.com/wiki/Mod_API_Reference:GamePlayer
 			local income = game.ServerGame.Game.Players[playerID].Income(0, game.ServerGame.LatestTurnStanding, false,
-				false)
+				false).Total
 
 			local bonusPoints = math.floor(income / incomeThreshold) * pointsPerIncome
 			PrivateGameData[playerID].Economy.Points = PrivateGameData[playerID].Economy.Points + bonusPoints
@@ -113,7 +120,7 @@ function Server_AdvanceTurn_End(game, addNewOrder)
 	end
 
 	-- Passive points so you never get stuck at zero
-	local passivePoints = 1
+	local passivePoints = 100 -- todo Set to 1 after dev
 	for advancementName, advancement in pairs(Mod.Settings.Advancements) do
 		if advancement.Enabled then
 			for _, player in pairs(game.ServerGame.Game.PlayingPlayers) do
