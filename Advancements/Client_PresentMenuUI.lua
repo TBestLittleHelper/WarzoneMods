@@ -61,16 +61,19 @@ function Client_PresentMenuUI(rootParent, setMaxSize, setScrollable, game, close
 			table.insert(upgradeUIElements, line)
 
 			local upgradebtn = UI.CreateButton(line).SetText(upgrade.Name)
+			local buyButton = UI.CreateButton(line).SetText("Unlock (" .. upgrade.Cost .. " pts)").SetOnClick(function()
+				UnlockUpgrade(upgrade.UID, advancementView, game)
+			end)
 
 			if ClientState.UnlockedUpgrades[upgrade.UID] then
-				upgradebtn.SetInteractable(false).SetColor("#00FF00")
+				upgradebtn.SetInteractable(false).SetColor("#00FF21")
+				buyButton.SetInteractable(false).SetText("Unlocked!").SetOnClick(function()
+					UI.Alert("Already unlocked")
+				end)
 			else
 				local isAffordable = upgrade.Cost <= points
 				upgradebtn.SetInteractable(isAffordable).SetColor(isAffordable and "#FFFFFF" or "#FF0000")
 			end
-			local buyButton = UI.CreateButton(line).SetText("Unlock (" .. upgrade.Cost .. " pts)").SetOnClick(function()
-				UnlockUpgrade(upgrade.UID, advancementView, game)
-			end)
 			local helpButton = UI.CreateButton(line).SetText("?").SetOnClick
 				(function()
 					UI.Alert(upgrade.Description)
