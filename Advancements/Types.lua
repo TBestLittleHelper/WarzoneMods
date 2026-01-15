@@ -45,7 +45,7 @@
 ---@field PointsPerCity number
 ---@field Upgrades CultureUpgrade[]
 
----@class ArmyCategory
+---@class ArmiesCategory
 ---@field Color string
 ---@field Enabled boolean
 ---@field PointsPerArmy number
