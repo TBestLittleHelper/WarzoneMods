@@ -36,7 +36,7 @@ function Server_GameCustomMessage(game, playerID, payload, setReturnTable)
 			return
 		end
 
-		local upgrade = Mod.Settings.Advancements[advancmentName].Upgrades[payload.UpgradeUID]
+		local upgrade = Mod.Settings.Advancements[advancmentName].Upgrades[upgradeUID]
 		if upgrade == nil then
 			returnData.Message = "No upgrade found with UID " .. payload.UpgradeUID .. "."
 			setReturnTable(returnData)
@@ -61,6 +61,7 @@ function Server_GameCustomMessage(game, playerID, payload, setReturnTable)
 
 		returnData.Success = true
 		returnData.Message = "Upgrade unlocked successfully."
+		returnData.UpgradeUID = upgradeUID
 		setReturnTable(returnData)
 	end
 

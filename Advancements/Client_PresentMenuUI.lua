@@ -134,6 +134,7 @@ end
 function UpdateUnlockUpgrade(returnData)
 	if returnData.Success then
 		-- todo this will not update the state of the UI ( points and unlocked )
+		ClientState.UnlockedUpgrades[returnData.UpgradeUID] = true
 		UpdateView()
 		UI.Alert(returnData.Message)
 	else
