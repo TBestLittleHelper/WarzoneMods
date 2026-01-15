@@ -23,8 +23,8 @@ function Server_GameCustomMessage(game, playerID, payload, setReturnTable)
 	end
 
 	if payload.Type == "UnlockUpgrade" then
-		local advancmentName = payload.AdvancementName or ""
-		if advancmentName == "" then
+		local advancementName = payload.AdvancementName or ""
+		if advancementName == "" then
 			returnData.Message = "Invalid advancement name."
 			setReturnTable(returnData)
 			return
@@ -36,15 +36,15 @@ function Server_GameCustomMessage(game, playerID, payload, setReturnTable)
 			return
 		end
 
-		local upgrade = Mod.Settings.Advancements[advancmentName].Upgrades[upgradeUID]
+		local upgrade = Mod.Settings.Advancements[advancementName].Upgrades[upgradeUID]
 		if upgrade == nil then
-			returnData.Message = "No upgrade found with UID " .. payload.UpgradeUID .. "."
+			returnData.Message = "No upgrade found with UID " .. payload.UpgradeUID .. " in " .. payload.AdvancementName
 			setReturnTable(returnData)
 			return
 		end
 
-		local playerPoints = privateGameData[playerID][advancmentName].Points
-		local cost = Mod.Settings.Advancements[advancmentName].Upgrades[upgradeUID].Cost
+		local playerPoints = privateGameData[playerID][advancementName].Points
+		local cost = Mod.Settings.Advancements[advancementName].Upgrades[upgradeUID].Cost
 
 		if playerPoints < cost then
 			returnData.Message = "Not enough points to unlock upgrade."
@@ -53,8 +53,8 @@ function Server_GameCustomMessage(game, playerID, payload, setReturnTable)
 		end
 
 		-- Remove points and unlock upgrade
-		privateGameData[playerID][advancmentName].Points = playerPoints - cost
-		privateGameData[advancmentName][upgradeUID].UnlockedBy[playerID] = true
+		privateGameData[playerID][advancementName].Points = playerPoints - cost
+		privateGameData[advancementName][upgradeUID].UnlockedBy[playerID] = true
 
 		---@diagnostic disable-next-line: inject-field
 		Mod.PrivateGameData = privateGameData
