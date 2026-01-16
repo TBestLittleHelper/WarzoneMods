@@ -36,6 +36,7 @@ function Server_AdvanceTurn_Start(game, addNewOrder)
 	-- Start of turn advancements run right away
 	for upgradeUID, playerIDs in pairs(ActiveAdvancementsStart) do
 		if upgradeUID == UpgradeUID.SpyNetwork then
+			---@diagnostic disable-next-line: undefined-field
 			local fogLevel = WL.StandingFogLevel.OwnerOnly
 			local fogPriority = 500 -- Less then other WZ effects, like cards
 			local fogTerritories = {} -- todo consider picking one player?
