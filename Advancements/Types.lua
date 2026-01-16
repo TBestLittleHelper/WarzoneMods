@@ -2,12 +2,18 @@
 ---@alias AdvancementType "Economy" | "Culture" | "Armies"
 ---@alias AdvanceTurn "Start" | "Order" | "End"
 
----@alias UpgradeUID
+---@alias EconomyUID
 ---| 1   -- TradeStocks
 ---| 2   -- IndustrialFarms
+
+---@alias CultureUID
 ---| 30  -- NationalSong
+
+---@alias ArmyUID
 ---| 60  -- Mercenaries
 ---| 61  -- SpyNetwork
+
+---@alias UpgradeUID EconomyUID | CultureUID | ArmyUID
 
 -- Mod.Settings.Advancements data structure
 
@@ -20,14 +26,17 @@
 ---@field AdvanceTurn AdvanceTurn
 
 ---@class EconomyUpgrade : BaseUpgrade
+---@field UID EconomyUID
 ---@field IncomeThreshold number
 ---@field PointsPerIncome number
 
 ---@class CultureUpgrade : BaseUpgrade
+---@field UID CultureUID
 ---@field CitiesThreshold number
 ---@field PointsPerCity number
 
 ---@class ArmyUpgrade : BaseUpgrade
+---@field UID ArmyUID
 ---@field ArmiesThreshold number?
 ---@field DeployBonus number?
 ---@field SpyReports number?
