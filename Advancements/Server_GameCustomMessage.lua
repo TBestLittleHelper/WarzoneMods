@@ -1,3 +1,4 @@
+require("Enums")
 function Server_GameCustomMessage(game, playerID, payload, setReturnTable)
 	local returnData = {
 		Success = false,
@@ -92,12 +93,14 @@ function Server_GameCustomMessage(game, playerID, payload, setReturnTable)
 end
 
 function GetUnlockedByPlayerID(playerID, privateGameData)
+	---@alias Unlockables table<UpgradeUID, boolean>
 	local unlockables = {}
+
 	for advancementName, advancement in pairs(Mod.Settings.Advancements) do
 		if advancement.Enabled then
 			for _, upgrade in pairs(advancement.Upgrades) do
 				if privateGameData[advancementName][upgrade.UID].UnlockedBy[playerID] then
-					table.insert(unlockables, upgrade.UID)
+					unlockables[upgrade.UID] = true
 				end
 			end
 		end
