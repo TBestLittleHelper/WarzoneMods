@@ -201,6 +201,7 @@ function StandingCounter(LatestTurnStanding, players)
 		Counters.Territories[ownerID] = Counters.Territories[ownerID] + 1
 		Counters.Armies[ownerID] = Counters.Armies[ownerID] + territory.NumArmies.NumArmies;
 
+		---@diagnostic disable-next-line: undefined-field
 		local cities = (structures and structures[WL.StructureType.City]) or 0
 		Counters.Cities[ownerID] = Counters.Cities[ownerID] + cities
 	end
