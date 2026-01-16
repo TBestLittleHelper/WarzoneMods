@@ -60,24 +60,24 @@ end
 
 function Server_AdvanceTurn_Order(game, order, orderResult, skipThisOrder, addNewOrder)
 	if (order.proxyType == "GameOrderDeploy") then
+		local ActiveMercenaries = ActiveAdvancementsOrder[UpgradeUID.Mercenaries]
+
 		---@cast order GameOrderDeploy
 		---@cast orderResult GameOrderDeployResult
-		if ActiveAdvancementsOrder[UpgradeUID.Mercenaries] then
-			if ActiveAdvancementsOrder[UpgradeUID.Mercenaries][order.PlayerID] then
-				local deployBonus = Mod.Settings.Advancements.Armies.Upgrades[UpgradeUID.Mercenaries].DeployBonus
+		if ActiveMercenaries then
+			if ActiveMercenaries[order.PlayerID] then
+				local deployBonus = Mod.Settings.Advancements.Armies.Upgrades[UpgradeUID.Mercenaries].DeployBonus or 0
 				local armiesThreshold = Mod.Settings.Advancements.Armies.Upgrades[UpgradeUID.Mercenaries]
-					.ArmiesThreshold
+					.ArmiesThreshold or 0
 
-				print(order.PlayerID)
-				print(order.NumArmies)
-				print("order numArmies")
+				if deployBonus == 0 or armiesThreshold == 0 then return end
+
 				local thresholdCount = math.floor(order.NumArmies / armiesThreshold)
 				local sumBonus = thresholdCount * deployBonus
 
 				---@type TerritoryModification
 				local terrMod = WL.TerritoryModification.Create(order.DeployOn)
 				terrMod.AddArmies = sumBonus
-				print("armies bonus " .. sumBonus)
 				local orders = { terrMod }
 
 				local msg = sumBonus .. " Mercenaries joined " ..
