@@ -38,6 +38,17 @@ local Advancements = {
 function Client_SaveConfigureUI()
 	---@type Mod Mod
 	Mod = Mod
+
+	local CustomAdvancment = Advancements
+
+	local EconomyEnabled = EconomyEnabledBox.GetIsChecked()
+	local CultureEnabled = CultureEnabledBox.GetIsChecked()
+	local ArmiesEnabled = ArmiesEnabledBox.GetIsChecked()
+
+	CustomAdvancment.Economy.Enabled = EconomyEnabled
+	CustomAdvancment.Culture.Enabled = CultureEnabled
+	CustomAdvancment.Armies.Enabled = ArmiesEnabled
+
 	Mod.Settings.Version = 1
-	Mod.Settings.Advancements = Advancements
+	Mod.Settings.Advancements = CustomAdvancment
 end
