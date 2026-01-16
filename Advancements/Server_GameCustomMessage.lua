@@ -52,7 +52,7 @@ function Server_GameCustomMessage(game, playerID, payload, setReturnTable)
 			return
 		end
 
-		if privateGameData[advancementName][UpgradeUID].UnlockedBy[playerID] then
+		if privateGameData[advancementName][upgradeUID].UnlockedBy[playerID] then
 			returnData.Message = "Advancement already unlocked!"
 			setReturnTable(returnData)
 			return
