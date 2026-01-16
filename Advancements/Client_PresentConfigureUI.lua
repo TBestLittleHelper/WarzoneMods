@@ -17,10 +17,11 @@ function Client_PresentConfigureUI(rootParent)
     local vert = UI.CreateVerticalLayoutGroup(rootParent)
     local horz = UI.CreateHorizontalLayoutGroup(vert)
     UI.CreateLabel(horz).SetText("Advancements can't be customized. Maybe in the future.")
-    local EconomyEnabledBox = UI.CreateCheckBox(vert).SetText("Enable Economy Advancements").SetIsChecked(
+    -- Must be globals for Save configure to work
+    EconomyEnabledBox = UI.CreateCheckBox(vert).SetText("Enable Economy Advancements").SetIsChecked(
         savedEconomyEnabled)
-    local CultureEnabledBox = UI.CreateCheckBox(vert).SetText("Enable Culture Advancements").SetIsChecked(
+    CultureEnabledBox = UI.CreateCheckBox(vert).SetText("Enable Culture Advancements").SetIsChecked(
         savedCultureEnabled)
-    local ArmiesEnabledBox = UI.CreateCheckBox(vert).SetText("Enable Armies Advancements").SetIsChecked(
+    ArmiesEnabledBox = UI.CreateCheckBox(vert).SetText("Enable Armies Advancements").SetIsChecked(
         savedArmiesEnabled)
 end
