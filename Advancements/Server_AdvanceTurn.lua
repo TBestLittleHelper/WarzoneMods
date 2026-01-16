@@ -184,6 +184,7 @@ function GetUnlockedByAdvancementID(advancementID, privateGameData)
 end
 
 function StandingCounter(LatestTurnStanding, players)
+	---@diagnostic disable-next-line: undefined-field -- For WL.PlayerID
 	local Counters = { Cities = { [WL.PlayerID.Neutral] = 0 }, Armies = { [WL.PlayerID.Neutral] = 0 }, Territories = { [WL.PlayerID.Neutral] = 0 } }
 
 	for playerID, _ in pairs(players) do
