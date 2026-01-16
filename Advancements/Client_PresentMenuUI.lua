@@ -20,6 +20,8 @@ function Client_PresentMenuUI(rootParent, setMaxSize, setScrollable, game, close
 	---@type UI
 	UI = UI
 	local advancementView = GetDefaultView(Advancements)
+	if advancementView == "" then return end -- If no advancements are enabled
+
 	setMaxSize(550, 650)
 	setScrollable(false, true)
 
