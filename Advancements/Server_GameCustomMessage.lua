@@ -92,6 +92,9 @@ function Server_GameCustomMessage(game, playerID, payload, setReturnTable)
 	end
 end
 
+---@param playerID number
+---@param privateGameData table
+---@return Unlockables
 function GetUnlockedByPlayerID(playerID, privateGameData)
 	---@alias Unlockables table<UpgradeUID, boolean>
 	local unlockables = {}
