@@ -58,16 +58,16 @@ function Client_PresentMenuUI(rootParent, setMaxSize, setScrollable, game, close
 
 		local upgrades = Advancements[advancementView].Upgrades
 
-		for _, upgrade in pairs(upgrades) do
+		for upgradeUID, upgrade in pairs(upgrades) do
 			local line = UI.CreateHorizontalLayoutGroup(advancementUpgradeArea)
 			table.insert(upgradeUIElements, line)
 
 			local upgradebtn = UI.CreateButton(line).SetText(upgrade.Name)
 			local buyButton = UI.CreateButton(line).SetText("Unlock (" .. upgrade.Cost .. " pts)").SetOnClick(function()
-				UnlockUpgrade(upgrade.UID, advancementView, game)
+				UnlockUpgrade(upgradeUID, advancementView, game)
 			end)
 
-			if ClientState.UnlockedUpgrades[upgrade.UID] then
+			if ClientState.UnlockedUpgrades[upgradeUID] then
 				upgradebtn.SetInteractable(false).SetColor("#00FF21")
 				buyButton.SetInteractable(false).SetText("Unlocked!").SetOnClick(function()
 					UI.Alert("Already unlocked")
