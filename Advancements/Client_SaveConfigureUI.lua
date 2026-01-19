@@ -8,10 +8,8 @@ local Advancements = {
 		Enabled = true,
 		PointsPerIncome = 1,
 		Upgrades = {
-			[1] =
-			{ UID = 1, Name = "Trade Stocks", Description = "Earn 1 extra point for every 5 income you have.", IncomeThreshold = 5, PointsPerIncome = 1, Cost = 5, AdvanceTurn = AdvanceTurn.End },
-			[2] =
-			{ UID = 2, Name = "Industrial Farms", Description = "Earn 1 extra point for every 10 income you have.", IncomeThreshold = 10, PointsPerIncome = 1, Cost = 10, AdvanceTurn = AdvanceTurn.End }
+			{ UID = 1, Name = "Trade Stocks",     Description = "Earn 1 extra point for every 5 income you have.",  IncomeThreshold = 5,  PointsPerIncome = 1, Cost = 5,  AdvanceTurn = "End" },
+			{ UID = 2, Name = "Industrial Farms", Description = "Earn 1 extra point for every 10 income you have.", IncomeThreshold = 10, PointsPerIncome = 1, Cost = 10, AdvanceTurn = "End" }, { UID = 3, Name = "Universal Basic Income", Description = "Increase your basic Income by 5", BasicIncome = 5, Cost = 50, AdvanceTurn = "End" }
 		},
 	},
 	Culture = {
@@ -41,6 +39,7 @@ function Client_SaveConfigureUI()
 
 	local CustomAdvancment = Advancements
 
+	-- Defined in Present_Configure
 	local EconomyEnabled = EconomyEnabledBox.GetIsChecked()
 	local CultureEnabled = CultureEnabledBox.GetIsChecked()
 	local ArmiesEnabled = ArmiesEnabledBox.GetIsChecked()
