@@ -14,13 +14,13 @@ AdvanceTurn = {
 
 UpgradeUID = {
 	-- Economy
-	TradeStocks     = 1,
-	IndustrialFarms = 2,
+	TradeStocks      = 1,
+	IndustrialFarms  = 2,
 
 	-- Culture
-	NationalSong    = 30,
+	NationalSong     = 30,
 
 	-- Armies
-	Mercenaries     = 60,
-	SpyNetwork      = 61,
+	Mercenaries      = 60,
+	SpyReportsCities = 61,
 }

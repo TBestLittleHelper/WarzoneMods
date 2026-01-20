@@ -11,7 +11,7 @@
 
 ---@alias ArmyUID
 ---| 60  -- Mercenaries
----| 61  -- SpyNetwork
+---| 61  -- SpyReportsCities
 
 ---@alias UpgradeUID EconomyUID | CultureUID | ArmyUID
 
