@@ -6,3 +6,7 @@ Military/Conquest 1. Capture 100 territories 2. Have 100 armies perish in battle
 
 Diplomatic/Cultral 1. Don't make any attack orders 2. Have less then 100 territores 3. Have less then 100 armies
 
+
+
+Icon.png is from https://game-icons.net/1x1/delapouite/upgrade.html#download
+Feature.png is from https://game-icons.net/1x1/delapouite/trophies-shelf.html#download
