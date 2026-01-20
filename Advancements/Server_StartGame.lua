@@ -20,16 +20,16 @@ function Server_StartGame(game, standing)
 		privateGameData[player.ID] = privateGameData[player.ID] or {}
 	end
 
-	for advancmentName, advancement in pairs(Mod.Settings.Advancments) do
+	for advancementName, advancement in pairs(Mod.Settings.Advancments) do
 		if advancement.Enabled then
 			for _, player in pairs(game.ServerGame.Game.Players) do
-				privateGameData[player.ID][advancmentName] = { Points = 0 }
+				privateGameData[player.ID][advancementName] = { Points = 0 }
 			end
 
-			privateGameData[advancmentName] = {}
+			privateGameData[advancementName] = {}
 			local Upgrades = advancement.Upgrades
 			for _, upgrade in pairs(Upgrades) do
-				privateGameData[advancmentName][upgrade.UID] = {
+				privateGameData[advancementName][upgrade.UID] = {
 					UnlockedBy = {}
 				}
 			end
