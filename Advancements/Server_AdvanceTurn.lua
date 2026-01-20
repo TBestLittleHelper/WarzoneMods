@@ -35,7 +35,7 @@ function Server_AdvanceTurn_Start(game, addNewOrder)
 
 	-- Start of turn advancements run right away
 	for upgradeUID, playerIDs in pairs(ActiveAdvancementsStart) do
-		if upgradeUID == UpgradeUID.SpyNetwork then
+		if upgradeUID == UpgradeUID.SpyReportsCities then
 			---@diagnostic disable-next-line: undefined-field
 			local fogLevel = WL.StandingFogLevel.OwnerOnly
 			local fogPriority = 500 -- Less then other WZ effects, like cards
@@ -47,9 +47,10 @@ function Server_AdvanceTurn_Start(game, addNewOrder)
 			for _, playerID in pairs(playerIDs) do
 				local playersAffectedOpt = {}
 				table.insert(playersAffectedOpt, playerID)
-				local fogMod = WL.FogMod.Create("Spy Network", fogLevel, fogPriority, fogTerritories, playersAffectedOpt)
+				local fogMod = WL.FogMod.Create("Spy Reports from Cities", fogLevel, fogPriority, fogTerritories,
+				playersAffectedOpt)
 
-				local message = "Spy Network shows you who controls the world"
+				local message = "Spy Reports from Cities shows you who controls the world"
 				-- Create a spy report order
 				local spyReportEventOrder = WL.GameOrderEvent.Create(playerID, message, {})
 				spyReportEventOrder.FogModsOpt = { fogMod }
