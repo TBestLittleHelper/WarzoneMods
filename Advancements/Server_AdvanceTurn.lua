@@ -48,7 +48,7 @@ function Server_AdvanceTurn_Start(game, addNewOrder)
 				local playersAffectedOpt = {}
 				table.insert(playersAffectedOpt, playerID)
 				local fogMod = WL.FogMod.Create("Spy Reports from Cities", fogLevel, fogPriority, fogTerritories,
-				playersAffectedOpt)
+					playersAffectedOpt)
 
 				local message = "Spy Reports from Cities shows you who controls the world"
 				-- Create a spy report order
