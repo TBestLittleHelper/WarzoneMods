@@ -22,6 +22,12 @@ local Advancements = {
 		Upgrades = {
 			[30] =
 			{ UID = 30, Name = "National Song Competition", Description = "Earn 1 extra culture point for every 3 cities you own.", CitiesThreshold = 3, PointsPerCity = 1, Cost = 8, AdvanceTurn = AdvanceTurn.End },
+			[31] =
+			{ UID = 31, Name = "Urban Life", Description = "Increases your income by 1 for each city", CitiesThreshold = 1, IncomePerCity = 1, Cost = 20, AdvanceTurn = AdvanceTurn.End },
+			[32] =
+			{ UID = 32, Name = "Public Education", Description = "Increases your income by 1 for each city", CitiesThreshold = 1, IncomePerCity = 1, Cost = 40, AdvanceTurn = AdvanceTurn.End },
+			[33] =
+			{ UID = 33, Name = "National Song Competition", Description = "Earn 1 extra culture point for every 3 cities you own.", CitiesThreshold = 3, PointsPerCity = 1, Cost = 8, AdvanceTurn = AdvanceTurn.End },
 		},
 	},
 	Armies = {
