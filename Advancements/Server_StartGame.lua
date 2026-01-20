@@ -20,7 +20,7 @@ function Server_StartGame(game, standing)
 		privateGameData[player.ID] = privateGameData[player.ID] or {}
 	end
 
-	for advancementName, advancement in pairs(Mod.Settings.Advancments) do
+	for advancementName, advancement in pairs(Mod.Settings.Advancements) do
 		if advancement.Enabled then
 			for _, player in pairs(game.ServerGame.Game.Players) do
 				privateGameData[player.ID][advancementName] = { Points = 0 }
