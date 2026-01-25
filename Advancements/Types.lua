@@ -9,13 +9,14 @@
 ---| 4   -- Welfare Fund
 
 ---@alias CultureUID
----| 30  -- NationalSong
+---| 30  -- National Song Competition
 ---| 31  -- Urban Life
 ---| 32  -- Public Education
+---| 33  -- Sportswashing
 
 ---@alias ArmyUID
 ---| 60  -- Mercenaries
----| 61  -- SpyReportsCities
+---| 61  -- Spy Network in Cities
 ---| 62  -- Combat Experience
 ---| 63  -- Infiltrate Big Armies
 
