@@ -3,15 +3,21 @@
 ---@alias AdvanceTurn "Start" | "Order" | "End"
 
 ---@alias EconomyUID
----| 1   -- TradeStocks
----| 2   -- IndustrialFarms
+---| 1   -- Trade Stocks
+---| 2   -- Industrial Farms
+---| 3   -- Universal Basic Income
+---| 4   -- Welfare Fund
 
 ---@alias CultureUID
 ---| 30  -- NationalSong
+---| 31  -- Urban Life
+---| 32  -- Public Education
 
 ---@alias ArmyUID
 ---| 60  -- Mercenaries
 ---| 61  -- SpyReportsCities
+---| 62  -- Combat Experience
+---| 63  -- Infiltrate Big Armies
 
 ---@alias UpgradeUID EconomyUID | CultureUID | ArmyUID
 
@@ -29,17 +35,21 @@
 ---@field UID EconomyUID
 ---@field IncomeThreshold number
 ---@field PointsPerIncome number
+---@field BasicIncome number?
 
 ---@class CultureUpgrade : BaseUpgrade
 ---@field UID CultureUID
 ---@field CitiesThreshold number
 ---@field PointsPerCity number
+---@field IncomePerCity number?
 
 ---@class ArmyUpgrade : BaseUpgrade
 ---@field UID ArmyUID
 ---@field ArmiesThreshold number?
 ---@field DeployBonus number?
 ---@field SpyReports number?
+---@field PointsPerWinningAttack number?
+---@field BigArmySize number?
 
 -- Category
 ---@class EconomyCategory

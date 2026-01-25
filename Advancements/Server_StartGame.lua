@@ -3,7 +3,7 @@ function Server_StartGame(game, standing)
 	local privateGameData = Mod.PrivateGameData
 	privateGameData.Advancement = {}
 
-	-- Data structure:
+	-- Data structure we need to initialize :
 	--	privateGameData = {
 	--		[playerID] = {
 	--			Economy = { Points = 0 },
