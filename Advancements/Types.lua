@@ -34,14 +34,14 @@
 
 ---@class EconomyUpgrade : BaseUpgrade
 ---@field UID EconomyUID
----@field IncomeThreshold number
----@field PointsPerIncome number
+---@field IncomeThreshold number?
+---@field PointsPerIncome number?
 ---@field BasicIncome number?
 
 ---@class CultureUpgrade : BaseUpgrade
 ---@field UID CultureUID
----@field CitiesThreshold number
----@field PointsPerCity number
+---@field CitiesThreshold number?
+---@field PointsPerCity number?
 ---@field IncomePerCity number?
 
 ---@class ArmyUpgrade : BaseUpgrade
