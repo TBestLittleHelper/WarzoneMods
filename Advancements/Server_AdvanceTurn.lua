@@ -103,6 +103,9 @@ function Server_AdvanceTurn_End(game, addNewOrder)
 	local EconomyFarmsUID = UpgradeUID.IndustrialFarms
 
 	local CultureSongUID = UpgradeUID.NationalSongCompetition
+	local CultureUrbanLifeUID = UpgradeUID.UrbanLife
+	local CulturePublicEducation = UpgradeUID.PublicEducation
+	local CultureSportWashing = UpgradeUID.Sportswashing
 
 	-- todo dry, extract dupe code
 	-- Income Threshold Advancements
@@ -146,6 +149,24 @@ function Server_AdvanceTurn_End(game, addNewOrder)
 			print("Player " ..
 				playerID .. " has " .. numCities .. " cities, earning " .. bonusPoints .. " culture points.")
 			PrivateGameData[playerID].Culture.Points = PrivateGameData[playerID].Culture.Points + bonusPoints
+		end
+
+		for _, playerID in pairs(ActiveAdvancementsEnd[CultureUrbanLifeUID]) do
+			--todo don't hardcode incomePercity
+			local numCities = Counters.Cities[playerID] or 0
+			local bonusIncome = numCities
+			--todo add income
+		end
+		for _, playerID in pairs(ActiveAdvancementsEnd[CulturePublicEducation]) do
+			--todo don't hardcode incomePercity
+			local numCities = Counters.Cities[playerID] or 0
+			local bonusIncome = numCities
+			--todo add income
+		end
+		for _, playerID in pairs(ActiveAdvancementsEnd[CultureSportWashing]) do
+			local numUnits = Counters.SpecialUnits[playerID] or 0
+			local bonusIncome = numUnits
+			--todo add income
 		end
 	end
 
