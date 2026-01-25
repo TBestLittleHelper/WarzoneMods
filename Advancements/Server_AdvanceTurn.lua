@@ -102,7 +102,7 @@ function Server_AdvanceTurn_End(game, addNewOrder)
 	local EconomyStocksUID = UpgradeUID.TradeStocks
 	local EconomyFarmsUID = UpgradeUID.IndustrialFarms
 
-	local CultureSongUID = UpgradeUID.NationalSong
+	local CultureSongUID = UpgradeUID.NationalSongCompetition
 
 	-- todo dry, extract dupe code
 	-- Income Threshold Advancements
@@ -187,12 +187,13 @@ end
 
 function StandingCounter(LatestTurnStanding, players)
 	---@diagnostic disable-next-line: undefined-field -- For WL.PlayerID
-	local Counters = { Cities = { [WL.PlayerID.Neutral] = 0 }, Armies = { [WL.PlayerID.Neutral] = 0 }, Territories = { [WL.PlayerID.Neutral] = 0 } }
+	local Counters = { Cities = { [WL.PlayerID.Neutral] = 0 }, Armies = { [WL.PlayerID.Neutral] = 0 }, Territories = { [WL.PlayerID.Neutral] = 0 }, SpecialUnits = { [WL.PlayerID.Neutral] = 0 } }
 
 	for playerID, _ in pairs(players) do
 		Counters.Cities[playerID] = 0
 		Counters.Armies[playerID] = 0
 		Counters.Territories[playerID] = 0
+		Counters.SpecialUnits[playerID] = 0
 	end
 
 	for _, territory in pairs(LatestTurnStanding.Territories) do
@@ -205,6 +206,11 @@ function StandingCounter(LatestTurnStanding, players)
 		---@diagnostic disable-next-line: undefined-field
 		local cities = (structures and structures[WL.StructureType.City]) or 0
 		Counters.Cities[ownerID] = Counters.Cities[ownerID] + cities
+
+		local units = territory.NumArmies.SpecialUnits or nil
+		units = #units or 0
+		Counters.SpecialUnits[ownerID] = Counters.SpecialUnits[ownerID]
+			+ units
 	end
 
 	return Counters
