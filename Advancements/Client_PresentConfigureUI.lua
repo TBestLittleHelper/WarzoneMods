@@ -17,7 +17,7 @@ function Client_PresentConfigureUI(rootParent)
     local vert = UI.CreateVerticalLayoutGroup(rootParent)
     local horz = UI.CreateHorizontalLayoutGroup(vert)
     UI.CreateLabel(horz).SetText("Advancements can't be customized. Maybe in the future if frequently requested")
-    UI.CreateLabel(horz).SetText("For the best expirience it's recommended to leave everything enabled")
+    UI.CreateLabel(horz).SetText("For the best experience it's recommended to leave everything enabled")
     -- Must be globals for Save configure to work
     EconomyEnabledBox = UI.CreateCheckBox(vert).SetText("Enable Economy Advancements").SetIsChecked(
         savedEconomyEnabled)
