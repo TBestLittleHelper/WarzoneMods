@@ -116,8 +116,8 @@ local Advancements = {
 			},
 			[uid.CombatExperience] = {
 				UID = uid.CombatExperience,
-				Name = "Combat Expirience",
-				Description = "Earn 1 extra armies point for each succcsessful attack",
+				Name = "Combat Experience",
+				Description = "Earn 1 extra armies point for each successful attack",
 				PointsPerWinningAttack = 1,
 				Cost = 30,
 				AdvanceTurn = AdvanceTurn.Order
@@ -146,17 +146,17 @@ function Client_SaveConfigureUI()
 	---@type Mod Mod
 	Mod = Mod
 
-	local CustomAdvancment = Advancements
+	local CustomAdvancement = Advancements
 
 	-- Defined in Present_Configure
 	local EconomyEnabled = EconomyEnabledBox.GetIsChecked()
 	local CultureEnabled = CultureEnabledBox.GetIsChecked()
 	local ArmiesEnabled = ArmiesEnabledBox.GetIsChecked()
 
-	CustomAdvancment.Economy.Enabled = EconomyEnabled
-	CustomAdvancment.Culture.Enabled = CultureEnabled
-	CustomAdvancment.Armies.Enabled = ArmiesEnabled
+	CustomAdvancement.Economy.Enabled = EconomyEnabled
+	CustomAdvancement.Culture.Enabled = CultureEnabled
+	CustomAdvancement.Armies.Enabled = ArmiesEnabled
 
 	Mod.Settings.Version = 1
-	Mod.Settings.Advancements = CustomAdvancment
+	Mod.Settings.Advancements = CustomAdvancement
 end
