@@ -34,7 +34,7 @@ function Client_PresentMenuUI(rootParent, setMaxSize, setScrollable, game, close
 
 
 
-	local function DestroyOldAdvancmentUpgrades()
+	local function DestroyOldAdvancementUpgrades()
 		for i = #upgradeUIElements, 1, -1 do
 			UI.Destroy(upgradeUIElements[i])
 			upgradeUIElements[i] = nil
@@ -46,12 +46,12 @@ function Client_PresentMenuUI(rootParent, setMaxSize, setScrollable, game, close
 			print("ui not ready!")
 			return
 		end
-		DestroyOldAdvancmentUpgrades()
+		DestroyOldAdvancementUpgrades()
 
 		local UpgradePoints = ClientState.UpgradePoints
 		local points = UpgradePoints[advancementView] or 0
 
-		print("Selected Advancment: " .. advancementView)
+		print("Selected Advancement: " .. advancementView)
 		print("points " .. points)
 
 		PointsButton.SetText(points .. " Points")
@@ -87,8 +87,8 @@ function Client_PresentMenuUI(rootParent, setMaxSize, setScrollable, game, close
 		end
 	end
 
-	local function SelectAdvancment(advancment)
-		advancementView = advancment
+	local function SelectAdvancement(advancement)
+		advancementView = advancement
 		UpdateView()
 	end
 
@@ -105,7 +105,7 @@ function Client_PresentMenuUI(rootParent, setMaxSize, setScrollable, game, close
 			.SetText("Economy")
 			.SetColor(Advancements.Economy.Color)
 			.SetOnClick(function()
-				SelectAdvancment("Economy")
+				SelectAdvancement("Economy")
 			end)
 	end
 
@@ -114,7 +114,7 @@ function Client_PresentMenuUI(rootParent, setMaxSize, setScrollable, game, close
 			.SetText("Culture")
 			.SetColor(Advancements.Culture.Color)
 			.SetOnClick(function()
-				SelectAdvancment("Culture")
+				SelectAdvancement("Culture")
 			end)
 	end
 
@@ -123,7 +123,7 @@ function Client_PresentMenuUI(rootParent, setMaxSize, setScrollable, game, close
 			.SetText("Armies")
 			.SetColor(Advancements.Armies.Color)
 			.SetOnClick(function()
-				SelectAdvancment("Armies")
+				SelectAdvancement("Armies")
 			end)
 	end
 
@@ -206,7 +206,7 @@ function GetDefaultView(Advancements)
 	elseif Advancements.Armies.Enabled then
 		return "Armies"
 	else
-		UI.Alert("No Advancments are enabled in the mod settings. This should not be possible.")
+		UI.Alert("No Advancements are enabled in the mod settings. This should not be possible.")
 		return ""
 	end
 end
