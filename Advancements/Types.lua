@@ -19,6 +19,7 @@
 ---| 61  -- Spy Network in Cities
 ---| 62  -- Combat Experience
 ---| 63  -- Infiltrate Big Armies
+---| 64  -- Spy Report Empty
 
 ---@alias UpgradeUID EconomyUID | CultureUID | ArmyUID
 
@@ -51,6 +52,7 @@
 ---@field SpyReports number?
 ---@field PointsPerWinningAttack number?
 ---@field BigArmySize number?
+---@field SpyEmpty boolean?
 
 -- Category
 ---@class EconomyCategory

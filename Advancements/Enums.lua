@@ -30,4 +30,5 @@ UpgradeUID = {
 	SpyReportsCities        = 61,
 	CombatExperience        = 62,
 	InfiltrateBigArmies     = 63,
+	SpyReportEmpty          = 64,
 }
