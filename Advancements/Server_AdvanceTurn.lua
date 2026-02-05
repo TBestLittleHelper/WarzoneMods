@@ -142,36 +142,34 @@ function Server_AdvanceTurn_End(game, addNewOrder)
 			PrivateGameData[playerID].Culture.Points = PrivateGameData[playerID].Culture.Points + bonusPoints
 		end
 
-		local incomePerCity = Mod.Settings.Advancements.Culture.Upgrades[CultureUrbanLifeUID].IncomePerCity
-		for _, playerID in pairs(ActiveAdvancementsEnd[CultureUrbanLifeUID]) do
-			local numCities = Counters.Cities[playerID] or 0
-			local bonusIncome = numCities * incomePerCity
+		local function ProcessDynamicIncome(upgradeUID, countTable, dataKey, messageTitle, multiplierKeyName)
+			if ActiveAdvancementsEnd[upgradeUID] then
+				local multiplier = Mod.Settings.Advancements.Culture.Upgrades[upgradeUID][multiplierKeyName]
+				for _, playerID in pairs(ActiveAdvancementsEnd[upgradeUID]) do
+					local count = countTable[playerID] or 0
+					local bonusIncome = count * multiplier
 
-			local currentBonus = PrivateGameData[playerID].Culture.UrbanLifeBonus or 0
-			local delta = bonusIncome - currentBonus
+					local currentBonus = PrivateGameData[playerID].Culture[dataKey] or 0
+					local delta = bonusIncome - currentBonus
 
-			if delta ~= 0 then
-				local message = "Urban Life Income"
-				local incomeMod = WL.IncomeMod.Create(playerID, delta, message)
-				local event = WL.GameOrderEvent.Create(playerID, message, {})
-				event.IncomeModsOpt = { incomeMod }
-				addNewOrder(event)
+					if delta ~= 0 then
+						local incomeMod = WL.IncomeMod.Create(playerID, delta, messageTitle)
+						local event = WL.GameOrderEvent.Create(playerID, messageTitle, {})
+						event.IncomeModsOpt = { incomeMod }
+						addNewOrder(event)
 
-				PrivateGameData[playerID].Culture.UrbanLifeBonus = bonusIncome
+						PrivateGameData[playerID].Culture[dataKey] = bonusIncome
+					end
+				end
 			end
 		end
-		for _, playerID in pairs(ActiveAdvancementsEnd[CulturePublicEducation]) do
-			local incomePerCity = Mod.Settings.Advancements.Culture.Upgrades[CulturePublicEducation].IncomePerCity
-			local numCities = Counters.Cities[playerID] or 0
-			local bonusIncome = numCities * incomePerCity
-			--todo add income
-		end
-		for _, playerID in pairs(ActiveAdvancementsEnd[CultureSportWashing]) do
-			local incomePerUnit = Mod.Settings.Advancements.Culture.Upgrades[CultureSportWashing].IncomePerUnit
-			local numUnits = Counters.SpecialUnits[playerID] or 0
-			local bonusIncome = numUnits * incomePerUnit
-			--todo add income
-		end
+
+		ProcessDynamicIncome(CultureUrbanLifeUID, Counters.Cities, "UrbanLifeBonus", "Urban Life Income", "IncomePerCity")
+		ProcessDynamicIncome(CulturePublicEducation, Counters.Cities, "PublicEducationBonus", "Public Education Income", "IncomePerCity")
+		ProcessDynamicIncome(CultureSportWashing, Counters.SpecialUnits, "SportswashingBonus", "Sportswashing Income", "IncomePerUnit")
+
+
+
 	end
 
 	-- Passive points so you never get stuck at zero
