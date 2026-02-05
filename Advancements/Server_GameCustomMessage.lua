@@ -69,6 +69,8 @@ function Server_GameCustomMessage(game, playerID, payload, setReturnTable)
 		returnData.Success = true
 		returnData.Message = "Upgrade unlocked successfully."
 		returnData.UpgradeUID = upgradeUID
+		returnData.AdvancementName = advancementName
+		returnData.NewPoints = privateGameData[playerID][advancementName].Points
 		setReturnTable(returnData)
 	end
 
