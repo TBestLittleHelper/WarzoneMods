@@ -142,11 +142,23 @@ function Server_AdvanceTurn_End(game, addNewOrder)
 			PrivateGameData[playerID].Culture.Points = PrivateGameData[playerID].Culture.Points + bonusPoints
 		end
 
+		local incomePerCity = Mod.Settings.Advancements.Culture.Upgrades[CultureUrbanLifeUID].IncomePerCity
 		for _, playerID in pairs(ActiveAdvancementsEnd[CultureUrbanLifeUID]) do
-			local incomePerCity = Mod.Settings.Advancements.Culture.Upgrades[CultureUrbanLifeUID].IncomePerCity
 			local numCities = Counters.Cities[playerID] or 0
 			local bonusIncome = numCities * incomePerCity
-			--todo add income
+
+			local currentBonus = PrivateGameData[playerID].Culture.UrbanLifeBonus or 0
+			local delta = bonusIncome - currentBonus
+
+			if delta ~= 0 then
+				local message = "Urban Life Income"
+				local incomeMod = WL.IncomeMod.Create(playerID, delta, message)
+				local event = WL.GameOrderEvent.Create(playerID, message, {})
+				event.IncomeModsOpt = { incomeMod }
+				addNewOrder(event)
+
+				PrivateGameData[playerID].Culture.UrbanLifeBonus = bonusIncome
+			end
 		end
 		for _, playerID in pairs(ActiveAdvancementsEnd[CulturePublicEducation]) do
 			local incomePerCity = Mod.Settings.Advancements.Culture.Upgrades[CulturePublicEducation].IncomePerCity
