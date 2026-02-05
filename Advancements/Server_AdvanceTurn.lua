@@ -39,7 +39,7 @@ function Server_AdvanceTurn_Start(game, addNewOrder)
 			---@diagnostic disable-next-line: undefined-field
 			local fogLevel = WL.StandingFogLevel.OwnerOnly
 			local fogPriority = 500 -- Less then other WZ effects, like cards
-			local fogTerritories = {} -- todo consider picking one player?
+			local fogTerritories = {}
 			for territoryID, _ in pairs(game.Map.Territories) do
 				table.insert(fogTerritories, territoryID)
 			end
