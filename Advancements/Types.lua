@@ -77,3 +77,4 @@
 ---@field Economy EconomyCategory
 ---@field Culture CultureCategory
 ---@field Armies ArmiesCategory
+---@field DefaultView string

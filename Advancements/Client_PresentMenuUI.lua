@@ -19,7 +19,7 @@ function Client_PresentMenuUI(rootParent, setMaxSize, setScrollable, game, close
 	-- UI setup
 	---@type UI
 	UI = UI
-	local advancementView = GetDefaultView(Advancements) --todo we can precompute this at Save Configure
+	local advancementView = Advancements.DefaultView
 	if advancementView == "" then return end          -- If no advancements are enabled
 
 	setMaxSize(550, 650)
@@ -196,17 +196,4 @@ function UpdatePlayerPoints(returnData)
 		end
 	end
 	UpdateView()
-end
-
-function GetDefaultView(Advancements)
-	if Advancements.Economy.Enabled then
-		return "Economy"
-	elseif Advancements.Culture.Enabled then
-		return "Culture"
-	elseif Advancements.Armies.Enabled then
-		return "Armies"
-	else
-		UI.Alert("No Advancements are enabled in the mod settings. This should not be possible.")
-		return ""
-	end
 end

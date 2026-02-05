@@ -157,6 +157,16 @@ function Client_SaveConfigureUI()
 	CustomAdvancement.Culture.Enabled = CultureEnabled
 	CustomAdvancement.Armies.Enabled = ArmiesEnabled
 
+	local defaultView = ""
+	if EconomyEnabled then
+		defaultView = "Economy"
+	elseif CultureEnabled then
+		defaultView = "Culture"
+	elseif ArmiesEnabled then
+		defaultView = "Armies"
+	end
+	CustomAdvancement.DefaultView = defaultView
+
 	Mod.Settings.Version = 1
 	Mod.Settings.Advancements = CustomAdvancement
 end
