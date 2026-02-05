@@ -107,33 +107,24 @@ function Server_AdvanceTurn_End(game, addNewOrder)
 	local CulturePublicEducation = UpgradeUID.PublicEducation
 	local CultureSportWashing = UpgradeUID.Sportswashing
 
-	-- todo dry, extract dupe code
 	-- Income Threshold Advancements
-	if ActiveAdvancementsEnd[EconomyStocksUID] then
-		local incomeThreshold = Mod.Settings.Advancements.Economy.Upgrades[EconomyStocksUID].IncomeThreshold
-		local pointsPerIncome = Mod.Settings.Advancements.Economy.Upgrades[EconomyStocksUID].PointsPerIncome
-		for _, playerID in pairs(ActiveAdvancementsEnd[EconomyStocksUID]) do
-			--https://www.warzone.com/wiki/Mod_API_Reference:GamePlayer
-			local player = players[playerID]
-			--todo use player and test
-			local income = game.ServerGame.Game.Players[playerID].Income(0, game.ServerGame.LatestTurnStanding, false,
-				false).Total
-			local bonusPoints = math.floor(income / incomeThreshold) * pointsPerIncome
-			PrivateGameData[playerID].Economy.Points = PrivateGameData[playerID].Economy.Points + bonusPoints
+	-- Helper function to process economy advancements
+	local function ProcessEconomyAdvancement(upgradeUID)
+		if ActiveAdvancementsEnd[upgradeUID] then
+			local upgrade = Mod.Settings.Advancements.Economy.Upgrades[upgradeUID]
+			local incomeThreshold = upgrade.IncomeThreshold
+			local pointsPerIncome = upgrade.PointsPerIncome
+			for _, playerID in pairs(ActiveAdvancementsEnd[upgradeUID]) do
+				local player = players[playerID]
+				local income = player.Income(0, game.ServerGame.LatestTurnStanding, false, false).Total
+				local bonusPoints = math.floor(income / incomeThreshold) * pointsPerIncome
+				PrivateGameData[playerID].Economy.Points = PrivateGameData[playerID].Economy.Points + bonusPoints
+			end
 		end
 	end
-	if ActiveAdvancementsEnd[EconomyFarmsUID] then
-		local incomeThreshold = Mod.Settings.Advancements.Economy.Upgrades[EconomyFarmsUID].IncomeThreshold
-		local pointsPerIncome = Mod.Settings.Advancements.Economy.Upgrades[EconomyFarmsUID].PointsPerIncome
-		for _, playerID in pairs(ActiveAdvancementsEnd[EconomyFarmsUID]) do
-			--https://www.warzone.com/wiki/Mod_API_Reference:GamePlayer
-			local income = game.ServerGame.Game.Players[playerID].Income(0, game.ServerGame.LatestTurnStanding, false,
-				false).Total
 
-			local bonusPoints = math.floor(income / incomeThreshold) * pointsPerIncome
-			PrivateGameData[playerID].Economy.Points = PrivateGameData[playerID].Economy.Points + bonusPoints
-		end
-	end
+	ProcessEconomyAdvancement(EconomyStocksUID)
+	ProcessEconomyAdvancement(EconomyFarmsUID)
 
 	-- Culture
 	if ActiveAdvancementsEnd[CultureSongUID] then
@@ -152,20 +143,21 @@ function Server_AdvanceTurn_End(game, addNewOrder)
 		end
 
 		for _, playerID in pairs(ActiveAdvancementsEnd[CultureUrbanLifeUID]) do
-			--todo don't hardcode incomePercity
+			local incomePerCity = Mod.Settings.Advancements.Culture.Upgrades[CultureUrbanLifeUID].IncomePerCity
 			local numCities = Counters.Cities[playerID] or 0
-			local bonusIncome = numCities
+			local bonusIncome = numCities * incomePerCity
 			--todo add income
 		end
 		for _, playerID in pairs(ActiveAdvancementsEnd[CulturePublicEducation]) do
-			--todo don't hardcode incomePercity
+			local incomePerCity = Mod.Settings.Advancements.Culture.Upgrades[CulturePublicEducation].IncomePerCity
 			local numCities = Counters.Cities[playerID] or 0
-			local bonusIncome = numCities
+			local bonusIncome = numCities * incomePerCity
 			--todo add income
 		end
 		for _, playerID in pairs(ActiveAdvancementsEnd[CultureSportWashing]) do
+			local incomePerUnit = Mod.Settings.Advancements.Culture.Upgrades[CultureSportWashing].IncomePerUnit
 			local numUnits = Counters.SpecialUnits[playerID] or 0
-			local bonusIncome = numUnits
+			local bonusIncome = numUnits * incomePerUnit
 			--todo add income
 		end
 	end
