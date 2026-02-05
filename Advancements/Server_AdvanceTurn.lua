@@ -185,7 +185,7 @@ function Server_AdvanceTurn_End(game, addNewOrder)
 	end
 
 	-- Passive points so you never get stuck at zero
-	local passivePoints = 100 -- todo Set to 1 after dev
+	local passivePoints = 1
 	for advancementName, advancement in pairs(Mod.Settings.Advancements) do
 		if advancement.Enabled then
 			for _, player in pairs(game.ServerGame.Game.PlayingPlayers) do
