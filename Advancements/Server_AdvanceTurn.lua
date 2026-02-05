@@ -19,8 +19,10 @@ function Server_AdvanceTurn_Start(game, addNewOrder)
 		if advancement.Enabled then
 			local Upgrades = advancement.Upgrades
 			for _, upgrade in pairs(Upgrades) do
+				-- GetUnlockedByAdvancementID now returns a Set: { [playerID] = true }
 				local unlockedBy = GetUnlockedByAdvancementID(upgrade.UID, PrivateGameData)
-				if #unlockedBy > 0 then
+
+				if next(unlockedBy) then
 					if upgrade.AdvanceTurn == AdvanceTurn.Start then
 						ActiveAdvancementsStart[upgrade.UID] = unlockedBy
 					elseif upgrade.AdvanceTurn == AdvanceTurn.Order then
@@ -31,6 +33,15 @@ function Server_AdvanceTurn_Start(game, addNewOrder)
 				end
 			end
 		end
+	end
+
+	-- Precompute settings for Order hook to avoid table lookups in hot path
+	if ActiveAdvancementsOrder[UpgradeUID.Mercenaries] then
+		MercenariesDeployBonus = Mod.Settings.Advancements.Armies.Upgrades[UpgradeUID.Mercenaries].DeployBonus or 0
+		MercenariesArmiesThreshold = Mod.Settings.Advancements.Armies.Upgrades[UpgradeUID.Mercenaries].ArmiesThreshold or 0
+	end
+	if ActiveAdvancementsOrder[UpgradeUID.CombatExperience] then
+		CombatExperiencePointsPerAttack = Mod.Settings.Advancements.Armies.Upgrades[UpgradeUID.CombatExperience].PointsPerWinningAttack or 0
 	end
 
 	-- Start of turn advancements run right away
@@ -44,7 +55,7 @@ function Server_AdvanceTurn_Start(game, addNewOrder)
 				table.insert(fogTerritories, territoryID)
 			end
 			-- https://www.warzone.com/wiki/Mod_API_Reference:FogMod
-			for _, playerID in pairs(playerIDs) do
+			for playerID, _ in pairs(playerIDs) do
 				local playersAffectedOpt = {}
 				table.insert(playersAffectedOpt, playerID)
 				local fogMod = WL.FogMod.Create("Spy Reports from Cities", fogLevel, fogPriority, fogTerritories,
@@ -63,30 +74,31 @@ end
 function Server_AdvanceTurn_Order(game, order, orderResult, skipThisOrder, addNewOrder)
 	if (order.proxyType == "GameOrderDeploy") then
 		local ActiveMercenaries = ActiveAdvancementsOrder[UpgradeUID.Mercenaries]
+		if ActiveMercenaries and ActiveMercenaries[order.PlayerID] then
+			-- Use precomputed globals if available, else fallback (though Start runs before Order, globals should be set)
+			local deployBonus = MercenariesDeployBonus or 0
+			local armiesThreshold = MercenariesArmiesThreshold or 0
 
-		---@cast order GameOrderDeploy
-		---@cast orderResult GameOrderDeployResult
-		if ActiveMercenaries then
-			if ActiveMercenaries[order.PlayerID] then
-				local deployBonus = Mod.Settings.Advancements.Armies.Upgrades[UpgradeUID.Mercenaries].DeployBonus or 0
-				local armiesThreshold = Mod.Settings.Advancements.Armies.Upgrades[UpgradeUID.Mercenaries]
-					.ArmiesThreshold or 0
+			if deployBonus == 0 or armiesThreshold == 0 then return end
 
-				if deployBonus == 0 or armiesThreshold == 0 then return end
+			local thresholdCount = math.floor(order.NumArmies / armiesThreshold)
+			local sumBonus = thresholdCount * deployBonus
 
-				local thresholdCount = math.floor(order.NumArmies / armiesThreshold)
-				local sumBonus = thresholdCount * deployBonus
+			local terrMod = WL.TerritoryModification.Create(order.DeployOn)
+			terrMod.AddArmies = sumBonus
+			local orders = { terrMod }
 
-				---@type TerritoryModification
-				local terrMod = WL.TerritoryModification.Create(order.DeployOn)
-				terrMod.AddArmies = sumBonus
-				local orders = { terrMod }
-
-				local msg = sumBonus .. " Mercenaries joined " ..
-					game.Map.Territories[order.DeployOn].Name
-
-				addNewOrder(WL.GameOrderEvent.Create(order.PlayerID, msg, {},
-					orders))
+			local msg = sumBonus .. " Mercenaries joined " .. game.Map.Territories[order.DeployOn].Name
+			addNewOrder(WL.GameOrderEvent.Create(order.PlayerID, msg, {}, orders))
+		end
+	elseif (order.proxyType == "GameOrderAttackTransfer") then
+		local ActiveCombatExperience = ActiveAdvancementsOrder[UpgradeUID.CombatExperience]
+		if ActiveCombatExperience and ActiveCombatExperience[order.PlayerID] then
+			if orderResult.IsAttack and orderResult.IsSuccessful then
+				local pointsPerAttack = CombatExperiencePointsPerAttack or 0
+				if pointsPerAttack > 0 then
+					PrivateGameData[order.PlayerID].Armies.Points = PrivateGameData[order.PlayerID].Armies.Points + pointsPerAttack
+				end
 			end
 		end
 	end
@@ -114,7 +126,7 @@ function Server_AdvanceTurn_End(game, addNewOrder)
 			local upgrade = Mod.Settings.Advancements.Economy.Upgrades[upgradeUID]
 			local incomeThreshold = upgrade.IncomeThreshold
 			local pointsPerIncome = upgrade.PointsPerIncome
-			for _, playerID in pairs(ActiveAdvancementsEnd[upgradeUID]) do
+			for playerID, _ in pairs(ActiveAdvancementsEnd[upgradeUID]) do
 				local player = players[playerID]
 				local income = player.Income(0, game.ServerGame.LatestTurnStanding, false, false).Total
 				local bonusPoints = math.floor(income / incomeThreshold) * pointsPerIncome
@@ -132,7 +144,7 @@ function Server_AdvanceTurn_End(game, addNewOrder)
 		local pointsPerCity = Mod.Settings.Advancements.Culture.Upgrades[CultureSongUID].PointsPerCity
 
 
-		for _, playerID in pairs(ActiveAdvancementsEnd[CultureSongUID]) do
+		for playerID, _ in pairs(ActiveAdvancementsEnd[CultureSongUID]) do
 			--https://www.warzone.com/wiki/Mod_API_Reference:GamePlayer
 			local numCities = Counters.Cities[playerID] or 0
 			local bonusPoints = math.floor(numCities / citiesThreshold) * pointsPerCity
@@ -145,7 +157,7 @@ function Server_AdvanceTurn_End(game, addNewOrder)
 		local function ProcessDynamicIncome(upgradeUID, countTable, dataKey, messageTitle, multiplierKeyName)
 			if ActiveAdvancementsEnd[upgradeUID] then
 				local multiplier = Mod.Settings.Advancements.Culture.Upgrades[upgradeUID][multiplierKeyName]
-				for _, playerID in pairs(ActiveAdvancementsEnd[upgradeUID]) do
+				for playerID, _ in pairs(ActiveAdvancementsEnd[upgradeUID]) do
 					local count = countTable[playerID] or 0
 					local bonusIncome = count * multiplier
 
@@ -193,19 +205,17 @@ function Server_AdvanceTurn_End(game, addNewOrder)
 end
 
 function GetUnlockedByAdvancementID(advancementID, privateGameData)
-	local unlockedBy = {}
 	for advancementName, advancement in pairs(Mod.Settings.Advancements) do
 		if advancement.Enabled then
 			for _, upgrade in pairs(advancement.Upgrades) do
 				if upgrade.UID == advancementID then
-					for playerID, _ in pairs(privateGameData[advancementName][upgrade.UID].UnlockedBy) do
-						table.insert(unlockedBy, playerID)
-					end
+					-- Directly return the Set table from PrivateGameData
+					return privateGameData[advancementName][upgrade.UID].UnlockedBy
 				end
 			end
 		end
 	end
-	return unlockedBy
+	return {}
 end
 
 function StandingCounter(LatestTurnStanding, players)
