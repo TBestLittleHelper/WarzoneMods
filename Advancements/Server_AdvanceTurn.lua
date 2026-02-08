@@ -10,6 +10,16 @@ function Server_AdvanceTurn_Start(game, addNewOrder)
 	-- Globals work in all advanceturn hooks
 	PrivateGameData = Mod.PrivateGameData
 
+	--If we have any existing fog mods, remove them
+	if (PrivateGameData.FogModIDs ~= nil) then
+		local event = WL.GameOrderEvent.Create(WL.PlayerID.Neutral, 'Old spy reports are removed', {});
+		event.RemoveFogModsOpt = PrivateGameData.FogModIDs;
+		addNewOrder(event);
+
+		PrivateGameData.FogModIDs = nil;
+		Mod.PrivateGameData = PrivateGameData;
+	end
+
 	-- For all advancements, check if any players have them unlocked
 	ActiveAdvancementsStart = {}
 	ActiveAdvancementsOrder = {}
@@ -66,6 +76,12 @@ function Server_AdvanceTurn_Start(game, addNewOrder)
 				local spyReportEventOrder = WL.GameOrderEvent.Create(playerID, message, {})
 				spyReportEventOrder.FogModsOpt = { fogMod }
 				addNewOrder(spyReportEventOrder)
+
+				-- Store the ID so we can later disable it
+				local allIDs = PrivateGameData.FogModIDs or {};
+				table.insert(allIDs, fogMod.ID);
+				PrivateGameData.FogModIDs = allIDs;
+				Mod.PrivateGameData = PrivateGameData;
 			end
 		end
 	end
