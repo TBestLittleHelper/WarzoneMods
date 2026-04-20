@@ -76,7 +76,7 @@ function Server_AdvanceTurn_Order(game, order, orderResult, skipThisOrder,
                 local extraDmg = attackersKilled -
                     orderResult.ActualArmies.NumArmies
                 print(extraDmg, " extraDmg")
-                -- todo We need to dmg special units : https://www.warzone.com/wiki/Mod_API_Reference:GameOrderAttackTransferResult
+                -- todo We need to dmg special units : https://war.app/wiki/Mod_API_Reference:GameOrderAttackTransferResult
                 attackersKilled = orderResult.ActualArmies.NumArmies
             else
                 -- round up, always

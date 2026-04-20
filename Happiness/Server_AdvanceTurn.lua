@@ -34,7 +34,7 @@ function Server_AdvanceTurn_Order(game, order, orderResult, skipThisOrder, addNe
 	end
 	if (order.proxyType == "GameOrderDiscard") then
 		---@cast order GameOrderDiscard
-		-- todo check card type when supported https://www.warzone.com/Forum/816730-mod-incude-customcardid-discard-order
+		-- todo check card type when supported https://war.app/Forum/816730-mod-incude-customcardid-discard-order
 		skipThisOrder(WL.ModOrderControl
 			.SkipAndSupressSkippedMessage)
 	end
@@ -72,7 +72,7 @@ function Server_AdvanceTurn_End(game, addNewOrder)
 					{ incomeMod }))
 
 				-- Remove the old card and old card pices
-				-- https://www.warzone.com/wiki/Mod_API_Reference:GameOrderEvent
+				-- https://war.app/wiki/Mod_API_Reference:GameOrderEvent
 				local event = WL.GameOrderEvent.Create(WL.PlayerID.Neutral, "Removing old happiness cards", {});
 				event.RemoveWholeCardsOpt = { [playerID] = cardInstance };
 

@@ -64,7 +64,7 @@ function Server_AdvanceTurn_Start(game, addNewOrder)
 			for territoryID, _ in pairs(game.Map.Territories) do
 				table.insert(fogTerritories, territoryID)
 			end
-			-- https://www.warzone.com/wiki/Mod_API_Reference:FogMod
+			-- https://war.app/wiki/Mod_API_Reference:FogMod
 			for playerID, _ in pairs(playerIDs) do
 				local playersAffectedOpt = {}
 				table.insert(playersAffectedOpt, playerID)
@@ -159,9 +159,8 @@ function Server_AdvanceTurn_End(game, addNewOrder)
 		local citiesThreshold = Mod.Settings.Advancements.Culture.Upgrades[CultureSongUID].CitiesThreshold
 		local pointsPerCity = Mod.Settings.Advancements.Culture.Upgrades[CultureSongUID].PointsPerCity
 
-
 		for playerID, _ in pairs(ActiveAdvancementsEnd[CultureSongUID]) do
-			--https://www.warzone.com/wiki/Mod_API_Reference:GamePlayer
+			--https://war.app/wiki/Mod_API_Reference:GamePlayer
 			local numCities = Counters.Cities[playerID] or 0
 			local bonusPoints = math.floor(numCities / citiesThreshold) * pointsPerCity
 

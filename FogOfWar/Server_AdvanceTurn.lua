@@ -61,7 +61,7 @@ function Server_AdvanceTurn_End(game, addNewOrder)
 
     print("************")
     -- Update fogged
-    -- Wiki ref : https://www.warzone.com/wiki/Mod_API_Reference:FogMod
+    -- Wiki ref : https://war.app/wiki/Mod_API_Reference:FogMod
 
     for _, targetID in pairs(TerritoriesToBeFogged) do
         print(game.Map.Territories[targetID].Name .. " is being fogged")
